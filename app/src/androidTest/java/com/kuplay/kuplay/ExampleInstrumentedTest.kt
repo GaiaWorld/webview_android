@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getTargetContext()
-        assertEquals("com.kupay.kupay", appContext.packageName)
+        assertEquals("com.yineng.webviewpro", appContext.packageName)
     }
 }

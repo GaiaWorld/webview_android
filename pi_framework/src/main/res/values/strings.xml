@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">pi_framework</string>
+    <string name="app_select_contacts_label">选择联系人</string>
+    <string name="dialog_title_prompt">提示</string>
+    <string name="dialog_title_ok">确定</string>
+    <string name="dialog_title_cancel">取消</string>
+    <string name="tip_web_view_load_failed">加载失败</string>
+    <string name="tip_web_view_connect_time_out">与服务器的连接超时</string>
+    <string name="msg_request_failed">请求服务器失败!</string>
+    <string name="dialog_msg_confirm_exit_app">确定退出App？</string>
+    <!--权限相关-->
+    <string name="tip_please_allow_app_install_unknown_res_apk">请允许酷玩安装未知来源的应用！</string>
+    <string name="tip_please_allow_app_read_contacts">从本地联系人中读取联系人需要使用到联系人权限，请先在设置中打开再使用此功能</string>
+    <string name="tip_please_allow_app_read_gallery_with_camera">使用相机需要相机权限、读写手机存储权限</string>
+    <string name="tip_please_allow_app_read_gallery_without_camera">打开相册需要读取手机存储权限</string>
+    <string name="tip_please_allow_app_scan_qr_code">扫描二维码必须使用到相机功能，请前往“设置”中打开相机权限</string>
+    <string name="tip_misseed_permission_default_prompt">当前应用缺少必要权限。\n \n请点击"设置"-"权限"-打开所需权限。</string>
+    <!--配置-->
+    <string name="init_url" translatable="false">/dst/boot/index.html</string><!--要加载的首个网页，如需要用本地打包，一定要以/开头-->
+    <string name="connect_url_time_out_value" translatable="false">20000</string><!--连接超时的时间-->
+    <string name="web_view_intercept" translatable="false">1</string><!--拦截WebView的http请求-->
+    <string name="compile_web_view_version_code" translatable="false">50</string><!--浏览器的版本号临界值、低于这个值将会使用X5Chrome-->
+    <string name="whether_show_launch_animation" translatable="false">0</string><!--是否显示启动的动画-->
+    <string name="launch_animation_least_last_time" translatable="false">600</string><!--动画的最低持续时间(ms)-->
+    <string name="app_splash_anim_file_name" translatable="false">dotted_loader.json</string><!--启动的动画-->
+</resources>

@@ -7,8 +7,6 @@
     <external-path
         name="./"
         path="./"/>
-    <!-- 广点通广告下载路径,必须配置 -->
-    <external-path
-        name="gdt_sdk_download_path"
-        path="GDTDOWNLOAD" />
+    <external-files-path name="external_files_path" path="Download" />
+    <external-path name="gdt_sdk_download_path" path="GDTDOWNLOAD" />
 </paths>
