@@ -1,6 +1,7 @@
 package com.kuplay.pi_framework.framework
 
 import android.app.Activity
+import android.app.ActivityOptions
 import android.util.Log
 import android.webkit.JavascriptInterface
 import com.kuplay.pi_framework.Util.ClassInfo
@@ -34,9 +35,6 @@ class JSBridge(ynWebView: YNWebView) {
 
     }
 
-
-
-
     private fun setClass(className: String, clazz: Class<*>) {
         val info = ClassInfo(clazz)
         clsMap[className] = info
@@ -46,15 +44,16 @@ class JSBridge(ynWebView: YNWebView) {
         }
     }
 
+    //高层调用底层
     @JavascriptInterface
     fun postMessage(className: String, methodName: String, nativeID: Int, listenerID: Int, jsonArray: String){
         Log.d("JSBridge","$className,$methodName,$jsonArray")
         var callBack = { callType: Int, prames: Array<Any> ->
-            //if (callType == BaseJSModule.SUCCESS){
-            callJS(webView.getEnv(webView.ACTIVITY) as Activity?, webView.getEnv(webView.WEBVIEW), listenerID, callType, prames)
-            //}else if (callType == BaseJSModule.FAIL){
-            //    callJS(webView.getEnv(webView.ACTIVITY) as Activity?, webView.getEnv(webView.WEBVIEW), listenerID, callType, prames)
-            //}
+            if (callType == 3){
+                throwJS(webView,webView.getEnv(webView.ACTIVITY) as Activity,className,methodName,prames[0] as String)
+            }else{
+                callJS(webView.getEnv(webView.ACTIVITY) as Activity?, webView.getEnv(webView.WEBVIEW), listenerID, callType, prames)
+            }
         }
         try {
             val js = JSONArray(jsonArray)
@@ -80,11 +79,9 @@ class JSBridge(ynWebView: YNWebView) {
 
             }
         } catch (e: Exception) {
-            throwJS(webView, webView.getEnv(webView.ACTIVITY) as Activity, webView.getEnv(webView.WEBVIEW), className, methodName, e.message!!)
+            throwJS(webView, webView.getEnv(webView.ACTIVITY) as Activity, className, methodName, e.message!!)
         }
     }
-
-
 
     fun callJS(activity: Activity?, webview: Any?, listenerId: Int, @BaseJSModule.Companion.StatusCode statusCode: Int, params: Array<Any>) {
         var activity = activity
@@ -95,7 +92,7 @@ class JSBridge(ynWebView: YNWebView) {
         if (webview == null) {
             webview = webView.getEnv(webView.WEBVIEW)
         }
-        val func = StringBuilder("window['handle_Native_Message']($listenerId, $statusCode")
+        val func = StringBuilder("window['handle_native_message']($listenerId, $statusCode")
         if (null != params)
             for (o in params) {
                 Log.d("callJS","$o")
@@ -121,7 +118,7 @@ class JSBridge(ynWebView: YNWebView) {
                     val s = o as String
                     func.append(String.format(", '%s'", s))
                 } else {
-                    throwJS(webView, activity, webview, "Android", "CallJS", "Internal Error, CallJS params error!")
+                    throwJS(webView, activity, "Android", "CallJS", "Internal Error, CallJS params error!")
                     return
                 }
             }
@@ -133,8 +130,8 @@ class JSBridge(ynWebView: YNWebView) {
 
 
 
-    fun throwJS(ynWebView: YNWebView, activity: Activity, webview: Any?, className: String, methodName: String, message: String) {
-        val func = String.format("handle_Native_ThrowError('%s', '%s', '%s'", className, methodName, message)
+    fun throwJS(ynWebView: YNWebView, activity: Activity, className: String, methodName: String, message: String) {
+        val func = String.format("handle_native_throwerror('%s', '%s', '%s'", className, methodName, message)
         Log.d("JSBridge", "throwJS: $func")
         activity.runOnUiThread(CallJSRunnable(func, ynWebView))
     }
@@ -209,9 +206,44 @@ class JSBridge(ynWebView: YNWebView) {
     }
 
     companion object {
-        private val TAG = JSBridge::class.java.name
         private val METHOD_INIT = "init"//method name->init
         private val METHOD_CLOSE = "close"//method name->close
+
+
+        fun sendJS(ynWebView: YNWebView, type: String, name: String, params: Array<Any>){
+            val func = StringBuilder("window['handle_native_event']($type, $name")
+            if (null != params)
+                for (o in params) {
+                    Log.d("callJS","$o")
+                    if (o is Byte) {
+                        val v = o.toInt()
+                        func.append(", ").append(v)
+                    } else if (o is Short) {
+                        val v = o.toInt()
+                        func.append(", ").append(v)
+                    } else if (o is Int) {
+                        val v = o
+                        func.append(", ").append(v)
+                    } else if (o is Float) {
+                        val v = o
+                        func.append(", ").append(v)
+                    } else if (o is Double) {
+                        val v = o
+                        func.append(", ").append(v)
+                    } else if (o is Boolean) {
+                        val v = o
+                        func.append(", ").append(if (v) 1 else 0)
+                    } else if (o is String) {
+                        val s = o as String
+                        func.append(String.format(", '%s'", s))
+                    } else {
+                        JSBridge(ynWebView).throwJS(ynWebView, ynWebView.getEnv(ynWebView.ACTIVITY) as Activity, "Android", "CallJS", "Internal Error, CallJS params error!")
+                        return
+                    }
+                }
+            func.append(")")
+            (ynWebView.getEnv(ynWebView.ACTIVITY) as Activity).runOnUiThread(CallJSRunnable(func.toString(),ynWebView))
+        }
     }
 }
 

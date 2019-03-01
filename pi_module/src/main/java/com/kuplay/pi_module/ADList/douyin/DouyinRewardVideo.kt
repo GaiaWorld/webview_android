@@ -14,7 +14,6 @@ class DouyinRewardVideo(ynWebView: YNWebView):BaseAD(ynWebView) {
     //step3:创建TTAdNative对象,用于调用广告请求接口
     var mTTAdNative : TTAdNative
     var mttRewardVideoAd : TTRewardVideoAd? = null
-    var cb = 0
     init {
         ttAdManager.requestPermissionIfNecessary(ctx!!)
         mTTAdNative = ttAdManager.createAdNative(ctx!!)
@@ -22,12 +21,10 @@ class DouyinRewardVideo(ynWebView: YNWebView):BaseAD(ynWebView) {
     private var mHasShowDownloadActive = false
     var mAdList = mutableListOf<Any>()
 
-    fun showAd(cbID:Int,callBack: (callType: Int, prames: Array<Any>)->Unit){
-        cb = cbID
+    fun showAd(callBack: (callType: Int, prames: Array<Any>)->Unit){
         this.callBack = callBack
         if(!mAdList.isNotEmpty()){
-            val func = "window['handle_Native_Message']($cb, 100, 0, '发放奖励', '没有广告')"
-            ctx!!.runOnUiThread ( CallJSRunnable(func,yn!!) )
+            callBack(BaseJSModule.CALLBACK, arrayOf(0,0,"没有广告"))
         }else{
             mttRewardVideoAd = mAdList[0] as TTRewardVideoAd
             mttRewardVideoAd!!.setRewardAdInteractionListener(object : TTRewardVideoAd.RewardAdInteractionListener {
@@ -41,9 +38,7 @@ class DouyinRewardVideo(ynWebView: YNWebView):BaseAD(ynWebView) {
                 }
 
                 override fun onAdClose() {
-                    val func = "window['handle_Native_Message']($cb, 100, 1, '关闭广告', '成功')"
-                    ctx!!.runOnUiThread ( CallJSRunnable(func,yn!!) )
-
+                    callBack(BaseJSModule.CALLBACK, arrayOf(1,1,"成功"))
                     callBack(BaseJSModule.SUCCESS, arrayOf(""))
                     //TToast.show(ctx!!, "rewardVideoAd close")
                 }
@@ -54,16 +49,12 @@ class DouyinRewardVideo(ynWebView: YNWebView):BaseAD(ynWebView) {
                 }
 
                 override fun onVideoError() {
-                    val func = "window['handle_Native_Message']($cb, 100, 0, '发放奖励', '失败')"
-                    ctx!!.runOnUiThread ( CallJSRunnable(func,yn!!) )
-                    //TToast.show(ctx!!, "rewardVideoAd error")
+                    callBack(BaseJSModule.CALLBACK, arrayOf(0,0,"失败"))
                 }
 
                 //视频播放完成后，奖励验证回调，rewardVerify：是否有效，rewardAmount：奖励梳理，rewardName：奖励名称
                 override fun onRewardVerify(rewardVerify: Boolean, rewardAmount: Int, rewardName: String) {
-                    val func = "window['handle_Native_Message']($cb, 100, 1, '发放奖励', '成功')"
-                    ctx!!.runOnUiThread ( CallJSRunnable(func,yn!!) )
-                    //callBack(BaseJSModule.SUCCESS, arrayOf("success"))
+                    callBack(BaseJSModule.CALLBACK, arrayOf(1,0,"成功"))
                 }
             })
             mttRewardVideoAd!!.setDownloadListener(object : TTAppDownloadListener {

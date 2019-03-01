@@ -5,11 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
-import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.ImageView
 import android.widget.RelativeLayout
 import com.kuplay.pi_framework.R
 import com.kuplay.pi_framework.Util.FileUtil
@@ -20,8 +17,6 @@ import com.kuplay.pi_framework.base.BaseWebView
 import com.kuplay.pi_framework.module.LocalLanguageMgr
 import kotlinx.android.synthetic.main.layout_fake_status_bar_view.*
 import java.io.File
-import android.view.ViewGroup.LayoutParams.FILL_PARENT
-
 
 
 class WebViewActivity : BaseWebView() {
@@ -36,11 +31,10 @@ class WebViewActivity : BaseWebView() {
     override val layoutResources: Int get() = R.layout.activity_webview
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.FullScreenWithoutAny)
+        //setTheme(R.style.FullScreenWithoutAny)
         ynWebView.createYnWebView(this)
         addJEV(this)
         super.onCreate(savedInstanceState)
-
     }
 
 
@@ -115,7 +109,7 @@ class WebViewActivity : BaseWebView() {
 
 
     override fun onBackPressed() {
-        ynWebView.evaluateJavascript(String.format(BaseActivity.JS_CALLBACK, BaseActivity.ON_BACK_PRESSED))
+        JSBridge.sendJS(ynWebView,"BaseActivity",ON_BACK_PRESSED, arrayOf("App进入后台"))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

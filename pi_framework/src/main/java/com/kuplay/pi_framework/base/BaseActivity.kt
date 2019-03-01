@@ -12,6 +12,7 @@ import com.kuplay.pi_framework.Util.AndroidBug5497Workaround
 import com.kuplay.pi_framework.Util.AndroidWorkaround
 import com.kuplay.pi_framework.Util.Logger
 import com.kuplay.pi_framework.Util.ToastManager
+import com.kuplay.pi_framework.framework.JSBridge
 import com.kuplay.pi_framework.webview.YNWebView
 
 abstract class BaseActivity : AppCompatActivity(), BaseView {
@@ -151,8 +152,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
      */
     private fun gotoBackground() {
         Logger.error("BaseActivity", "App进入后台")
-        ynWebView.backFrontgrandEvn(String.format(JS_CALLBACK, ON_APP_PAUSED))
-
+        JSBridge.sendJS(ynWebView,"BaseActivity",ON_BACK_PRESSED, arrayOf("App进入后台"))
     }
 
     /**
@@ -160,7 +160,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
      */
     private fun gotoForeground() {
         Logger.error("BaseActivity", "App进入前台")
-        ynWebView.backFrontgrandEvn(String.format(JS_CALLBACK, ON_APP_RESUMED))
+        JSBridge.sendJS(ynWebView,"BaseActivity",ON_APP_RESUMED, arrayOf("App进入前台"))
     }
 
     override fun onDestroy() {
@@ -177,9 +177,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
 
     companion object {
         private var registered = false
-        const val JS_CALLBACK = "handle_app_lifecycle_listener('%s')"
         private const val ON_APP_RESUMED = "onAppResumed"
-        private const val ON_APP_PAUSED = "onAppPaused"
         const val ON_BACK_PRESSED = "onBackPressed"
         private const val SYSTEM_DIALOG_REASON_KEY = "reason"
         private const val SYSTEM_DIALOG_REASON_HOME_KEY = "homekey"

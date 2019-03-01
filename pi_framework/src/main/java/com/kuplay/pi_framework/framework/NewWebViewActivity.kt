@@ -50,16 +50,13 @@ class NewWebViewActivity : BaseWebView() {
      * Initialize basic data.
      */
     override fun initData() {
-
         Log.d("WebView", "new WebView: " + intent?.getStringExtra("tag"))
-
         mTvTitle.text = intent?.getStringExtra("title")
         tag = intent?.getStringExtra("tag")
         if (null == tag) throw Exception("The tag can't be null!")
         mIvBack.setOnClickListener {
             onBackPressed()
         }
-
         var path = intent?.getStringExtra("inject")
         var file = File(path)
         val content = file.readText()
@@ -71,7 +68,6 @@ class NewWebViewActivity : BaseWebView() {
         addJEV(this)
         super.loadUrl(url)
         registerCloseReceiver()
-
     }
 
     override fun onBackPressed() {
@@ -79,7 +75,13 @@ class NewWebViewActivity : BaseWebView() {
         if (childCount > 1) {
             mRlRootView.removeViewAt(childCount - 1)
         }
-        else super.onBackPressed()
+        else {
+            JSBridge.sendJS(ynWebView,"BaseActivity","onBackPressed", arrayOf("页面即将关闭"))
+        }
+    }
+
+    fun closeActivicty(){
+        super.onBackPressed()
     }
 
     private fun registerCloseReceiver() {
@@ -95,7 +97,7 @@ class NewWebViewActivity : BaseWebView() {
             when (action) {
                 "close_web_view" -> {
                     if (tag == intent.getStringExtra("web_view_name")) {
-                        this@NewWebViewActivity.onBackPressed()
+                        this@NewWebViewActivity.closeActivicty()
                     }
                 }
                 "send_message$tag" -> {

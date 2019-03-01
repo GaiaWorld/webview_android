@@ -8,6 +8,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/ShortcutBadger" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/pi_framework" />
             <option value="$PROJECT_DIR$/pi_module" />

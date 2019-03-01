@@ -47,6 +47,9 @@
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
 
+        <!--<meta-data android:name="com.alibaba.app.appkey" android:value="25706201"/> &lt;!&ndash; 请填写你自己的- appKey &ndash;&gt;-->
+        <!--<meta-data android:name="com.alibaba.app.appsecret" android:value="3f23e416c16ab516b6602480d0891b45"/> &lt;!&ndash; 请填写你自己的appSecret &ndash;&gt;-->
+
     <!-- Android 7.0 文件共享配置，必须配置 -->
     <provider
             android:name="android.support.v4.content.FileProvider"
@@ -81,6 +84,23 @@
         </intent-filter>
 
     </activity>
+
+        <activity android:name=".PopupPushActivity" />
+
+        <receiver
+                android:name=".YNMessageReceiver"
+                android:exported="false"> <!-- 为保证receiver安全，建议设置不可导出，如需对其他应用开放可通过android：permission进行限制 -->
+            <intent-filter>
+                <action android:name="com.alibaba.push2.action.NOTIFICATION_OPENED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.alibaba.push2.action.NOTIFICATION_REMOVED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.alibaba.sdk.android.push.RECEIVE" />
+            </intent-filter>
+        </receiver>
+
 
     </application>
 

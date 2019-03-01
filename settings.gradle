@@ -1,1 +1,1 @@
-include ':app', ':pi_framework', ':pi_module'
+include ':app', ':pi_framework', ':pi_module', ':ShortcutBadger'

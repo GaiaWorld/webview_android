@@ -150,7 +150,7 @@ public class FileUtil {
                 baos.close();
 
                 byte[] bitmapBytes = baos.toByteArray();
-                result = Base64.encodeToString(bitmapBytes, Base64.DEFAULT);
+                result = Base64.encodeToString(bitmapBytes, Base64.NO_WRAP);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -184,7 +184,7 @@ public class FileUtil {
                 boolean newFile = file.createNewFile();
                 if (!newFile) return file;
             }
-            byte[] bytes = Base64.decode(base64, Base64.DEFAULT);// 将字符串转换为byte数组
+            byte[] bytes = Base64.decode(base64, Base64.NO_WRAP);// 将字符串转换为byte数组
             ByteArrayInputStream in = new ByteArrayInputStream(bytes);
             byte[] buffer = new byte[1024];
             out = new FileOutputStream(file);

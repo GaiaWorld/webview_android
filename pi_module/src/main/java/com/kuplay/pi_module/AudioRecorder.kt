@@ -13,6 +13,7 @@ import com.kuplay.pi_framework.base.BaseJSModule
 import com.kuplay.pi_framework.webview.YNWebView
 
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.Timer
@@ -36,21 +37,41 @@ class AudioRecorder(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
 
 
     fun getPromission(callBack:(callType: Int, prames: Array<Any>)->Unit){
+        val mBootPath = "/data/data/" + YNWebView.sAppCtx.packageName
+        val path = "$mBootPath/apk_back/recoderfile.txt"
+        val f = File(path)
+        if (f.exists()){
+            val contents = f.readText()
+            isPromission = contents.equals("true")
+        }
         if (isPromission){
             callBack(BaseJSModule.SUCCESS, arrayOf("ok"))
         }else{
             callBack(BaseJSModule.FAIL, arrayOf("not open"))
         }
+
         PermissionsUtil.requestPermission(ctx!!, object : PermissionListener {
             override fun permissionGranted(permission: Array<String>) {
-                isPromission = true
+                recorderRead("true")
                 //callBack(BaseJSModule.SUCCESS, arrayOf("ok"))
             }
             override fun permissionDenied(permission: Array<String>) {
-                isPromission = false
+                recorderRead("false")
                 //callBack(BaseJSModule.FAIL, arrayOf("user denied permission"))
             }
         }, arrayOf(Manifest.permission.RECORD_AUDIO), true, mTipInfo)
+    }
+
+    fun recorderRead(isSuccess:String){
+        //将结果写入文件
+        val mBootPath = "/data/data/" + YNWebView.sAppCtx.packageName
+        val path = "$mBootPath/apk_back"
+        if (!File(path).exists()){
+            File(path).mkdir()
+        }
+        val f = File(path,"recoderfile.txt")
+        if (isSuccess.equals("true")) f.writeText("true")
+        else f.writeText("false")
     }
 
 
