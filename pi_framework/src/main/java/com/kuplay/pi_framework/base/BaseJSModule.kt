@@ -5,6 +5,7 @@ import android.content.Intent
 import android.support.annotation.IntDef
 import com.github.dfqin.grantor.PermissionsUtil
 import com.kuplay.pi_framework.R
+import com.kuplay.pi_framework.framework.JSBridge
 import com.kuplay.pi_framework.webview.YNWebView
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
@@ -33,6 +34,11 @@ abstract class BaseJSModule constructor(ynWebView: YNWebView) : JSExecutable, JS
         ynWebView.jsImpl = this
     }
 
+    //如果需要底层主动给高层抛事件
+    fun sendTop(type: String, name: String, params: Array<Any>){
+        JSBridge.sendJS(yn,type,name,params)
+    }
+
     /**
      * Activity's visibility changes from invisible to visible.
      */
@@ -50,9 +56,10 @@ abstract class BaseJSModule constructor(ynWebView: YNWebView) : JSExecutable, JS
     companion object {
         const val SUCCESS = 0
         const val FAIL = 1
-        const val CALLBACK = 100
+        const val CALLBACK = 2
+        const val CALLERROR = 3
 
-        @IntDef(SUCCESS, FAIL, CALLBACK)
+        @IntDef(SUCCESS, FAIL, CALLBACK, CALLERROR)
         @Retention(RetentionPolicy.SOURCE)
         annotation class StatusCode
     }

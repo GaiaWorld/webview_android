@@ -66,7 +66,7 @@ class JSIntercept(ynWebView: YNWebView) {
             e.printStackTrace()
         }
 
-        val func = String.format("window.handle_jsintercept_callback(%d, true, '%s','%d')", listenerID, name, isUpdate)
+        val func = String.format("window.handle_jsintercept_callback(%d, true, '%s', %d)", listenerID, name, isUpdate)
         mActivity.runOnUiThread(CallJSRunnable(func, yn))
     }
 

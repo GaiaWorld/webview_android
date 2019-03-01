@@ -4,14 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.media.Image
-import android.os.Handler
-import android.text.BoringLayout
 import android.util.Log
-import android.widget.ImageView
 import android.widget.RelativeLayout
-import com.kuplay.pi_framework.R
-import com.kuplay.pi_framework.Util.FileUtil
 import com.kuplay.pi_framework.Util.WebViewUtil
 import com.kuplay.pi_framework.base.BaseActivity
 import com.kuplay.pi_framework.base.JSInterface
@@ -83,16 +77,6 @@ class YNWebView {
     }
 
 
-    //前后台
-    fun backFrontgrandEvn(format: String){
-        if (YNWebView.isX5) {
-            mX5!!.evaluateJavascript(format, null)
-        } else {
-            mAndroidWebView!!.evaluateJavascript(format, null)
-        }
-    }
-
-
     //activity
     fun addYnWebView(mRlRootView: RelativeLayout){
         mRlRootView.addView(if (isX5) mX5 else mAndroidWebView)
@@ -135,11 +119,11 @@ class YNWebView {
     }
 
 
+    //向webView通信
     fun evaluateJavascript(format: String){
         if (isX5) mX5?.evaluateJavascript(format, null)
         else mAndroidWebView?.evaluateJavascript(format, null)
     }
-
 
     //截屏
     fun snapShotInWebView(bmpBlock : (bitmap : Bitmap)->Unit){

@@ -30,7 +30,7 @@ class ADUnion(ynWebView: YNWebView):BaseJSModule(ynWebView) {
         DYRewardVideo = DouyinRewardVideo(yn)
     }
 
-    fun showRewardVideoAD(cbID: Int,adType: Int,callBack: (callType: Int, prames: Array<Any>)->Unit) {
+    fun showRewardVideoAD(adType: Int,callBack: (callType: Int, prames: Array<Any>)->Unit) {
         PermissionsUtil.requestPermission(ctx!!, object : PermissionListener {
             override fun permissionGranted(permission: Array<String>) {
                 if (ctx != null) {
@@ -39,22 +39,26 @@ class ADUnion(ynWebView: YNWebView):BaseJSModule(ynWebView) {
                     }
                     if (adType == 1) {
                         if (GDTRewardVideo.mAdList.count()>0){
-                            GDTRewardVideo.showAD(cbID,callBack)
+                            GDTRewardVideo.showAD(callBack)
                         }else{
                             GDTRewardVideo.fetchAD { callType, prames ->
                                 if (callType == BaseJSModule.SUCCESS){
-                                    GDTRewardVideo.showAD(cbID,callBack)
+                                    GDTRewardVideo.showAD(callBack)
+                                }else{
+                                    callBack(BaseJSModule.FAIL, arrayOf("用户拒绝了权限"))
                                 }
                             }
                         }
                     }
                     else if (adType == 2){
                         if (DYRewardVideo.mAdList.count()>0){
-                            DYRewardVideo.showAd(cbID,callBack)
+                            DYRewardVideo.showAd(callBack)
                         }else{
                             DYRewardVideo.fetchAD { callType, prames ->
                                 if (callType == BaseJSModule.SUCCESS){
-                                    DYRewardVideo.showAd(cbID,callBack)
+                                    DYRewardVideo.showAd(callBack)
+                                }else{
+                                    callBack(BaseJSModule.FAIL, arrayOf("用户拒绝了权限"))
                                 }
                             }
                         }

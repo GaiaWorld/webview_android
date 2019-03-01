@@ -20,8 +20,6 @@ class RewardVideo(ynWebView: YNWebView) : RewardVideoADListener,BaseAD(ynWebView
 
     var mAdList = mutableListOf<Any>()
 
-    var cb = 0
-
     //    拉取广告
     fun fetchAD(callBack: (callType: Int, prames: Array<Any>)->Unit) {
         fetchBack = callBack
@@ -31,9 +29,8 @@ class RewardVideo(ynWebView: YNWebView) : RewardVideoADListener,BaseAD(ynWebView
     }
 
     //  播放广告
-    fun showAD(cbID: Int,callBack: (callType: Int, prames: Array<Any>)->Unit){
+    fun showAD(callBack: (callType: Int, prames: Array<Any>)->Unit){
         val delta: Long = 1000   // 加个保险，防止广告过期
-        cb = cbID
         this.callBack = callBack
         //删除过期视频
         //激励视频广告只能显示一次，如果广告已显示，或已过期，则重新拉取广告显示
@@ -42,8 +39,7 @@ class RewardVideo(ynWebView: YNWebView) : RewardVideoADListener,BaseAD(ynWebView
             else break
         }
         if (mAdList.isEmpty()){
-            val func = "window['handle_Native_Message']($cb, 100, 0, '发放奖励', '没有广告')"
-            ctx!!.runOnUiThread ( CallJSRunnable(func,yn!!) )
+            callBack(BaseJSModule.CALLBACK, arrayOf(0,0,"没有广告了"))
         }else{
             rewardVideoAD = mAdList[0] as RewardVideoAD
             rewardVideoAD!!.showAD()
@@ -76,12 +72,7 @@ class RewardVideo(ynWebView: YNWebView) : RewardVideoADListener,BaseAD(ynWebView
     //    在此发放奖励
     override fun onReward() {
         mAdList.remove(rewardVideoAD!!)
-        //
-        val func = "window['handle_Native_Message']($cb, 100, 1, '发放奖励', '成功')"
-        ctx!!.runOnUiThread ( CallJSRunnable(func,yn!!) )
-
-        //callBack(BaseJSModule.SUCCESS, arrayOf("success"))
-
+        callBack(BaseJSModule.CALLBACK, arrayOf(1,0,"成功"))
         Log.e("GDT", "reward video should reward.")
     }
 
@@ -95,8 +86,7 @@ class RewardVideo(ynWebView: YNWebView) : RewardVideoADListener,BaseAD(ynWebView
     }
 
     override fun onADClose() {
-        val func = "window['handle_Native_Message']($cb, 100, 1, '关闭广告', '成功')"
-        ctx!!.runOnUiThread ( CallJSRunnable(func,yn!!) )
+        callBack(BaseJSModule.CALLBACK, arrayOf(1,1,"成功"))
         callBack(BaseJSModule.SUCCESS, arrayOf(""))
         Log.e("GDT", "reward video close")
     }
