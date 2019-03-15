@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
-          package="com.kuplay.kuplay">
+          package="com.kuplay.kuplay" >
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 定位权限 -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -47,6 +47,8 @@
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
 
+
+        <!--<meta-data android:name="UMENG_CHANNEL" android:value="${UMENG_CHANNEL_VALUE}" />&lt;!&ndash;多渠道打包配置&ndash;&gt;-->
         <!--<meta-data android:name="com.alibaba.app.appkey" android:value="25706201"/> &lt;!&ndash; 请填写你自己的- appKey &ndash;&gt;-->
         <!--<meta-data android:name="com.alibaba.app.appsecret" android:value="3f23e416c16ab516b6602480d0891b45"/> &lt;!&ndash; 请填写你自己的appSecret &ndash;&gt;-->
 
@@ -81,7 +83,7 @@
             <category android:name="android.intent.category.DEFAULT"/>
             <category android:name="android.intent.category.BROWSABLE"/>
             <data android:scheme="haohai"/>
-        </intent-filter>
+        </intent-filter>j
 
     </activity>
 

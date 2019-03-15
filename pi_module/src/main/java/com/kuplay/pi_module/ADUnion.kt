@@ -1,43 +1,29 @@
 package com.kuplay.pi_module
-
 import android.Manifest
-import android.content.Intent
-import android.os.Environment
-import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
-import android.support.v4.content.FileProvider
-import com.bytedance.sdk.openadsdk.TTAdManager
 import com.github.dfqin.grantor.PermissionListener
 import com.github.dfqin.grantor.PermissionsUtil
 import com.kuplay.pi_framework.base.BaseJSModule
 import com.kuplay.pi_framework.webview.YNWebView
-import com.kuplay.pi_module.ADList.Banner
-import com.kuplay.pi_module.ADList.Interstitial
-import com.kuplay.pi_module.ADList.NativeExpress
 import com.kuplay.pi_module.ADList.RewardVideo
 import com.kuplay.pi_module.ADList.douyin.DouyinRewardVideo
-import java.io.File
-import java.io.IOException
 
 class ADUnion(ynWebView: YNWebView):BaseJSModule(ynWebView) {
-    private var interstitialWithMask = false
-    private val GDT_TYPE = 1
-    private val DY_TYPE = 2
-    private lateinit var GDTRewardVideo : RewardVideo
-    private lateinit var DYRewardVideo : DouyinRewardVideo
+    private var GDTRewardVideo : RewardVideo
+    private var DYRewardVideo : DouyinRewardVideo
     init {
         GDTRewardVideo = RewardVideo(yn)
         DYRewardVideo = DouyinRewardVideo(yn)
     }
 
-    fun showRewardVideoAD(adType: Int,callBack: (callType: Int, prames: Array<Any>)->Unit) {
+    fun showRewardVideoAD(platform: Int,callBack: (callType: Int, prames: Array<Any>)->Unit) {
         PermissionsUtil.requestPermission(ctx!!, object : PermissionListener {
             override fun permissionGranted(permission: Array<String>) {
                 if (ctx != null) {
                     if (!ActivityCompat.shouldShowRequestPermissionRationale(ctx!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         ActivityCompat.requestPermissions(ctx!!, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
                     }
-                    if (adType == 1) {
+                    if (platform == 1) {
                         if (GDTRewardVideo.mAdList.count()>0){
                             GDTRewardVideo.showAD(callBack)
                         }else{
@@ -50,7 +36,7 @@ class ADUnion(ynWebView: YNWebView):BaseJSModule(ynWebView) {
                             }
                         }
                     }
-                    else if (adType == 2){
+                    else if (platform == 2){
                         if (DYRewardVideo.mAdList.count()>0){
                             DYRewardVideo.showAd(callBack)
                         }else{
@@ -72,15 +58,15 @@ class ADUnion(ynWebView: YNWebView):BaseJSModule(ynWebView) {
 
     }
 
-    fun loadRewardVideoAD(adType: Int,callBack: (callType: Int, prames: Array<Any>)->Unit) {
+    fun loadRewardVideoAD(platform: Int,callBack: (callType: Int, prames: Array<Any>)->Unit) {
         PermissionsUtil.requestPermission(ctx!!, object : PermissionListener {
             override fun permissionGranted(permission: Array<String>) {
                 if (ctx != null) {
                     if (!ActivityCompat.shouldShowRequestPermissionRationale(ctx!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         ActivityCompat.requestPermissions(ctx!!, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
                     }
-                    if (adType == 1) GDTRewardVideo.fetchAD(callBack)
-                    else if (adType == 2)DYRewardVideo.fetchAD(callBack)
+                    if (platform == 1) GDTRewardVideo.fetchAD(callBack)
+                    else if (platform == 2)DYRewardVideo.fetchAD(callBack)
                 }
             }
             override fun permissionDenied(permission: Array<String>) {

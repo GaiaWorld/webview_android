@@ -107,9 +107,14 @@ class WebViewActivity : BaseWebView() {
         }
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        JSBridge.sendJS(ynWebView,"PI_App",ON_APP_RESUMED, arrayOf("App进入前台"))
+    }
+
 
     override fun onBackPressed() {
-        JSBridge.sendJS(ynWebView,"BaseActivity",ON_BACK_PRESSED, arrayOf("App进入后台"))
+        JSBridge.sendJS(ynWebView,"PI_App",ON_BACK_PRESSED, arrayOf("App进入后台"))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -36,9 +36,9 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
             if (TextUtils.isEmpty(action)) return
             when (action) {
                 //亮屏
-                Intent.ACTION_SCREEN_ON -> gotoBackground()
+                Intent.ACTION_SCREEN_ON -> { }
                 //锁屏
-                Intent.ACTION_SCREEN_OFF -> { }
+                Intent.ACTION_SCREEN_OFF -> gotoBackground()
                 //解锁屏幕
                 Intent.ACTION_USER_PRESENT -> gotoForeground()
                 Intent.ACTION_CLOSE_SYSTEM_DIALOGS -> {
@@ -152,7 +152,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
      */
     private fun gotoBackground() {
         Logger.error("BaseActivity", "App进入后台")
-        JSBridge.sendJS(ynWebView,"BaseActivity",ON_BACK_PRESSED, arrayOf("App进入后台"))
+        JSBridge.sendJS(ynWebView,"PI_App",ON_BACK_PRESSED, arrayOf("App进入后台"))
     }
 
     /**
@@ -160,7 +160,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
      */
     private fun gotoForeground() {
         Logger.error("BaseActivity", "App进入前台")
-        JSBridge.sendJS(ynWebView,"BaseActivity",ON_APP_RESUMED, arrayOf("App进入前台"))
+        JSBridge.sendJS(ynWebView,"PI_App",ON_APP_RESUMED, arrayOf("App进入前台"))
     }
 
     override fun onDestroy() {
@@ -177,7 +177,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
 
     companion object {
         private var registered = false
-        private const val ON_APP_RESUMED = "onAppResumed"
+        const val ON_APP_RESUMED = "onResumed"
         const val ON_BACK_PRESSED = "onBackPressed"
         private const val SYSTEM_DIALOG_REASON_KEY = "reason"
         private const val SYSTEM_DIALOG_REASON_HOME_KEY = "homekey"

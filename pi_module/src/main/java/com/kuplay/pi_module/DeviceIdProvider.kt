@@ -21,6 +21,7 @@ class DeviceIdProvider(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
      *  *获取设备唯一标识
      */
     fun getUUId(callBack:(callType: Int, prames: Array<Any>)->Unit) {
+        //callBack(BaseJSModule.SUCCESS, arrayOf("1111111111111111111"))
         callBack(BaseJSModule.SUCCESS, arrayOf(GetDeviceId.getDeviceId(ctx)))
     }
     /**

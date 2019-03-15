@@ -70,13 +70,18 @@ class NewWebViewActivity : BaseWebView() {
         registerCloseReceiver()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        JSBridge.sendJS(ynWebView,"PI_App", ON_APP_RESUMED, arrayOf("App进入前台"))
+    }
+
     override fun onBackPressed() {
         val childCount = mRlRootView.childCount
         if (childCount > 1) {
             mRlRootView.removeViewAt(childCount - 1)
         }
         else {
-            JSBridge.sendJS(ynWebView,"BaseActivity","onBackPressed", arrayOf("页面即将关闭"))
+            JSBridge.sendJS(ynWebView,"PI_Activity", ON_BACK_PRESSED, arrayOf("页面即将关闭"))
         }
     }
 
@@ -111,7 +116,7 @@ class NewWebViewActivity : BaseWebView() {
     }
 
     override fun onDestroy() {
-        WebViewManager.removeWebView(this!!.tag!!)
+        WebViewManager.removeWebView(this.tag!!)
         unregisterReceiver(mCloseReceiver)
         super.onDestroy()
     }

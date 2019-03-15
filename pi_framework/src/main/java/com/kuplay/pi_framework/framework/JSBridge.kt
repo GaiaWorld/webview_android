@@ -211,7 +211,7 @@ class JSBridge(ynWebView: YNWebView) {
 
 
         fun sendJS(ynWebView: YNWebView, type: String, name: String, params: Array<Any>){
-            val func = StringBuilder("window['handle_native_event']($type, $name")
+            val func = StringBuilder("window['handle_native_event']('$type', '$name'")
             if (null != params)
                 for (o in params) {
                     Log.d("callJS","$o")
@@ -242,6 +242,7 @@ class JSBridge(ynWebView: YNWebView) {
                     }
                 }
             func.append(")")
+            Log.d("JSBridge",func.toString())
             (ynWebView.getEnv(ynWebView.ACTIVITY) as Activity).runOnUiThread(CallJSRunnable(func.toString(),ynWebView))
         }
     }
