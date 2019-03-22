@@ -1,10 +1,13 @@
 package com.kuplay.pi_framework.webview
 
 import android.app.Application
+import android.app.backup.BackupAgent
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.util.Log
+import android.view.ViewGroup
+import android.widget.Button
 import android.widget.RelativeLayout
 import com.kuplay.pi_framework.Util.WebViewUtil
 import com.kuplay.pi_framework.base.BaseActivity
@@ -16,6 +19,8 @@ import com.tencent.smtt.sdk.QbSdk
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.HashMap
+
+
 
 class YNWebView {
     var mAndroidWebView: AndroidWebView? = null
@@ -46,16 +51,39 @@ class YNWebView {
     }
 
     //创建YNWebView
-    fun createYnWebView(baseActivity: BaseActivity){
-        if (isX5)  mX5 = X5Chrome(baseActivity)
-        else mAndroidWebView = AndroidWebView(baseActivity)
-
+    fun createYnWebView(baseActivity: BaseActivity, uAgent: String? = null ){
+        if (uAgent == null){
+            if (isX5)  mX5 = X5Chrome(baseActivity)
+            else mAndroidWebView = AndroidWebView(baseActivity)
+        }else{
+            if (isX5)  mX5 = X5Chrome(baseActivity, uAgent)
+            else mAndroidWebView = AndroidWebView(baseActivity, uAgent)
+        }
     }
 
 
     fun destroyYnWebView(){
-        if (isX5) mX5?.destroy()
-        else mAndroidWebView?.destroy()
+        //为了防止内存泄漏，注销时，先加载空页面，清除内存，移除视图，再销毁控件，最后将控件至空
+        if (isX5) {
+            if (mX5 != null) {
+                mX5!!.loadDataWithBaseURL(null, "", "text/html", "utf-8", null)
+                mX5!!.clearHistory()
+
+                (mX5!!.getParent() as ViewGroup).removeView(mX5)
+                mX5!!.destroy()
+                mX5 = null
+            }
+        }
+        else {
+            if (mAndroidWebView != null) {
+                mAndroidWebView!!.loadDataWithBaseURL(null, "", "text/html", "utf-8", null)
+                mAndroidWebView!!.clearHistory()
+
+                (mAndroidWebView!!.getParent() as ViewGroup).removeView(mAndroidWebView)
+                mAndroidWebView!!.destroy()
+                mAndroidWebView = null
+            }
+        }
     }
 
     fun setJEN(){
@@ -76,13 +104,9 @@ class YNWebView {
         else mAndroidWebView?.loadDataWithBaseURL(url, content, "text/html", "utf8", url);
     }
 
-
-    //activity
     fun addYnWebView(mRlRootView: RelativeLayout){
         mRlRootView.addView(if (isX5) mX5 else mAndroidWebView)
     }
-
-
 
     fun addNewJavaScript( mRlRootView: RelativeLayout, tag: String, url: String, content: String){
         if (isX5) {
@@ -121,6 +145,7 @@ class YNWebView {
 
     //向webView通信
     fun evaluateJavascript(format: String){
+        Log.d("js",format)
         if (isX5) mX5?.evaluateJavascript(format, null)
         else mAndroidWebView?.evaluateJavascript(format, null)
     }
@@ -210,11 +235,11 @@ class YNWebView {
         //创建webView
         fun createWebView(context: Context, url: String, headers: Map<*, *>):Any{
             if (isX5) {
-                val view = X5Chrome(context, null)
+                val view = X5Chrome(context)
                 view.loadUrl(url, headers as MutableMap<String, String>?)
                 return view
             } else {
-                val view = AndroidWebView(context, null)
+                val view = AndroidWebView(context)
                 view.loadUrl(url, headers as MutableMap<String, String>?)
                 return view
             }

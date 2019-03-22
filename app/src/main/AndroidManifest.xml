@@ -48,10 +48,6 @@
             tools:ignore="GoogleAppIndexingWarning">
 
 
-        <!--<meta-data android:name="UMENG_CHANNEL" android:value="${UMENG_CHANNEL_VALUE}" />&lt;!&ndash;多渠道打包配置&ndash;&gt;-->
-        <!--<meta-data android:name="com.alibaba.app.appkey" android:value="25706201"/> &lt;!&ndash; 请填写你自己的- appKey &ndash;&gt;-->
-        <!--<meta-data android:name="com.alibaba.app.appsecret" android:value="3f23e416c16ab516b6602480d0891b45"/> &lt;!&ndash; 请填写你自己的appSecret &ndash;&gt;-->
-
     <!-- Android 7.0 文件共享配置，必须配置 -->
     <provider
             android:name="android.support.v4.content.FileProvider"
@@ -62,28 +58,24 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
     </provider>
-    <!--<provider-->
-            <!--android:name="com.bytedance.sdk.openadsdk.service.TTDownloadProvider"-->
-            <!--android:authorities="${applicationId}.union_adsdk_tt"-->
-            <!--android:exported="false"-->
-    <!--</provider>-->
 
     <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
+
+
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
 
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
-
         <intent-filter>
             <action android:name="android.intent.action.VIEW"/>
             <category android:name="android.intent.category.DEFAULT"/>
             <category android:name="android.intent.category.BROWSABLE"/>
             <data android:scheme="haohai"/>
-        </intent-filter>j
+        </intent-filter>
 
     </activity>
 

@@ -11,7 +11,7 @@ import java.io.InputStream
 import java.lang.ref.WeakReference
 
 class UpdateAppService : Service() {
-    private var mDownloadProgressListener: ((total: Int, progress: Int) -> Unit)? = null
+    private var mDownloadProgressListener: ((total: Long, progress: Long) -> Unit)? = null
     private var mDownloadFinishListener: ((filePath: String) -> Unit)? = null
     override fun onBind(intent: Intent): IBinder = UpdateBinder()
     private val mHandler = DownloadHandler(this)
@@ -97,7 +97,7 @@ class UpdateAppService : Service() {
         override fun handleMessage(msg: Message?) {
             val service = wr.get() ?: return
             when (msg?.what) {
-                DOWNLOAD_UPDATE -> service.mDownloadProgressListener?.invoke(service.maxLen.toInt(), service.currentLen)
+                DOWNLOAD_UPDATE -> service.mDownloadProgressListener?.invoke(service.maxLen, service.currentLen.toLong())
                 DOWNLOAD_FAILED -> {
                     service.running = false
                     service.currentLen = 0
@@ -112,7 +112,7 @@ class UpdateAppService : Service() {
         }
     }
 
-    fun addDownloadProgressListener(listener: ((total: Int, progress: Int) -> Unit)) {
+    fun addDownloadProgressListener(listener: ((total: Long, progress: Long) -> Unit)) {
         this.mDownloadProgressListener = listener
     }
 

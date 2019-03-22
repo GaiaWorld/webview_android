@@ -62,12 +62,12 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
     fun newView(webViewName: String, url: String, headers: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
 
         if (TextUtils.isEmpty(webViewName)) {
-            callBack(BaseJSModule.FAIL, arrayOf("The WebView's name can't be null."))
+            callBack(BaseJSModule.FAIL, arrayOf("The WebViews name canot be null."))
             return
         }
 
         if (TextUtils.isEmpty(url)) {
-            callBack(BaseJSModule.FAIL, arrayOf("The url can't be null."))
+            callBack(BaseJSModule.FAIL, arrayOf("The url canot be null."))
             return
         }
 
@@ -95,7 +95,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
     fun freeView(webViewName: String,callBack:(callType: Int, prames: Array<Any>)->Unit) {
         try {
             if ("default" == webViewName) {
-                callBack(BaseJSModule.FAIL, arrayOf("The default WebView couldn't remove,please select a new one."))
+                callBack(BaseJSModule.FAIL, arrayOf("The default WebView couldnot remove,please select a new one."))
                 return
             }
 
@@ -126,15 +126,17 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
     fun openWebView(webViewName: String, url: String, title: String, injectContent: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
 
         if (TextUtils.isEmpty(webViewName)) {
-            callBack(BaseJSModule.FAIL, arrayOf("The WebView's name can't be null."))
+            callBack(BaseJSModule.FAIL, arrayOf("The WebViews name can not be null."))
             return
         }
         if (TextUtils.isEmpty(url)) {
-            callBack(BaseJSModule.FAIL, arrayOf("The url can't be null."))
+            callBack(BaseJSModule.FAIL, arrayOf("The url can not be null."))
             return
         }
         if (isWebViewNameExists(webViewName)) {
-            callBack(BaseJSModule.FAIL, arrayOf("WebView name is exist."))
+            val intent = Intent(ctx, NewWebViewActivity::class.java)
+            intent.putExtra("tag", webViewName)
+            ctx!!.startActivity(intent)
         } else {
             val file = File(ctx!!.cacheDir, "new_webview_inject")
             try {
@@ -146,11 +148,12 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             }
 
             val intent = Intent(ctx, NewWebViewActivity::class.java)
+//            intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
+            intent.putExtra("uagent", "YINENG_ANDROID_GAME/1.0")
             intent.putExtra("inject", file.absolutePath)
             intent.putExtra("title", title)
             intent.putExtra("load_url", url)
             intent.putExtra("tag", webViewName)
-
             ctx!!.startActivity(intent)
         }
     }
@@ -163,13 +166,24 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
      */
     fun closeWebView(webViewName: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
         if ("default" == webViewName) {
-            callBack(BaseJSModule.FAIL, arrayOf("The default WebView couldn't remove,please select a new one."))
+            callBack(BaseJSModule.FAIL, arrayOf("The default WebView could not remove,please select a new one."))
             return
         }
         if (!isWebViewNameExists(webViewName)) {
             return
         }
         sendCloseWebViewMessage(webViewName)
+    }
+
+    fun mineWebView(webViewName: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
+        if ("default" == webViewName) {
+            callBack(BaseJSModule.FAIL, arrayOf("The default WebView could not remove,please select a new one."))
+            return
+        }
+        if (!isWebViewNameExists(webViewName)) {
+            return
+        }
+        sendMinSizeWebViewMessage(webViewName)
     }
 
     /**
@@ -191,8 +205,6 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
     }
 
     fun getScreenModify(callBack:(callType: Int, prames: Array<Any>)->Unit) {
-        //ViewUtil.getNavigationBarHeight(getActivity())
-        //DisplayCutout displayCutout = decorView.getRootWindowInsets().getDisplayCutout();
         val activity = yn.getEnv(yn.ACTIVITY) as Activity
         val high = ViewUtil.getStatusBarHeight(activity)
         callBack(BaseJSModule.SUCCESS, arrayOf(high,0))
@@ -206,6 +218,13 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
      */
     private fun sendCloseWebViewMessage(webViewName: String) {
         val intent = Intent("close_web_view")
+        intent.putExtra("web_view_name", webViewName)
+        ctx!!.sendBroadcast(intent)
+    }
+
+
+    private fun sendMinSizeWebViewMessage(webViewName: String) {
+        val intent = Intent("mine_size_activity")
         intent.putExtra("web_view_name", webViewName)
         ctx!!.sendBroadcast(intent)
     }

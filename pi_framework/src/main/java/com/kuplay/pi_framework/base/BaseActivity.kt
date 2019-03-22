@@ -44,7 +44,10 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
                 Intent.ACTION_CLOSE_SYSTEM_DIALOGS -> {
                     val reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY)
                     if (null != reason) {
-                        if (reason == SYSTEM_DIALOG_REASON_HOME_KEY) {
+                        if (reason.equals(SYSTEM_DIALOG_REASON_HOME_LONG_KEY,true)) {
+                            return
+                        }
+                        else if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY,true)) {
                             if (isHome) return
                             isHome = true
                             gotoBackground()
@@ -70,9 +73,6 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
     }
 
     private fun setFitSystemWindows() {
-        /* val mContentView =  window?.findViewById(Window.ID_ANDROID_CONTENT)as ViewGroup
-         val mChildView = mContentView.getChildAt(0)
-         if (mChildView != null) mChildView.fitsSystemWindows = true*/
         if (AndroidWorkaround.checkDeviceHasNavigationBar(this)) {
             AndroidWorkaround.assistActivity(findViewById(android.R.id.content))
         } else {
@@ -181,6 +181,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
         const val ON_BACK_PRESSED = "onBackPressed"
         private const val SYSTEM_DIALOG_REASON_KEY = "reason"
         private const val SYSTEM_DIALOG_REASON_HOME_KEY = "homekey"
+        private const val SYSTEM_DIALOG_REASON_HOME_LONG_KEY = "recentapps"
         protected const val NO_LAYOUT = -1//No Layout Resources.
     }
 }

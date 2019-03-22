@@ -79,7 +79,8 @@ class JSBridge(ynWebView: YNWebView) {
 
             }
         } catch (e: Exception) {
-            throwJS(webView, webView.getEnv(webView.ACTIVITY) as Activity, className, methodName, e.message!!)
+            Log.d("JSbridge",e.message!!)
+            //throwJS(webView, webView.getEnv(webView.ACTIVITY) as Activity, className, methodName, e.message!!)
         }
     }
 
@@ -131,7 +132,7 @@ class JSBridge(ynWebView: YNWebView) {
 
 
     fun throwJS(ynWebView: YNWebView, activity: Activity, className: String, methodName: String, message: String) {
-        val func = String.format("handle_native_throwerror('%s', '%s', '%s'", className, methodName, message)
+        val func = String.format("handle_native_throwerror('%s', '%s', '%s')", className, methodName, message)
         Log.d("JSBridge", "throwJS: $func")
         activity.runOnUiThread(CallJSRunnable(func, ynWebView))
     }
@@ -164,7 +165,7 @@ class JSBridge(ynWebView: YNWebView) {
      */
     @Throws(Exception::class)
     fun newInstance(className: String, ynWebView: YNWebView): Int {
-        val info = clsMap[className] ?: throw Exception("JSEnv.call class $className don't find")
+        val info = clsMap[className] ?: throw Exception("JSEnv.call class $className do not find")
         val id: Int
         try {
             val c = info.clazz.constructors[0]
@@ -187,10 +188,10 @@ class JSBridge(ynWebView: YNWebView) {
         if (objectID > 0) {
             obj = getObject(objectID)
         }
-        val info = clsMap[className] ?: throw Exception("JSEnv.call class $className don't find")
+        val info = clsMap[className] ?: throw Exception("JSEnv.call class $className do not find")
 
         val m = info.methods!![methodName]
-            ?: throw Exception("call method " + methodName + "in class " + className + " don't find")
+            ?: throw Exception("call method " + methodName + "in class " + className + " do not find")
         var r: Any? = null
         try {
             for (o in params){

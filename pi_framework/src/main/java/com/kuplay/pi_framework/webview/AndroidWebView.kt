@@ -17,7 +17,8 @@ import java.io.ByteArrayInputStream
 import java.lang.ref.WeakReference
 import java.util.*
 
-class AndroidWebView constructor(private val ctx: Context, attr: AttributeSet? = null) : WebView(ctx, attr) {
+class AndroidWebView constructor(private val ctx: Context, private var uAgent: String = "YINENG_ANDROID/1.0", attr: AttributeSet? = null) : WebView(ctx, attr) {
+//    private val mRlRelativeLayout: RelativeLayout,
     private val connectTimeOut = ctx.resources.getString(R.string.connect_url_time_out_value)
     private var injectUrl = ""
     private var injectContent: String = ""
@@ -25,7 +26,6 @@ class AndroidWebView constructor(private val ctx: Context, attr: AttributeSet? =
     private val mTimerOutHandler = TimerOutHandler(this)
     private var mTimer: Timer? = null
     private var isShowTimeOut = false
-
     init {
         initClient(this@AndroidWebView)
         initSettings(this@AndroidWebView)
@@ -38,7 +38,7 @@ class AndroidWebView constructor(private val ctx: Context, attr: AttributeSet? =
     private fun initSettings(awv: AndroidWebView, initLp: Boolean = true) {
         val settings = awv.settings
         val ua = settings.userAgentString
-        settings.userAgentString = "$ua YINENG_ANDROID/1.0"
+        settings.userAgentString = "$ua $uAgent"
         settings.javaScriptEnabled = true//可以与js交互
         // 设置自适应屏幕，两者合用
         settings.useWideViewPort = true//将图片调整到适合webView的大小

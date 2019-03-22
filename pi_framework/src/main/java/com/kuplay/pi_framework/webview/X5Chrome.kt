@@ -28,7 +28,7 @@ import java.lang.ref.WeakReference
 import java.util.*
 
 
-class X5Chrome @JvmOverloads constructor(private val ctx: Context, attributeSet: AttributeSet? = null) : WebView(ctx, attributeSet) {
+class X5Chrome @JvmOverloads constructor(private val ctx: Context, private val uAgent: String = "YINENG_ANDROID/1.0", attributeSet: AttributeSet? = null) : WebView(ctx, attributeSet) {
     private var connectTimeOut: Int = 0
     private var isIntercept = false
     private var injectUrl: String = ""
@@ -38,7 +38,6 @@ class X5Chrome @JvmOverloads constructor(private val ctx: Context, attributeSet:
     private var mTimer: Timer? = null
     private var isShowTimeOut: Boolean = false
     private var downloading: Boolean = false
-
     init {
         isIntercept = "1" == ctx.resources.getString(R.string.web_view_intercept);
         connectTimeOut = Integer.parseInt(resources.getString(R.string.connect_url_time_out_value))
@@ -64,7 +63,7 @@ class X5Chrome @JvmOverloads constructor(private val ctx: Context, attributeSet:
         // 桥接接口
         //JSEnv.setEnv(JSEnv.WEBVIEW, this)
         val ua = settings.userAgentString
-        settings.userAgentString = "$ua YINENG_ANDROID/1.0"
+        settings.userAgentString = "$ua $uAgent"
         settings.javaScriptEnabled = true//可以与js交互
         // 设置自适应屏幕，两者合用
         settings.useWideViewPort = true//将图片调整到适合webView的大小

@@ -49,10 +49,9 @@ class AppUpdater(ynWebView: YNWebView,var listenerID: Int, var cbID: Int) : Base
         }, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 
-    private fun updateDownloadProgress(total: Int, progress: Int) {
-        val func = String.format("window.handle_jsintercept_update(%d, %d, %d)", cbID, total, progress)
+    private fun updateDownloadProgress(total: Long, progress: Long) {
+        val func = String.format("window.handle_jsintercept_update(%d, %d, %d)", cbID, 7224974, progress)
         ctx!!.runOnUiThread(CallJSRunnable(func, yn))
-        Log.d("TAG", "总进度$total 当前下载进度$progress")
     }
 
     /**

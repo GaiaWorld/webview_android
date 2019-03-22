@@ -53,14 +53,6 @@ MobSDK {
 
 
 android {
-    signingConfigs {
-        config {
-            keyAlias 'YINENG'
-            keyPassword '123456'
-            storeFile file('../../yineng.keystore')
-            storePassword '123456'
-        }
-    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.kuplay.kuplay"
@@ -68,7 +60,6 @@ android {
         targetSdkVersion 28
         versionCode 3
         versionName "1.0.3"
-//        flavorDimensions "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -80,21 +71,8 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
         }
     }
-//    productFlavors {
-//        xiaomi {
-//            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "xiaomi"]
-//        }
-//        wandoujia {
-//            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "wandoujia"]
-//        }
-//    }
-//
-//    productFlavors.all {
-//        flavor -> flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
-//    }
 }
 
 

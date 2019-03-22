@@ -16,7 +16,7 @@
     <string name="tip_please_allow_app_scan_qr_code">扫描二维码必须使用到相机功能，请前往“设置”中打开相机权限</string>
     <string name="tip_misseed_permission_default_prompt">当前应用缺少必要权限。\n \n请点击"设置"-"权限"-打开所需权限。</string>
     <!--配置-->
-    <string name="init_url" translatable="false">/dst/boot/index.html</string><!--要加载的首个网页，如需要用本地打包，一定要以/开头-->
+    <string name="init_url" translatable="false">/wallet/app/boot/index.html</string><!--要加载的首个网页，如需要用本地打包，一定要以/开头-->
     <string name="connect_url_time_out_value" translatable="false">20000</string><!--连接超时的时间-->
     <string name="web_view_intercept" translatable="false">1</string><!--拦截WebView的http请求-->
     <string name="compile_web_view_version_code" translatable="false">50</string><!--浏览器的版本号临界值、低于这个值将会使用X5Chrome-->

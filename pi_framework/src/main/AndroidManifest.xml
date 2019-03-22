@@ -1,16 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.kuplay.pi_framework">
-
     <application>
         <activity
                 android:name=".framework.WebViewActivity"
-                android:launchMode="singleTop"
                 android:screenOrientation="portrait"
-                android:theme="@style/FullScreenWithoutAny"/>
-
+                android:launchMode="singleTask"
+                android:theme="@style/FullScreenWithoutAny">
+        </activity>
         <activity
                 android:name=".framework.NewWebViewActivity"
-                android:launchMode="standard"
+                android:launchMode="singleInstance"
                 android:screenOrientation="portrait"
                 android:theme="@style/FullScreenWithoutAny" />
         <service
@@ -21,11 +20,7 @@
                 android:name=".module.service.RestartService"
                 android:enabled="true"
                 android:exported="true" />
-
-
     </application>
-
-
 </manifest>
 
 

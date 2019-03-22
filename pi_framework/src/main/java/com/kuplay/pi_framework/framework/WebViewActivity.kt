@@ -12,7 +12,6 @@ import com.kuplay.pi_framework.R
 import com.kuplay.pi_framework.Util.FileUtil
 import com.kuplay.pi_framework.Util.PrefMgr
 import com.kuplay.pi_framework.Util.ViewUtil
-import com.kuplay.pi_framework.base.BaseActivity
 import com.kuplay.pi_framework.base.BaseWebView
 import com.kuplay.pi_framework.module.LocalLanguageMgr
 import kotlinx.android.synthetic.main.layout_fake_status_bar_view.*
@@ -22,7 +21,6 @@ import java.io.File
 class WebViewActivity : BaseWebView() {
     private lateinit var mJsIntercept: JSIntercept
     private lateinit var mRlRootView: RelativeLayout
-//    private lateinit var mImageView: ImageView
     /**
      * Get the layout resource from XML.
      *
@@ -31,7 +29,6 @@ class WebViewActivity : BaseWebView() {
     override val layoutResources: Int get() = R.layout.activity_webview
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        //setTheme(R.style.FullScreenWithoutAny)
         ynWebView.createYnWebView(this)
         addJEV(this)
         super.onCreate(savedInstanceState)
@@ -44,12 +41,8 @@ class WebViewActivity : BaseWebView() {
     override fun initViews() {
         mRlRootView = findViewById(R.id.app_main_rl_root_view)
         mRlRootView.removeAllViews()
-//        mImageView = ImageView(this)
-//        mImageView.setImageResource(R.drawable.splash)
-//        mRlRootView.addView(mImageView,0)
         ynWebView.addYnWebView(mRlRootView)
         status_bar.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
-//        AndroidBug5497Workaround.assistActivity(this)
     }
 
     /**
@@ -90,8 +83,6 @@ class WebViewActivity : BaseWebView() {
         }
         val url = resources.getString(URL_RES_ID)
         if (url.startsWith("/")) {
-            val urlFile = File(mJsIntercept.bootPath + url)
-            //var content = urlFile.readText()
             var content = FileUtil.readFile(mJsIntercept.htmlPath + url)
             if (content == "") {
                 val stream = this.getAssets().open(url.substring(1))
@@ -107,14 +98,25 @@ class WebViewActivity : BaseWebView() {
         }
     }
 
+    //当NewWebViewActivity没有关闭，直接进入聊天界面时，打开同样的实例
+    override fun onNewIntent(intent: Intent?) {
+        Log.d("test1","webView on reopen")
+        super.onNewIntent(intent)
+    }
+
     override fun onRestart() {
+        if (NewWebViewActivity.gameExit == true){
+            startActivity(Intent(this, NewWebViewActivity::class.java))
+            overridePendingTransition(0, 0)
+        }
         super.onRestart()
         JSBridge.sendJS(ynWebView,"PI_App",ON_APP_RESUMED, arrayOf("App进入前台"))
+
     }
 
 
     override fun onBackPressed() {
-        JSBridge.sendJS(ynWebView,"PI_App",ON_BACK_PRESSED, arrayOf("App进入后台"))
+        JSBridge.sendJS(ynWebView,"PI_Activity",ON_BACK_PRESSED, arrayOf("App进入后台"))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -152,13 +154,8 @@ class WebViewActivity : BaseWebView() {
         super.onResume()
     }
 
-
-
     companion object {
         const val APP_RESULT_CODE = 912
-        //        const val URL = "http://47.75.254.166:8080/wallet/app/boot/index.html"
-        //        const val URL = "http://192.168.33.113/wallet/app/boot/index.html"
         val URL_RES_ID = R.string.init_url
-        //        const val URL = "https://www.baidu.com"
     }
 }
