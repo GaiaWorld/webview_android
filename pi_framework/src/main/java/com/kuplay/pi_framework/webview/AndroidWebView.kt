@@ -42,6 +42,7 @@ class AndroidWebView constructor(private val ctx: Context, private var uAgent: S
         settings.javaScriptEnabled = true//可以与js交互
         // 设置自适应屏幕，两者合用
         settings.useWideViewPort = true//将图片调整到适合webView的大小
+        settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW ////允许从任何来源加载内容，即使起源是不安全的
         settings.loadWithOverviewMode = true//缩放至屏幕的大小
         settings.allowFileAccess = true//设置可以访问文件
         settings.allowFileAccessFromFileURLs = true

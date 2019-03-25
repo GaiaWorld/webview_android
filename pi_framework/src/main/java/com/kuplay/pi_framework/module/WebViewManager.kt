@@ -33,6 +33,7 @@ internal class NewWebView(private val context: Context, private val webViewName:
  */
 class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
 
+    private var oldWebViewName: String = ""
 
 
     /**
@@ -138,6 +139,10 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             intent.putExtra("tag", webViewName)
             ctx!!.startActivity(intent)
         } else {
+            if (WEB_VIEW_FORM.keys.size > 1){
+                sendCloseWebViewMessage(oldWebViewName)
+            }
+            oldWebViewName = webViewName
             val file = File(ctx!!.cacheDir, "new_webview_inject")
             try {
                 val bw = BufferedWriter(FileWriter(file))
@@ -148,7 +153,6 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             }
 
             val intent = Intent(ctx, NewWebViewActivity::class.java)
-//            intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
             intent.putExtra("uagent", "YINENG_ANDROID_GAME/1.0")
             intent.putExtra("inject", file.absolutePath)
             intent.putExtra("title", title)
@@ -175,7 +179,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
         sendCloseWebViewMessage(webViewName)
     }
 
-    fun mineWebView(webViewName: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
+    fun minWebView(webViewName: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
         if ("default" == webViewName) {
             callBack(BaseJSModule.FAIL, arrayOf("The default WebView could not remove,please select a new one."))
             return
@@ -229,26 +233,28 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
         ctx!!.sendBroadcast(intent)
     }
 
-    /**
-     * Check whether the name of webView is exists.
-     *
-     * @param webViewName The name of webView
-     * @return true for the name has been exists.
-     */
-    private fun isWebViewNameExists(webViewName: String): Boolean {
-        for (key in WEB_VIEW_FORM.keys) {
-            if (webViewName == key) {
-                return true
-            }
-        }
-        return false
-    }
+
 
     companion object {
         /**
          * All WebViews that have been opened.
          */
         private val WEB_VIEW_FORM = HashMap<String, Any>()
+
+        /**
+         * Check whether the name of webView is exists.
+         *
+         * @param webViewName The name of webView
+         * @return true for the name has been exists.
+         */
+        fun isWebViewNameExists(webViewName: String): Boolean {
+            for (key in WEB_VIEW_FORM.keys) {
+                if (webViewName == key) {
+                    return true
+                }
+            }
+            return false
+        }
 
         /**
          * Add WebView.

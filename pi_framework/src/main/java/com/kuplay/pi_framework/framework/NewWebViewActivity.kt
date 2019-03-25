@@ -11,12 +11,9 @@ import com.kuplay.pi_framework.R
 import com.kuplay.pi_framework.Util.ViewUtil
 import com.kuplay.pi_framework.base.BaseWebView
 import com.kuplay.pi_framework.module.WebViewManager
-import kotlinx.android.synthetic.main.layout_fake_status_bar_view.*
-import java.io.File
 import android.view.View
-import android.view.GestureDetector
-
-
+import kotlinx.android.synthetic.main.activity_new_web_view.*
+import java.io.File
 
 
 class NewWebViewActivity : BaseWebView(){
@@ -48,10 +45,12 @@ class NewWebViewActivity : BaseWebView(){
      * As the method name said,this method is used to initialize views on this activity.
      */
     override fun initViews() {
-        mRlRootView = findViewById(R.id.root_view)
+        mRlRootView = root_view
+        val bootView = boot_view
+        bootView.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
         mRlRootView.removeAllViews()
         ynWebView.addYnWebView(mRlRootView)
-        status_bar.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
+//        status_bar.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
     }
 
     /**
@@ -61,11 +60,10 @@ class NewWebViewActivity : BaseWebView(){
         Log.d("WebView", "new WebView: " + intent?.getStringExtra("tag"))
         tag = intent?.getStringExtra("tag")
         if (null == tag) throw Exception("The tag can't be null!")
-        val path = intent?.getStringExtra("inject")
+        val path = intent.getStringExtra("inject") ?: ""
         val file = File(path)
         val content = file.readText()
         file.delete()
-
         val url = intent?.getStringExtra("load_url") ?: "https://cn.bing.com"
         val tagStr = tag as String
         ynWebView.addNewJavaScript( mRlRootView, tagStr, url, content)
@@ -92,8 +90,8 @@ class NewWebViewActivity : BaseWebView(){
     fun closeActivicty(){
         gameExit = false
         val closeIntent = Intent(this, WebViewActivity::class.java)
-//        closeIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
         startActivity(closeIntent)
+        finish()
     }
 
     private fun hideSystemNavigationBar() {
@@ -106,21 +104,23 @@ class NewWebViewActivity : BaseWebView(){
     fun minsizeActivity(){
         gameExit = false
         val minintent = Intent(this, WebViewActivity::class.java)
-//        minintent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
         startActivity(minintent)
     }
 
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+
         gameExit = true
         if (intent?.getStringExtra("tag") == null){
             return
         }
         if (tag != intent.getStringExtra("tag") && tag != null){
+            if (WebViewManager.isWebViewNameExists(tag!!)){
+                WebViewManager.removeWebView(tag!!)
+            }
             tag = intent.getStringExtra("tag")
-            if (null == tag) throw Exception("The tag can't be null!")
-            val path = intent.getStringExtra("inject")
+            val path = intent.getStringExtra("inject") ?: ""
             val file = File(path)
             val content = file.readText()
             file.delete()

@@ -66,6 +66,7 @@ class X5Chrome @JvmOverloads constructor(private val ctx: Context, private val u
         settings.userAgentString = "$ua $uAgent"
         settings.javaScriptEnabled = true//可以与js交互
         // 设置自适应屏幕，两者合用
+        settings.mixedContentMode = 0 //允许从任何来源加载内容，即使起源是不安全的
         settings.useWideViewPort = true//将图片调整到适合webView的大小
         settings.loadWithOverviewMode = true//缩放至屏幕的大小
         settings.allowFileAccess = true//设置可以访问文件

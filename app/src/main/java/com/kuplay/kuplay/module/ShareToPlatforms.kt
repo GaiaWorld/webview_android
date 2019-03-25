@@ -9,7 +9,6 @@ import android.os.Environment
 import android.util.Log
 import cn.sharesdk.framework.Platform
 import cn.sharesdk.framework.PlatformActionListener
-import cn.sharesdk.line.Line
 import cn.sharesdk.onekeyshare.OnekeyShare
 import cn.sharesdk.tencent.qq.QQ
 import cn.sharesdk.tencent.qzone.QZone
@@ -141,8 +140,8 @@ class ShareToPlatforms(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
             PLATFORM_Q_ZONE -> this.startShareQRCode(content, QZone.NAME)
             //分享到平台->QQ
             PLATFORM_QQ -> this.startShareQRCode(content, QQ.NAME)
-            //分享到平台->LINE
-            PLATFORM_LINE -> this.startShareQRCode(content, Line.NAME)
+//            //分享到平台->LINE
+//            PLATFORM_LINE -> this.startShareQRCode(content, Line.NAME)
             //分享到平台->所有平台
             PLATFORM_ALL -> this.startShareQRCode(content, null)
         }
@@ -164,7 +163,7 @@ class ShareToPlatforms(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
             //分享到平台->QQ
             PLATFORM_QQ -> this.shareToQQ(content)
             //分享到平台->LINE
-            PLATFORM_LINE -> this.startShareText(content, Line.NAME)
+//            PLATFORM_LINE -> this.startShareText(content, Line.NAME)
             PLATFORM_ALL -> this.startShareText(content, null)
         }
     }
@@ -322,6 +321,6 @@ class ShareToPlatforms(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
         private val PLATFORM_MOMENTS = 2//分享到的平台->朋友圈
         private val PLATFORM_Q_ZONE = 3//分享到的平台->QQ空间
         private val PLATFORM_QQ = 4//分享到的平台->QQ
-        private val PLATFORM_LINE = 5//分享到的平台->LINE
+//        private val PLATFORM_LINE = 5//分享到的平台->LINE
     }
 }

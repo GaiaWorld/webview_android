@@ -32,20 +32,16 @@ MobSDK {
                 bypassApproval false
             }
             QQ {
-                appId "1107057918"
-                appKey "ZA8TZCDkupz38eoN"
+                appId "1108207789"
+                appKey "2Tpd70ASK67dYuuQ"
                 shareByAppClient true
                 bypassApproval false
             }
             QZone {
-                appId "1107057918"
-                appKey "ZA8TZCDkupz38eoN"
+                appId "1108207789"
+                appKey "2Tpd70ASK67dYuuQ"
                 shareByAppClient true
                 bypassApproval false
-            }
-            Line {
-                appId "1477692153"
-                appSecret "f30c036370f2e04ade71c52eef73a9af"
             }
         }
     }
