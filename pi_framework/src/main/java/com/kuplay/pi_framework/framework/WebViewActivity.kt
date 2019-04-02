@@ -105,7 +105,6 @@ class WebViewActivity : BaseWebView() {
         }
         super.onRestart()
         JSBridge.sendJS(ynWebView,"PI_App",ON_APP_RESUMED, arrayOf("App进入前台"))
-
     }
 
 

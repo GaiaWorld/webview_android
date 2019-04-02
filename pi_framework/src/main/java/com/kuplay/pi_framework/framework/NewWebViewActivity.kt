@@ -112,6 +112,7 @@ class NewWebViewActivity : BaseWebView(){
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        JSBridge.sendJS(ynWebView,"PI_Activity", ON_APP_RESUMED, arrayOf("Activity进入前台"))
         gameExit = true
         if (intent?.getStringExtra("tag") == null){
             return
