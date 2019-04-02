@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.net.http.SslError
 import android.os.Handler
 import android.os.Message
 import android.support.v7.app.AlertDialog
@@ -116,6 +117,11 @@ class AndroidWebView constructor(private val ctx: Context, private var uAgent: S
     }
 
     private inner class MyWebViewClient : WebViewClient() {
+
+        override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
+            handler!!.proceed()  // 接受所有网站的证书
+        }
+
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
 
@@ -231,7 +237,6 @@ class AndroidWebView constructor(private val ctx: Context, private var uAgent: S
                 e.printStackTrace()
             }
         }
-
 
         override fun onShowFileChooser(webView: WebView?, filePathCallback: ValueCallback<Array<Uri>>?, fileChooserParams: FileChooserParams?): Boolean {
             //ImagePicker().chooseImage(0, 1, 1, callBack = { callType, prames -> JSCallback.callJS(null,null, 1, callType, prames)})

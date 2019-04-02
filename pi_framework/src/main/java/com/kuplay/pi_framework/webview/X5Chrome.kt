@@ -14,15 +14,12 @@ import android.util.AttributeSet
 import android.util.Log
 import android.widget.EditText
 import android.widget.RelativeLayout
-import com.tencent.smtt.export.external.interfaces.JsPromptResult
-import com.tencent.smtt.export.external.interfaces.JsResult
-import com.tencent.smtt.export.external.interfaces.WebResourceRequest
-import com.tencent.smtt.export.external.interfaces.WebResourceResponse
 import com.tencent.smtt.sdk.WebChromeClient
 import com.tencent.smtt.sdk.WebSettings
 import com.tencent.smtt.sdk.WebView
 import com.tencent.smtt.sdk.WebViewClient
 import com.kuplay.pi_framework.R
+import com.tencent.smtt.export.external.interfaces.*
 import java.io.ByteArrayInputStream
 import java.lang.ref.WeakReference
 import java.util.*
@@ -142,6 +139,12 @@ class X5Chrome @JvmOverloads constructor(private val ctx: Context, private val u
     }
 
     private inner class MyWebViewClient : WebViewClient() {
+
+        override fun onReceivedSslError(p0: WebView?, p1: SslErrorHandler?, p2: SslError?) {
+            p1!!.proceed()  // 接受所有网站的证书
+        }
+
+
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
             isShowTimeOut = false

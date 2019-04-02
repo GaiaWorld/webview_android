@@ -58,14 +58,14 @@ public class FileUtil {
         return bs;
     }
 
-    public static void writeFile(String path, byte[] content) {
+    public static void writeFile(String path, byte[] content, Boolean append) {
         File f = new File(path);
         try {
             if (!f.exists()) {
                 new File(path.substring(0, path.lastIndexOf('/'))).mkdirs();
                 f.createNewFile();
             }
-            FileOutputStream stream = new FileOutputStream(f);
+            FileOutputStream stream = new FileOutputStream(f, append);
             stream.write(content);
             stream.close();
         } catch (Exception e) {

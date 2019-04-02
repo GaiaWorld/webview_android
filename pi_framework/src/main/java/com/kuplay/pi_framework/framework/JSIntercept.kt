@@ -116,11 +116,11 @@ class JSIntercept(ynWebView: YNWebView) {
 
             val fullPath = "$htmlPath/$path"
             val content = Base64.decode(base64Str, Base64.NO_WRAP)
-            FileUtil.writeFile(fullPath, content)
+            FileUtil.writeFile(fullPath, content, false)
 
             path = path.substring(path.lastIndexOf("/") + 1)
             mBootFilePaths!!.put(path, fullPath)
-            FileUtil.writeFile(mConfigPath, mBootFilePaths!!.toString().toByteArray(Charsets.UTF_8))
+            FileUtil.writeFile(mConfigPath, mBootFilePaths!!.toString().toByteArray(Charsets.UTF_8),false)
 
             Log.d("Intercept", "JSIntercept.saveFile: $fullPath")
             val func = String.format("window.handle_jsintercept_callback(%d, true)", listenerID)

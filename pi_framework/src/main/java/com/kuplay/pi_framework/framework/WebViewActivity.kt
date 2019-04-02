@@ -98,12 +98,6 @@ class WebViewActivity : BaseWebView() {
         }
     }
 
-    //当NewWebViewActivity没有关闭，直接进入聊天界面时，打开同样的实例
-    override fun onNewIntent(intent: Intent?) {
-        Log.d("test1","webView on reopen")
-        super.onNewIntent(intent)
-    }
-
     override fun onRestart() {
         if (NewWebViewActivity.gameExit == true){
             startActivity(Intent(this, NewWebViewActivity::class.java))

@@ -53,7 +53,7 @@ class YNWebView {
     //创建YNWebView
     fun createYnWebView(baseActivity: BaseActivity, uAgent: String? = null ){
         if (uAgent == null){
-            if (isX5)  mX5 = X5Chrome(baseActivity)
+            if (isX5) mX5 = X5Chrome(baseActivity)
             else mAndroidWebView = AndroidWebView(baseActivity)
         }else{
             if (isX5)  mX5 = X5Chrome(baseActivity, uAgent)
@@ -233,17 +233,20 @@ class YNWebView {
 
 
         //创建webView
-        fun createWebView(context: Context, url: String, headers: Map<*, *>):Any{
+        fun createWebView(context: Context, url: String, headers: Map<*, *>, injectContent: String):Any{
             if (isX5) {
                 val view = X5Chrome(context)
+                if (injectContent != "") view.setInjectContent(url, injectContent)
                 view.loadUrl(url, headers as MutableMap<String, String>?)
                 return view
             } else {
                 val view = AndroidWebView(context)
+                if (injectContent != "") view.setInjectContent(url, injectContent)
                 view.loadUrl(url, headers as MutableMap<String, String>?)
                 return view
             }
         }
+
 
         //销毁webView
         fun destroyWebView(view: Any){

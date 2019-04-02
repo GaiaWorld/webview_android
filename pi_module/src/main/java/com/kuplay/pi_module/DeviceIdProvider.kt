@@ -8,6 +8,7 @@ import android.telephony.TelephonyManager
 import android.text.format.Formatter
 import com.github.dfqin.grantor.PermissionListener
 import com.github.dfqin.grantor.PermissionsUtil
+import com.kuplay.pi_framework.Util.FileUtil
 import com.kuplay.pi_framework.Util.GetDeviceId
 import com.kuplay.pi_framework.base.BaseJSModule
 import com.kuplay.pi_framework.webview.YNWebView
@@ -21,9 +22,25 @@ class DeviceIdProvider(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
      *  *获取设备唯一标识
      */
     fun getUUId(callBack:(callType: Int, prames: Array<Any>)->Unit) {
-        //callBack(BaseJSModule.SUCCESS, arrayOf("1111111111111111111"))
         callBack(BaseJSModule.SUCCESS, arrayOf(GetDeviceId.getDeviceId(ctx)))
     }
+
+    /**
+     *  *获取包的渠道信息
+     */
+    fun getChannelName(callBack:(callType: Int, prames: Array<Any>)->Unit){
+        val url =  "file:///android_asset/channelName.txt"
+        callBack(BaseJSModule.SUCCESS, arrayOf(FileUtil.readFile(url)))
+    }
+
+    /**
+     *  *获取包的合作方信息
+     */
+    fun getGameName(callBack:(callType: Int, prames: Array<Any>)->Unit){
+        val url = "file:///android_asset/gameName.txt"
+        callBack(BaseJSModule.SUCCESS, arrayOf(FileUtil.readFile(url)))
+    }
+
     /**
      *
      *  *获取系统信息

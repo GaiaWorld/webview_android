@@ -29,6 +29,7 @@ class NewWebViewActivity : BaseWebView(){
     override fun onCreate(savedInstanceState: Bundle?) {
         gameExit = true
         hideSystemNavigationBar()
+
         val uAgent = intent?.getStringExtra("uagent")
         if ( uAgent != null){
             ynWebView.createYnWebView(this, uAgent)
@@ -103,6 +104,7 @@ class NewWebViewActivity : BaseWebView(){
 
     fun minsizeActivity(){
         gameExit = false
+        JSBridge.sendJS(ynWebView,"PI_Activity",ON_BACK_PRESSED, arrayOf("Activity进入后台"))
         val minintent = Intent(this, WebViewActivity::class.java)
         startActivity(minintent)
     }
@@ -110,7 +112,6 @@ class NewWebViewActivity : BaseWebView(){
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-
         gameExit = true
         if (intent?.getStringExtra("tag") == null){
             return

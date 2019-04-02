@@ -50,7 +50,7 @@ class AppUpdater(ynWebView: YNWebView,var listenerID: Int, var cbID: Int) : Base
     }
 
     private fun updateDownloadProgress(total: Long, progress: Long) {
-        val func = String.format("window.handle_jsintercept_update(%d, %d, %d)", cbID, 7224974, progress)
+        val func = String.format("window.handle_jsintercept_update(%d, %d, %d)", cbID, total, progress)
         ctx!!.runOnUiThread(CallJSRunnable(func, yn))
     }
 

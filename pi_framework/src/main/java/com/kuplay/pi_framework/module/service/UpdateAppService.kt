@@ -50,11 +50,13 @@ class UpdateAppService : Service() {
                 var inputStream: InputStream? = null
                 var fos: FileOutputStream? = null
                 try {
+//                    val headers = response.headers()
                     val body = response.body()
                     if (null == body) {
                         mHandler.sendEmptyMessage(DOWNLOAD_FAILED)
                         return
                     }
+                    //maxLen = headers.get("Content-Length")!!.toLong()
                     maxLen = body.contentLength()//文件总大小
                     val buf = ByteArray(1024 * 2)
                     var len: Int
