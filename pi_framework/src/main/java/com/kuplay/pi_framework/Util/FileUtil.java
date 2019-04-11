@@ -99,6 +99,20 @@ public class FileUtil {
     }
 
     /**
+     * 删除文件夹
+     *
+     */
+    public static void removeDir(String path) {
+        File file = new File(path);
+        RecursionDeleteFile(file);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+    }
+
+
+
+    /**
      * 删除指定路径下的图片
      *
      * @param path 图片的路径

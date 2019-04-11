@@ -41,7 +41,6 @@ class NewWebViewActivity : BaseWebView(){
     }
 
 
-
     /**
      * As the method name said,this method is used to initialize views on this activity.
      */
@@ -78,13 +77,16 @@ class NewWebViewActivity : BaseWebView(){
         JSBridge.sendJS(ynWebView,"PI_App", ON_APP_RESUMED, arrayOf("App进入前台"))
     }
 
+
+
+
     override fun onBackPressed() {
         val childCount = mRlRootView.childCount
         if (childCount > 1) {
             mRlRootView.removeViewAt(childCount - 1)
         }
         else {
-            JSBridge.sendJS(ynWebView,"PI_Activity", ON_BACK_PRESSED, arrayOf("页面即将关闭"))
+            //JSBridge.sendJS(ynWebView,"PI_Activity", ON_BACK_PRESSED, arrayOf("页面即将关闭"))
         }
     }
 

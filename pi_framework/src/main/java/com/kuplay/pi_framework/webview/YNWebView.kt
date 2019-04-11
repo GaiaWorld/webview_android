@@ -19,6 +19,9 @@ import com.tencent.smtt.sdk.QbSdk
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.HashMap
+import android.opengl.ETC1.getWidth
+
+
 
 
 
@@ -54,10 +57,16 @@ class YNWebView {
     fun createYnWebView(baseActivity: BaseActivity, uAgent: String? = null ){
         if (uAgent == null){
             if (isX5) mX5 = X5Chrome(baseActivity)
-            else mAndroidWebView = AndroidWebView(baseActivity)
+            else {
+                android.webkit.WebView.enableSlowWholeDocumentDraw()
+                mAndroidWebView = AndroidWebView(baseActivity)
+            }
         }else{
             if (isX5)  mX5 = X5Chrome(baseActivity, uAgent)
-            else mAndroidWebView = AndroidWebView(baseActivity, uAgent)
+            else{
+                android.webkit.WebView.enableSlowWholeDocumentDraw()
+                mAndroidWebView = AndroidWebView(baseActivity, uAgent)
+            }
         }
     }
 

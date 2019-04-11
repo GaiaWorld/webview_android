@@ -155,7 +155,8 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             intent.putExtra("title", title)
             intent.putExtra("load_url", url)
             intent.putExtra("tag", webViewName)
-            ctx!!.startActivity(intent)
+            ctx!!.runOnUiThread { ctx!!.startActivity(intent) }
+//            ctx!!.startActivity(intent)
         }
     }
 

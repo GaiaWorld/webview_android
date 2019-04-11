@@ -108,6 +108,8 @@ class WebViewActivity : BaseWebView() {
     }
 
 
+
+
     override fun onBackPressed() {
         JSBridge.sendJS(ynWebView,"PI_Activity",ON_BACK_PRESSED, arrayOf("App进入后台"))
     }

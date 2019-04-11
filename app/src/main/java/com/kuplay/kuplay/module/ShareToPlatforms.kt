@@ -22,18 +22,22 @@ import com.kuplay.pi_framework.Util.FileUtil
 import com.kuplay.pi_framework.base.BaseJSModule
 import com.kuplay.pi_framework.webview.YNWebView
 import java.io.File
-import java.util.HashMap
+import java.util.*
+
 
 class ShareToPlatforms(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
     private var platform: Int = 0
+
+    private val fileDocDirPath: String
+        get() = Environment.getExternalStorageDirectory().toString() + File.separator + "highapp"
+
 
     /**
      * 本地的二维码图片(要分享的图片必须在SDCard目录下！)
      *
      * @return 本地图片的路径
      */
-    private val fileDirPath: String
-        get() = Environment.getExternalStorageDirectory().toString() + File.separator + "share_img.png"
+    private var fileDirPath: String = ""
 
     /**
      * 把App的图片存到本地的路径
@@ -42,6 +46,26 @@ class ShareToPlatforms(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
      */
     private val appIconFile: String
         get() = Environment.getExternalStorageDirectory().toString() + File.separator + "ic_launcher.png"
+
+    init {
+        PermissionsUtil.requestPermission(ctx, object : PermissionListener {
+            override fun permissionGranted(permission: Array<String>) {
+                try {
+                    val f = File(fileDocDirPath)
+                    if (!f.exists()){
+                        f.mkdirs()
+                    }
+                } catch (e: Exception) {
+                    Log.d("创建文件失败", e.message)
+                    callBack(BaseJSModule.FAIL, arrayOf("创建文件失败"))
+                }
+
+            }
+            override fun permissionDenied(permission: Array<String>) {
+
+            }
+        }, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    }
 
     /**
      * ShareQRCode
@@ -227,6 +251,9 @@ class ShareToPlatforms(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
             override fun permissionGranted(permission: Array<String>) {
                 try {
                     yn.snapShotInWebView {
+                        FileUtil.removeDir(fileDocDirPath)
+                        val timeGetTime = Date().getTime()
+                        fileDirPath = fileDocDirPath + "/share_image_" + timeGetTime.toString() + ".jpg"
                         FileUtil.saveBitmapFile(it, fileDirPath) { callBack(BaseJSModule.SUCCESS, arrayOf("")) }
                     }
                 } catch (e: Exception) {
@@ -256,6 +283,9 @@ class ShareToPlatforms(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
         PermissionsUtil.requestPermission(ctx, object : PermissionListener {
             override fun permissionGranted(permission: Array<String>) {
                 val bitmap = QRCodeUtils.createCode(ctx, content) ?: return
+                FileUtil.removeDir(fileDocDirPath)
+                val timeGetTime = Date().getTime()
+                fileDirPath = fileDocDirPath + "/share_image_" + timeGetTime.toString() + ".jpg"
                 FileUtil.saveBitmapFile(bitmap, fileDirPath) { shareImageContent(platform) }
             }
 
@@ -275,21 +305,18 @@ class ShareToPlatforms(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
         oks.callback = object : PlatformActionListener {
             override fun onComplete(platform: Platform, i: Int, hashMap: HashMap<String, Any>) {
                 Log.d(TAG, "分享完成")
-                FileUtil.removeFile(fileDirPath)
                 callBack(BaseJSModule.SUCCESS, arrayOf(""))
                 //JSCallback.callJS(null, null, getCallbackId(), JSCallback.getSUCCESS(), "")
             }
 
             override fun onError(platform: Platform, i: Int, throwable: Throwable) {
                 Log.d(TAG, "分享出错")
-                FileUtil.removeFile(fileDirPath)
                 callBack(BaseJSModule.FAIL, arrayOf(""))
                 //JSCallback.callJS(null, null, getCallbackId(), JSCallback.getFAIL(), "")
             }
 
             override fun onCancel(platform: Platform, i: Int) {
                 Log.d(TAG, "分享取消")
-                FileUtil.removeFile(fileDirPath)
                 callBack(BaseJSModule.FAIL, arrayOf(""))
                 //JSCallback.callJS(null, null, getCallbackId(), JSCallback.getFAIL(), "")
             }
