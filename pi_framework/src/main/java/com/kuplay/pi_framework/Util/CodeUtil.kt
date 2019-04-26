@@ -71,7 +71,7 @@ object CodeUtil {
                     dexFileField = dexElement.javaClass.getDeclaredField("dexFile")
                     dexFileField!!.isAccessible = true
                 }
-                val dexFile = dexFileField.get(dexElement) as DexFile
+                val dexFile = dexFileField.get(dexElement) as? DexFile
                 if (null != dexFile) {
                     dexFiles.add(dexFile)
                 }
