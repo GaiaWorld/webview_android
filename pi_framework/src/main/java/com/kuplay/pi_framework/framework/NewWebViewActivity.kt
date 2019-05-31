@@ -29,7 +29,6 @@ class NewWebViewActivity : BaseWebView(){
     override fun onCreate(savedInstanceState: Bundle?) {
         gameExit = true
         hideSystemNavigationBar()
-
         val uAgent = intent?.getStringExtra("uagent")
         if ( uAgent != null){
             ynWebView.createYnWebView(this, uAgent)
@@ -39,6 +38,7 @@ class NewWebViewActivity : BaseWebView(){
         addJEV(this)
         super.onCreate(savedInstanceState)
     }
+
 
 
     /**
@@ -77,16 +77,13 @@ class NewWebViewActivity : BaseWebView(){
         JSBridge.sendJS(ynWebView,"PI_App", ON_APP_RESUMED, arrayOf("App进入前台"))
     }
 
-
-
-
     override fun onBackPressed() {
         val childCount = mRlRootView.childCount
         if (childCount > 1) {
             mRlRootView.removeViewAt(childCount - 1)
         }
         else {
-            //JSBridge.sendJS(ynWebView,"PI_Activity", ON_BACK_PRESSED, arrayOf("页面即将关闭"))
+            JSBridge.sendJS(ynWebView,"PI_Activity", ON_BACK_PRESSED, arrayOf("页面即将关闭"))
         }
     }
 
@@ -106,7 +103,6 @@ class NewWebViewActivity : BaseWebView(){
 
     fun minsizeActivity(){
         gameExit = false
-        JSBridge.sendJS(ynWebView,"PI_Activity",ON_BACK_PRESSED, arrayOf("Activity进入后台"))
         val minintent = Intent(this, WebViewActivity::class.java)
         startActivity(minintent)
     }
@@ -114,14 +110,13 @@ class NewWebViewActivity : BaseWebView(){
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        JSBridge.sendJS(ynWebView,"PI_Activity", ON_APP_RESUMED, arrayOf("Activity进入前台"))
         gameExit = true
         if (intent?.getStringExtra("tag") == null){
             return
         }
         if (tag != intent.getStringExtra("tag") && tag != null){
-            if (WebViewManager.isWebViewNameExists(tag!!)){
-                WebViewManager.removeWebView(tag!!)
+            if (WebViewManager.isGameViewExists(tag!!)){
+                WebViewManager.removeGameView(tag!!)
             }
             tag = intent.getStringExtra("tag")
             val path = intent.getStringExtra("inject") ?: ""
@@ -169,7 +164,7 @@ class NewWebViewActivity : BaseWebView(){
     }
 
     override fun onDestroy() {
-        WebViewManager.removeWebView(this.tag!!)
+        WebViewManager.removeGameView(this.tag!!)
         unregisterReceiver(mCloseReceiver)
         super.onDestroy()
     }

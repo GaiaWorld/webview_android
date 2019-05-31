@@ -21,10 +21,10 @@ internal class FreeWebView(private val view: Any) : Runnable {
     }
 }
 
-internal class NewWebView(private val context: Context, private val webViewName: String, private val url: String, private val headers: Map<*, *>) : Runnable {
+internal class NewWebView(private val context: Context, private val webViewName: String, private val url: String, private val headers: Map<*, *>, private  val injectContent: String) : Runnable {
 
     override fun run() {
-        WebViewManager.addWebView(this.webViewName, YNWebView.createWebView(context,url,headers, ""))
+        WebViewManager.addNoShowView(this.webViewName, YNWebView.createWebView(context,url,headers, injectContent))
     }
 }
 
@@ -32,8 +32,6 @@ internal class NewWebView(private val context: Context, private val webViewName:
  * Created by iqosjay@gmail.com on 2018/11/7
  */
 class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
-
-
 
     /**
      * Get the webView's name by webView.
@@ -43,7 +41,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
     private val nameByWebViewObj: String?
         get() {
             val obj = yn.getEnv(yn.WEBVIEW)
-            val entries = WEB_VIEW_FORM.entries
+            val entries = GAME_VIEW.entries
             for ((key, value) in entries) {
                 if (obj == value) {
                     return key
@@ -52,6 +50,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             return null
         }
 
+
     /**
      * 新开webview，但不显示出来
      * @param callbackId
@@ -59,19 +58,19 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
      * @param url
      * @param headers，以 key1:value1 key2:value2 方式传递
      */
-    fun newView(webViewName: String, url: String, headers: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
+    fun newView(webViewName: String, url: String, headers: String, injectContent: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
 
         if (TextUtils.isEmpty(webViewName)) {
-            callBack(BaseJSModule.FAIL, arrayOf("The WebViews name cant be null."))
+            callBack(BaseJSModule.FAIL, arrayOf("The WebViews name canot be null."))
             return
         }
 
         if (TextUtils.isEmpty(url)) {
-            callBack(BaseJSModule.FAIL, arrayOf("The url cant be null."))
+            callBack(BaseJSModule.FAIL, arrayOf("The url canot be null."))
             return
         }
 
-        if (isWebViewNameExists(webViewName)) {
+        if (isNoShowViewExists(webViewName)) {
             callBack(BaseJSModule.FAIL, arrayOf("WebView name is exist."))
             return
         }
@@ -88,25 +87,27 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
 
         }
         val activity = yn.getEnv(yn.ACTIVITY) as Activity
-        activity.runOnUiThread(NewWebView(activity.applicationContext, webViewName, url, extraHeaders))
+        activity.runOnUiThread(NewWebView(activity.applicationContext, webViewName, url, extraHeaders, injectContent))
         callBack(BaseJSModule.SUCCESS, arrayOf(""))
     }
+
+
 
     fun freeView(webViewName: String,callBack:(callType: Int, prames: Array<Any>)->Unit) {
         try {
             if ("default" == webViewName) {
-                callBack(BaseJSModule.FAIL, arrayOf("The default WebView couldnt remove,please select a new one."))
+                callBack(BaseJSModule.FAIL, arrayOf("The default WebView couldnot remove,please select a new one."))
                 return
             }
 
-            if (!isWebViewNameExists(webViewName)) {
+            if (!isNoShowViewExists(webViewName)) {
                 return
             }
 
-            val view = WebViewManager.getWebView(webViewName)
+            val view = WebViewManager.getNoShowView(webViewName)
             val activity = yn.getEnv(yn.ACTIVITY) as Activity
             activity.runOnUiThread(FreeWebView(view!!))
-            WebViewManager.removeWebView(webViewName)
+            WebViewManager.removeNoShowView(webViewName)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -123,20 +124,28 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
      * @param url         The web page's url.
      * @param title       The title what would you like to show in the new View.
      */
-    fun openWebView(webViewName: String, url: String, title: String, injectContent: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
+    fun openWebView(webViewName: String, url: String, title: String, injectContent: String, headers: String, isShow: Number, callBack:(callType: Int, prames: Array<Any>)->Unit) {
+
         if (TextUtils.isEmpty(webViewName)) {
-            callBack(BaseJSModule.FAIL, arrayOf("The WebViews name cant be null."))
+            callBack(BaseJSModule.FAIL, arrayOf("The WebViews name can not be null."))
             return
         }
         if (TextUtils.isEmpty(url)) {
-            callBack(BaseJSModule.FAIL, arrayOf("The url cant be null."))
+            callBack(BaseJSModule.FAIL, arrayOf("The url can not be null."))
             return
         }
-        if (isWebViewNameExists(webViewName) && Game_Name.equals(webViewName)) {
-            val intent = Intent(ctx!!, NewWebViewActivity::class.java)
-            intent.putExtra("tag",webViewName)
+        if (isGameViewExists(webViewName) && GAME_NAME == webViewName && isShow == 1) {
+            val intent = Intent(ctx, NewWebViewActivity::class.java)
+            intent.putExtra("tag", webViewName)
             ctx!!.startActivity(intent)
+        }else if (isShow == 0) {
+            newView( webViewName, url, headers, injectContent, callBack )
         } else {
+            if (!webViewName.equals(GAME_NAME) && isGameViewExists(GAME_NAME)){
+                sendCloseWebViewMessage(GAME_NAME)
+            }
+            GAME_NAME = webViewName
+            //注入字符串存本地文件的原因为： Android版本25一下，intent只支持500k大小的字符串
             val file = File(ctx!!.cacheDir, "new_webview_inject")
             try {
                 val bw = BufferedWriter(FileWriter(file))
@@ -145,30 +154,14 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-            if (isWebViewNameExists(Game_Name)){
-                sendCloseWebViewMessage(Game_Name)
-            }
-            Game_Name = webViewName
             val intent = Intent(ctx, NewWebViewActivity::class.java)
+            intent.putExtra("uagent", "YINENG_ANDROID_GAME/1.0")
             intent.putExtra("inject", file.absolutePath)
-            intent.putExtra("uagent", "YINENG_ANDROID_GAME1.0")
             intent.putExtra("title", title)
             intent.putExtra("load_url", url)
             intent.putExtra("tag", webViewName)
-            ctx!!.runOnUiThread { ctx!!.startActivity(intent) }
-//            ctx!!.startActivity(intent)
+            ctx!!.startActivity(intent)
         }
-    }
-
-    fun minWebView(webViewName: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
-        if ("default" == webViewName) {
-            callBack(BaseJSModule.FAIL, arrayOf("The default WebView couldnt remove,please select a new one."))
-            return
-        }
-        if (!isWebViewNameExists(webViewName)) {
-            return
-        }
-        sendMinWebViewMessage(webViewName)
     }
 
     /**
@@ -179,13 +172,27 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
      */
     fun closeWebView(webViewName: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
         if ("default" == webViewName) {
-            callBack(BaseJSModule.FAIL, arrayOf("The default WebView couldnt remove,please select a new one."))
+            callBack(BaseJSModule.FAIL, arrayOf("The default WebView could not remove,please select a new one."))
             return
         }
-        if (!isWebViewNameExists(webViewName)) {
+        if (isGameViewExists(webViewName)) {
+            sendCloseWebViewMessage(webViewName)
+        }else if (isNoShowViewExists(webViewName)){
+            freeView(webViewName, callBack)
+        }else{
             return
         }
-        sendCloseWebViewMessage(webViewName)
+    }
+
+    fun minWebView(webViewName: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
+        if ("default" == webViewName) {
+            callBack(BaseJSModule.FAIL, arrayOf("The default WebView could not remove,please select a new one."))
+            return
+        }
+        if (!isGameViewExists(webViewName)) {
+            return
+        }
+        sendMinSizeWebViewMessage(webViewName)
     }
 
     /**
@@ -195,8 +202,8 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
      * @param message     The message what you would like to send.
      */
     fun postWebViewMessage(webViewName: String, message: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
-        if (!isWebViewNameExists(webViewName)) {
-            callBack(BaseJSModule.FAIL, arrayOf("The WebViews name is not exists."))
+        if (!isGameViewExists(webViewName)) {
+            callBack(BaseJSModule.FAIL, arrayOf("The WebView's name is not exists."))
             return
         }
         val fromWebView = nameByWebViewObj
@@ -207,8 +214,6 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
     }
 
     fun getScreenModify(callBack:(callType: Int, prames: Array<Any>)->Unit) {
-        //ViewUtil.getNavigationBarHeight(getActivity())
-        //DisplayCutout displayCutout = decorView.getRootWindowInsets().getDisplayCutout();
         val activity = yn.getEnv(yn.ACTIVITY) as Activity
         val high = ViewUtil.getStatusBarHeight(activity)
         callBack(BaseJSModule.SUCCESS, arrayOf(high,0))
@@ -226,27 +231,33 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
         ctx!!.sendBroadcast(intent)
     }
 
-    private fun sendMinWebViewMessage(webViewName: String) {
+
+    private fun sendMinSizeWebViewMessage(webViewName: String) {
         val intent = Intent("mine_size_activity")
+        intent.putExtra("web_view_name", webViewName)
         ctx!!.sendBroadcast(intent)
     }
-    /**
-     * Check whether the name of webView is exists.
-     *
-     * @param webViewName The name of webView
-     * @return true for the name has been exists.
-     */
+
+
 
     companion object {
         /**
          * All WebViews that have been opened.
          */
-        private val WEB_VIEW_FORM = HashMap<String, Any>()
+        private val NOSHOW_VIEW = HashMap<String, Any>()
 
-        private var Game_Name = ""
+        private var GAME_NAME = ""
 
-        fun isWebViewNameExists(webViewName: String): Boolean {
-            for (key in WEB_VIEW_FORM.keys) {
+        private var GAME_VIEW = HashMap<String, Any>()
+
+        /**
+         * Check whether the name of webView is exists.
+         *
+         * @param webViewName The name of webView
+         * @return true for the name has been exists.
+         */
+        fun isGameViewExists(webViewName: String): Boolean {
+            for (key in GAME_VIEW.keys) {
                 if (webViewName == key) {
                     return true
                 }
@@ -254,15 +265,14 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             return false
         }
 
-
         /**
          * Add WebView.
          *
          * @param key    WebView's name.
          * @param object WebView:X5 or Android
          */
-        fun addWebView(key: String, `object`: Any) {
-            WEB_VIEW_FORM[key] = `object`
+        fun addGameView(key: String, `object`: Any) {
+            GAME_VIEW[key] = `object`
         }
 
         /**
@@ -270,12 +280,46 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
          *
          * @param key WebView's name
          */
-        fun removeWebView(key: String) {
-            WEB_VIEW_FORM.remove(key)
+        fun removeGameView(key: String) {
+            GAME_VIEW.remove(key)
         }
 
-        fun getWebView(key: String): Any? {
-            return WEB_VIEW_FORM[key]
+        fun getGameView(key: String): Any? {
+            return GAME_VIEW[key]
         }
+
+
+        fun isNoShowViewExists(webViewName: String): Boolean {
+            for (key in NOSHOW_VIEW.keys) {
+                if (webViewName == key) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        /**
+         * Add WebView.
+         *
+         * @param key    WebView's name.
+         * @param object WebView:X5 or Android
+         */
+        fun addNoShowView(key: String, `object`: Any) {
+            NOSHOW_VIEW[key] = `object`
+        }
+
+        /**
+         * Remove WebView by its name.
+         *
+         * @param key WebView's name
+         */
+        fun removeNoShowView(key: String) {
+            NOSHOW_VIEW.remove(key)
+        }
+
+        fun getNoShowView(key: String): Any? {
+            return NOSHOW_VIEW[key]
+        }
+
     }
 }

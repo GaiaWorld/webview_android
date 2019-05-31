@@ -19,9 +19,6 @@ import com.tencent.smtt.sdk.QbSdk
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.HashMap
-import android.opengl.ETC1.getWidth
-
-
 
 
 
@@ -57,16 +54,10 @@ class YNWebView {
     fun createYnWebView(baseActivity: BaseActivity, uAgent: String? = null ){
         if (uAgent == null){
             if (isX5) mX5 = X5Chrome(baseActivity)
-            else {
-                android.webkit.WebView.enableSlowWholeDocumentDraw()
-                mAndroidWebView = AndroidWebView(baseActivity)
-            }
+            else mAndroidWebView = AndroidWebView(baseActivity)
         }else{
             if (isX5)  mX5 = X5Chrome(baseActivity, uAgent)
-            else{
-                android.webkit.WebView.enableSlowWholeDocumentDraw()
-                mAndroidWebView = AndroidWebView(baseActivity, uAgent)
-            }
+            else mAndroidWebView = AndroidWebView(baseActivity, uAgent)
         }
     }
 
@@ -122,13 +113,13 @@ class YNWebView {
             mX5!!.addJavascriptInterface(JSBridge(this), JSBridge::class.java.simpleName)
             mX5?.addJavascriptInterface(JSIntercept(this), JSIntercept::class.java.simpleName)
             X5Chrome.sViewRoot.add(mRlRootView)
-            WebViewManager.addWebView(tag, mX5!!)
+            WebViewManager.addGameView(tag, mX5!!)
             mX5!!.setInjectContent(url, content)
         } else {
             mAndroidWebView!!.addJavascriptInterface(JSBridge(this), JSBridge::class.java.simpleName)
             mAndroidWebView?.addJavascriptInterface(JSIntercept(this), JSIntercept::class.java.simpleName)
             AndroidWebView.sViewRoot.add(mRlRootView)
-            WebViewManager.addWebView(tag, mAndroidWebView!!)
+            WebViewManager.addGameView(tag, mAndroidWebView!!)
             mAndroidWebView!!.setInjectContent(url, content)
         }
     }
@@ -140,13 +131,13 @@ class YNWebView {
             mX5?.addJavascriptInterface(JSBridge(this), JSBridge::class.java.simpleName)
             mX5?.addJavascriptInterface(mJsIntercept, JSIntercept::class.java.simpleName)
             X5Chrome.sViewRoot.add(mRlRootView)
-            WebViewManager.addWebView("default", mX5!!)
+            WebViewManager.addGameView("default", mX5!!)
         } else {
             mJsIntercept = JSIntercept(this)
             mAndroidWebView?.addJavascriptInterface(JSBridge(this), JSBridge::class.java.simpleName)
             mAndroidWebView?.addJavascriptInterface(mJsIntercept, JSIntercept::class.java.simpleName)
             AndroidWebView.sViewRoot.add(mRlRootView)
-            WebViewManager.addWebView("default", mAndroidWebView!!)
+            WebViewManager.addGameView("default", mAndroidWebView!!)
         }
         return mJsIntercept
     }
