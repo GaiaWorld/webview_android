@@ -201,17 +201,20 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
      * @param webViewName The name of WebView which you want send message to.
      * @param message     The message what you would like to send.
      */
-    fun postWebViewMessage(webViewName: String, message: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
+    fun postWebViewMessage(webViewName: String, message: String, isRPC: String,callBack:(callType: Int, prames: Array<Any>)->Unit) {
         if (!isGameViewExists(webViewName)) {
             callBack(BaseJSModule.FAIL, arrayOf("The WebView's name is not exists."))
             return
         }
+        val rpc: Int = isRPC.toInt()
         val fromWebView = nameByWebViewObj
         val intent = Intent("send_message$webViewName")
         intent.putExtra("message", message)
+        intent.putExtra("rpc", rpc)
         intent.putExtra("from_web_view", fromWebView)
         ctx!!.sendBroadcast(intent)
     }
+
 
     fun getScreenModify(callBack:(callType: Int, prames: Array<Any>)->Unit) {
         val activity = yn.getEnv(yn.ACTIVITY) as Activity

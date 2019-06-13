@@ -130,10 +130,16 @@ class WebViewActivity : BaseWebView() {
             val action = intent?.action ?: return
             when (action) {
                 "send_messagedefault" -> {
+                    val rpc = intent.getStringExtra("rpc")
                     val message = intent.getStringExtra("message")
                     val sender = intent.getStringExtra("from_web_view")
-                    val callFun = String.format("javascript:window.onWebViewPostMessage('%s','%s')", sender, message)
-                    ynWebView.evaluateJavascript(callFun)
+                    if (rpc == "true" ){
+                        val callFun = String.format("javascript:window.onWebViewPostMessage('%s','%s')", sender, message)
+                        ynWebView.evaluateJavascript(callFun)
+                    }else{
+                        ynWebView.evaluateJavascript(message)
+                    }
+
                 }
             }
         }
@@ -154,3 +160,6 @@ class WebViewActivity : BaseWebView() {
         val URL_RES_ID = R.string.init_url
     }
 }
+
+
+

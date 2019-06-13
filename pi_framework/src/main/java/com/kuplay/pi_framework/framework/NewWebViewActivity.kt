@@ -69,6 +69,7 @@ class NewWebViewActivity : BaseWebView(){
         ynWebView.addNewJavaScript( mRlRootView, tagStr, url, content)
         addJEV(this)
         super.loadUrl(url)
+        ynWebView.finishLoading()
         registerCloseReceiver()
     }
 
@@ -154,10 +155,15 @@ class NewWebViewActivity : BaseWebView(){
                     this@NewWebViewActivity.minsizeActivity()
                 }
                 "send_message$tag" -> {
+                    val rpc = intent.getStringExtra("rpc")
                     val message = intent.getStringExtra("message")
                     val sender = intent.getStringExtra("from_web_view")
-                    val callFun = String.format("javascript:window.onWebViewPostMessage('%s','%s')", sender, message)
-                    ynWebView.evaluateJavascript(callFun)
+                    if (rpc == "true"){
+                        val callFun = String.format("javascript:window.onWebViewPostMessage('%s','%s')", sender, message)
+                        ynWebView.evaluateJavascript(callFun)
+                    }else{
+                        ynWebView.evaluateJavascript(message)
+                    }
                 }
             }
         }

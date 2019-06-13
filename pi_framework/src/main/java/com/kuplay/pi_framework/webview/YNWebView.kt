@@ -1,8 +1,10 @@
 package com.kuplay.pi_framework.webview
 
+import android.app.Activity
 import android.app.Application
 import android.app.backup.BackupAgent
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.util.Log
@@ -16,6 +18,8 @@ import com.kuplay.pi_framework.framework.JSBridge
 import com.kuplay.pi_framework.framework.JSIntercept
 import com.kuplay.pi_framework.module.WebViewManager
 import com.tencent.smtt.sdk.QbSdk
+import com.tencent.smtt.sdk.WebView
+import com.tencent.smtt.sdk.WebViewClient
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.HashMap
@@ -61,6 +65,20 @@ class YNWebView {
         }
     }
 
+    fun finishLoading(){
+        if (isX5){
+            mX5!!.setWebViewClient(object : WebViewClient(){
+                override fun onPageFinished(p0: WebView?, p1: String?) {
+                    super.onPageFinished(p0, p1)
+                    val intent = Intent("send_message")
+                    intent.putExtra("web_view_name", "default")
+                    intent.putExtra("message","window['handle_native_event']('reptile', 'pageFinished','页面加载完毕')")
+                    intent.putExtra("rpc","false")
+                    (getEnv(ACTIVITY) as Activity).sendBroadcast(intent)
+                }
+            })
+        }
+    }
 
     fun destroyYnWebView(){
         //为了防止内存泄漏，注销时，先加载空页面，清除内存，移除视图，再销毁控件，最后将控件至空
