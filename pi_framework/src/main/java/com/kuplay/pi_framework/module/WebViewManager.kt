@@ -21,10 +21,10 @@ internal class FreeWebView(private val view: Any) : Runnable {
     }
 }
 
-internal class NewWebView(private val context: Context, private val webViewName: String, private val url: String, private val headers: Map<*, *>, private  val injectContent: String) : Runnable {
+internal class NewWebView(private val context: Context, private val webViewName: String, private val url: String, private val headers: Map<*, *>, private  val injectContent: String, private val ynWebView: YNWebView) : Runnable {
 
     override fun run() {
-        WebViewManager.addNoShowView(this.webViewName, YNWebView.createWebView(context,url,headers, injectContent))
+        WebViewManager.addNoShowView(this.webViewName, YNWebView.createWebView(context,url,headers, injectContent, ynWebView))
     }
 }
 
@@ -87,7 +87,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
 
         }
         val activity = yn.getEnv(yn.ACTIVITY) as Activity
-        activity.runOnUiThread(NewWebView(activity.applicationContext, webViewName, url, extraHeaders, injectContent))
+        activity.runOnUiThread(NewWebView(activity.applicationContext, webViewName, url, extraHeaders, injectContent, yn))
         callBack(BaseJSModule.SUCCESS, arrayOf(""))
     }
 

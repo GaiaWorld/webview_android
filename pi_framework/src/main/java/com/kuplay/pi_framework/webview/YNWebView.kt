@@ -70,13 +70,24 @@ class YNWebView {
             mX5!!.setWebViewClient(object : WebViewClient(){
                 override fun onPageFinished(p0: WebView?, p1: String?) {
                     super.onPageFinished(p0, p1)
-                    val intent = Intent("send_message")
+                    val intent = Intent("send_messagedefault")
                     intent.putExtra("web_view_name", "default")
                     intent.putExtra("message","window['handle_native_event']('reptile', 'pageFinished','页面加载完毕')")
                     intent.putExtra("rpc","false")
                     (getEnv(ACTIVITY) as Activity).sendBroadcast(intent)
                 }
             })
+        }else{
+            mAndroidWebView!!.webViewClient = object : android.webkit.WebViewClient(){
+                override fun onPageFinished(view: android.webkit.WebView?, url: String?) {
+                    super.onPageFinished(view, url)
+                    val intent = Intent("send_messagedefault")
+                    intent.putExtra("web_view_name", "default")
+                    intent.putExtra("message","window['handle_native_event']('reptile', 'pageFinished','页面加载完毕')")
+                    intent.putExtra("rpc","false")
+                    (getEnv(ACTIVITY) as Activity).sendBroadcast(intent)
+                }
+            }
         }
     }
 
@@ -251,14 +262,34 @@ class YNWebView {
 
 
         //创建webView
-        fun createWebView(context: Context, url: String, headers: Map<*, *>, injectContent: String):Any{
+        fun createWebView(context: Context, url: String, headers: Map<*, *>, injectContent: String, ynWebView: YNWebView):Any{
             if (isX5) {
                 val view = X5Chrome(context)
+                view.setWebViewClient(object : WebViewClient(){
+                    override fun onPageFinished(p0: WebView?, p1: String?) {
+                        super.onPageFinished(p0, p1)
+                        val intent = Intent("send_messagedefault")
+                        intent.putExtra("web_view_name", "default")
+                        intent.putExtra("message","window['handle_native_event']('reptile', 'pageFinished','页面加载完毕')")
+                        intent.putExtra("rpc","false")
+                        (ynWebView.getEnv(ynWebView.ACTIVITY) as Activity).sendBroadcast(intent)
+                    }
+                })
                 if (injectContent != "") view.setInjectContent(url, injectContent)
                 view.loadUrl(url, headers as MutableMap<String, String>?)
                 return view
             } else {
                 val view = AndroidWebView(context)
+                view.webViewClient = object : android.webkit.WebViewClient(){
+                    override fun onPageFinished(view: android.webkit.WebView?, url: String?) {
+                        super.onPageFinished(view, url)
+                        val intent = Intent("send_messagedefault")
+                        intent.putExtra("web_view_name", "default")
+                        intent.putExtra("message","window['handle_native_event']('reptile', 'pageFinished','页面加载完毕')")
+                        intent.putExtra("rpc","false")
+                        (ynWebView.getEnv(ynWebView.ACTIVITY) as Activity).sendBroadcast(intent)
+                    }
+                }
                 if (injectContent != "") view.setInjectContent(url, injectContent)
                 view.loadUrl(url, headers as MutableMap<String, String>?)
                 return view
