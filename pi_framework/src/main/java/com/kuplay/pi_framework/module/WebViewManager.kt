@@ -21,10 +21,10 @@ internal class FreeWebView(private val view: Any) : Runnable {
     }
 }
 
-internal class NewWebView(private val context: Context, private val webViewName: String, private val url: String, private val headers: Map<*, *>, private  val injectContent: String, private val ynWebView: YNWebView) : Runnable {
+internal class NewWebView(private val context: Context, private val webViewName: String, private val url: String, private val headers: Map<*, *>, private  val injectContent: String, private val ynWebView: YNWebView, private val defaultName: String) : Runnable {
 
     override fun run() {
-        WebViewManager.addNoShowView(this.webViewName, YNWebView.createWebView(context,url,headers, injectContent, ynWebView))
+        WebViewManager.addNoShowView(this.webViewName, YNWebView.createWebView(context,this.webViewName,url,headers, injectContent, ynWebView, defaultName))
     }
 }
 
@@ -40,7 +40,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
      */
     private val nameByWebViewObj: String?
         get() {
-            val obj = yn.getEnv(yn.WEBVIEW)
+            val obj = yn.getWeb("")
             val entries = GAME_VIEW.entries
             for ((key, value) in entries) {
                 if (obj == value) {
@@ -58,7 +58,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
      * @param url
      * @param headers，以 key1:value1 key2:value2 方式传递
      */
-    fun newView(webViewName: String, url: String, headers: String, injectContent: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
+    fun newView(webViewName: String, url: String, headers: String, injectContent: String ,callBack:(callType: Int, prames: Array<Any>)->Unit) {
 
         if (TextUtils.isEmpty(webViewName)) {
             callBack(BaseJSModule.FAIL, arrayOf("The WebViews name canot be null."))
@@ -87,7 +87,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
 
         }
         val activity = yn.getEnv(yn.ACTIVITY) as Activity
-        activity.runOnUiThread(NewWebView(activity.applicationContext, webViewName, url, extraHeaders, injectContent, yn))
+        activity.runOnUiThread(NewWebView(activity.applicationContext, webViewName, url, extraHeaders, injectContent, yn, nameByWebViewObj!!))
         callBack(BaseJSModule.SUCCESS, arrayOf(""))
     }
 

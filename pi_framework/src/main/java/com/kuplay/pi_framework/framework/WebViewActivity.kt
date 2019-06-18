@@ -55,7 +55,7 @@ class WebViewActivity : BaseWebView() {
         addJEV(this)
         LocalLanguageMgr(ynWebView).setAppLanguage(
             PrefMgr.getInstance(this).appLan,
-            callBack = { callType, prames -> JSBridge(ynWebView).callJS(null, null, 0, callType, prames) })
+            callBack = { callType, prames -> JSBridge(ynWebView,ynWebView.getWeb("")).callJS(null, null, 0, callType, prames) })
         onloadUrl()
         registerBc()
     }

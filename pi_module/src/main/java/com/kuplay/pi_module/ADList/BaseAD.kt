@@ -10,7 +10,7 @@ abstract class BaseAD(ynWebView: YNWebView) {
     init {
         yn = ynWebView
         ctx = ynWebView.getEnv(ynWebView.ACTIVITY) as Activity
-        webView = ynWebView.getEnv(ynWebView.WEBVIEW)
+        webView = ynWebView.getWeb("")
     }
     lateinit var callBack: (callType: Int, prames: Array<Any>)->Unit
 }

@@ -10,12 +10,14 @@ import com.kuplay.pi_framework.Util.ContainerUtil
 import com.kuplay.pi_framework.base.BaseJSModule
 import com.kuplay.pi_framework.base.JSExecutable
 import com.kuplay.pi_framework.module.WebViewManager
+import com.kuplay.pi_framework.webview.AndroidWebView
+import com.kuplay.pi_framework.webview.X5Chrome
 import com.kuplay.pi_framework.webview.YNWebView
 import org.json.JSONArray
 import java.util.HashMap
 
-class JSBridge(ynWebView: YNWebView) {
-    var webView : YNWebView = ynWebView
+class JSBridge(private val ynWebView: YNWebView, private val webview: Any?) {
+
     private var currID = 0
     /**
      * 对象映射表，键从1开始递增
@@ -50,9 +52,9 @@ class JSBridge(ynWebView: YNWebView) {
         Log.d("JSBridge","$className,$methodName,$jsonArray")
         var callBack = { callType: Int, prames: Array<Any> ->
             if (callType == 3){
-                throwJS(webView,webView.getEnv(webView.ACTIVITY) as Activity,className,methodName,prames[0] as String)
+                throwJS(ynWebView.getEnv(ynWebView.ACTIVITY) as Activity,className,methodName,prames[0] as String)
             }else{
-                callJS(webView.getEnv(webView.ACTIVITY) as Activity?, webView.getEnv(webView.WEBVIEW), listenerID, callType, prames)
+                callJS(ynWebView.getEnv(ynWebView.ACTIVITY) as Activity?, webview, listenerID, callType, prames)
             }
         }
         try {
@@ -68,12 +70,12 @@ class JSBridge(ynWebView: YNWebView) {
             }
             when (methodName) {
                 METHOD_INIT -> {
-                    val id = newInstance(className, webView)
-                    callJS(webView.getEnv(webView.ACTIVITY) as Activity?, webView.getEnv(webView.WEBVIEW), listenerID, BaseJSModule.SUCCESS, arrayOf(id))
+                    val id = newInstance(className, ynWebView)
+                    callJS(ynWebView.getEnv(ynWebView.ACTIVITY) as Activity?, webview, listenerID, BaseJSModule.SUCCESS, arrayOf(id))
                 }
                 METHOD_CLOSE -> {
                     removeObject(nativeID)
-                    callJS(webView.getEnv(webView.ACTIVITY) as Activity?, webView.getEnv(webView.WEBVIEW), listenerID, BaseJSModule.SUCCESS, emptyArray())
+                    callJS(ynWebView.getEnv(ynWebView.ACTIVITY) as Activity?, webview, listenerID, BaseJSModule.SUCCESS, emptyArray())
                 }
                 else -> call(className, methodName, nativeID, params)
 
@@ -88,10 +90,10 @@ class JSBridge(ynWebView: YNWebView) {
         var activity = activity
         var webview = webview
         if (activity == null) {
-            activity = webView.getEnv(webView.ACTIVITY) as Activity
+            activity = ynWebView.getEnv(ynWebView.ACTIVITY) as Activity
         }
         if (webview == null) {
-            webview = webView.getEnv(webView.WEBVIEW)
+            webview = this.webview
         }
         val func = StringBuilder("window['handle_native_message']($listenerId, $statusCode")
         if (null != params)
@@ -119,22 +121,22 @@ class JSBridge(ynWebView: YNWebView) {
                     val s = o as String
                     func.append(String.format(", '%s'", s))
                 } else {
-                    throwJS(webView, activity, "Android", "CallJS", "Internal Error, CallJS params error!")
+                    throwJS(activity, "Android", "CallJS", "Internal Error, CallJS params error!")
                     return
                 }
             }
         func.append(")")
 
         Log.d("JSBridge", "callJS: " + func.toString())
-        activity.runOnUiThread(CallJSRunnable(func.toString(),webView))
+        activity.runOnUiThread(CallJSRunnable(func.toString(),webview))
     }
 
 
 
-    fun throwJS(ynWebView: YNWebView, activity: Activity, className: String, methodName: String, message: String) {
+    fun throwJS(activity: Activity, className: String, methodName: String, message: String) {
         val func = String.format("handle_native_throwerror('%s', '%s', '%s')", className, methodName, message)
         Log.d("JSBridge", "throwJS: $func")
-        activity.runOnUiThread(CallJSRunnable(func, ynWebView))
+        activity.runOnUiThread(CallJSRunnable(func, webview))
     }
 
     /**
@@ -238,19 +240,23 @@ class JSBridge(ynWebView: YNWebView) {
                         val s = o as String
                         func.append(String.format(", '%s'", s))
                     } else {
-                        JSBridge(ynWebView).throwJS(ynWebView, ynWebView.getEnv(ynWebView.ACTIVITY) as Activity, "Android", "CallJS", "Internal Error, CallJS params error!")
+                        Log.e("JSBridge", "fail to sendJS with error type")
                         return
                     }
                 }
             func.append(")")
             Log.d("JSBridge",func.toString())
-            (ynWebView.getEnv(ynWebView.ACTIVITY) as Activity).runOnUiThread(CallJSRunnable(func.toString(),ynWebView))
+            (ynWebView.getEnv(ynWebView.ACTIVITY) as Activity).runOnUiThread(CallJSRunnable(func.toString(),ynWebView.getWeb("")))
         }
     }
 }
 
-class CallJSRunnable(private val func: String, val ynWebView: YNWebView) : Runnable {
+class CallJSRunnable(private val func: String,private val webview: Any?) : Runnable {
     override fun run() {
-        ynWebView.evaluateJavascript(func)
+        if (YNWebView.isX5){
+            (webview as X5Chrome).evaluateJavascript(func, null)
+        }else{
+            (webview as AndroidWebView).evaluateJavascript(func, null)
+        }
     }
 }

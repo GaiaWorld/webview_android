@@ -2,14 +2,12 @@ package com.kuplay.pi_framework.webview
 
 import android.app.Activity
 import android.app.Application
-import android.app.backup.BackupAgent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.util.Log
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.RelativeLayout
 import com.kuplay.pi_framework.Util.WebViewUtil
 import com.kuplay.pi_framework.base.BaseActivity
@@ -34,19 +32,27 @@ class YNWebView {
 
 
     val CONTEXT = "CONTEXT"
-    val WEBVIEW = "WEBVIEW"
     val ACTIVITY = "ACTIVITY"
 
     //环境表
     private val envMap = HashMap<String, Any>()
+    //webView表
+    private val webMap = HashMap<String, Any>()
 
+
+    fun setWeb(key: String, o: Any){
+        webMap[key] = o
+    }
+
+    fun getWeb(key: String): Any? {
+        return webMap[key]
+    }
     /**
      * 设置环境
      */
     fun setEnv(key: String, o: Any) {
         envMap[key] = o
     }
-
     /**
      * 获取环境对象
      */
@@ -115,13 +121,13 @@ class YNWebView {
         }
     }
 
-    fun setJEN(){
-        if (mX5 != null) {
-            setEnv(WEBVIEW, mX5 as X5Chrome)
-        } else {
-            setEnv(WEBVIEW, mAndroidWebView as AndroidWebView)
-        }
-    }
+//    fun setJEN(){
+//        if (mX5 != null) {
+//            setEnv(WEBVIEW, mX5 as X5Chrome)
+//        } else {
+//            setEnv(WEBVIEW, mAndroidWebView as AndroidWebView)
+//        }
+//    }
 
     fun loadURL(url: String, extraHeaders: HashMap<String, String>){
         if (isX5) mX5?.loadUrl(url, extraHeaders)
@@ -139,17 +145,20 @@ class YNWebView {
 
     fun addNewJavaScript( mRlRootView: RelativeLayout, tag: String, url: String, content: String){
         if (isX5) {
-            mX5!!.addJavascriptInterface(JSBridge(this), JSBridge::class.java.simpleName)
+            mX5!!.addJavascriptInterface(JSBridge(this, mX5), JSBridge::class.java.simpleName)
             mX5?.addJavascriptInterface(JSIntercept(this), JSIntercept::class.java.simpleName)
             X5Chrome.sViewRoot.add(mRlRootView)
             WebViewManager.addGameView(tag, mX5!!)
+            setWeb("",mX5!!)
             mX5!!.setInjectContent(url, content)
         } else {
-            mAndroidWebView!!.addJavascriptInterface(JSBridge(this), JSBridge::class.java.simpleName)
+            mAndroidWebView!!.addJavascriptInterface(JSBridge(this, mX5), JSBridge::class.java.simpleName)
             mAndroidWebView?.addJavascriptInterface(JSIntercept(this), JSIntercept::class.java.simpleName)
             AndroidWebView.sViewRoot.add(mRlRootView)
             WebViewManager.addGameView(tag, mAndroidWebView!!)
+            setWeb("",mAndroidWebView!!)
             mAndroidWebView!!.setInjectContent(url, content)
+
         }
     }
 
@@ -157,16 +166,18 @@ class YNWebView {
         lateinit var mJsIntercept: JSIntercept
         if (isX5) {
             mJsIntercept = JSIntercept(this)
-            mX5?.addJavascriptInterface(JSBridge(this), JSBridge::class.java.simpleName)
+            mX5?.addJavascriptInterface(JSBridge(this, mX5), JSBridge::class.java.simpleName)
             mX5?.addJavascriptInterface(mJsIntercept, JSIntercept::class.java.simpleName)
             X5Chrome.sViewRoot.add(mRlRootView)
             WebViewManager.addGameView("default", mX5!!)
+            setWeb("",mX5!!)
         } else {
             mJsIntercept = JSIntercept(this)
-            mAndroidWebView?.addJavascriptInterface(JSBridge(this), JSBridge::class.java.simpleName)
+            mAndroidWebView?.addJavascriptInterface(JSBridge(this, mAndroidWebView), JSBridge::class.java.simpleName)
             mAndroidWebView?.addJavascriptInterface(mJsIntercept, JSIntercept::class.java.simpleName)
             AndroidWebView.sViewRoot.add(mRlRootView)
             WebViewManager.addGameView("default", mAndroidWebView!!)
+            setWeb("",mAndroidWebView!!)
         }
         return mJsIntercept
     }
@@ -262,36 +273,40 @@ class YNWebView {
 
 
         //创建webView
-        fun createWebView(context: Context, url: String, headers: Map<*, *>, injectContent: String, ynWebView: YNWebView):Any{
+        fun createWebView(context: Context,name: String, url: String, headers: Map<*, *>, injectContent: String, ynWebView: YNWebView, defaultName: String):Any{
             if (isX5) {
                 val view = X5Chrome(context)
                 view.setWebViewClient(object : WebViewClient(){
                     override fun onPageFinished(p0: WebView?, p1: String?) {
                         super.onPageFinished(p0, p1)
-                        val intent = Intent("send_messagedefault")
-                        intent.putExtra("web_view_name", "default")
+                        val intent = Intent("send_message$defaultName")
+                        intent.putExtra("web_view_name", name)
                         intent.putExtra("message","window['handle_native_event']('reptile', 'pageFinished','页面加载完毕')")
                         intent.putExtra("rpc","false")
                         (ynWebView.getEnv(ynWebView.ACTIVITY) as Activity).sendBroadcast(intent)
                     }
                 })
                 if (injectContent != "") view.setInjectContent(url, injectContent)
+                view.addJavascriptInterface(JSBridge(ynWebView, view), JSBridge::class.java.simpleName)
                 view.loadUrl(url, headers as MutableMap<String, String>?)
+                ynWebView.setWeb(name, view)
                 return view
             } else {
                 val view = AndroidWebView(context)
                 view.webViewClient = object : android.webkit.WebViewClient(){
                     override fun onPageFinished(view: android.webkit.WebView?, url: String?) {
                         super.onPageFinished(view, url)
-                        val intent = Intent("send_messagedefault")
-                        intent.putExtra("web_view_name", "default")
+                        val intent = Intent("send_message$defaultName")
+                        intent.putExtra("web_view_name", name)
                         intent.putExtra("message","window['handle_native_event']('reptile', 'pageFinished','页面加载完毕')")
                         intent.putExtra("rpc","false")
                         (ynWebView.getEnv(ynWebView.ACTIVITY) as Activity).sendBroadcast(intent)
                     }
                 }
                 if (injectContent != "") view.setInjectContent(url, injectContent)
+                view.addJavascriptInterface(JSBridge(ynWebView, view), JSBridge::class.java.simpleName)
                 view.loadUrl(url, headers as MutableMap<String, String>?)
+                ynWebView.setWeb(name, view)
                 return view
             }
         }

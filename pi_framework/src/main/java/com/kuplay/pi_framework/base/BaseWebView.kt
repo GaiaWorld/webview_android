@@ -13,7 +13,7 @@ abstract class BaseWebView :BaseActivity() {
         protected fun addJEV(activity: BaseActivity) {
             ynWebView.setEnv(ynWebView.CONTEXT, activity)
             ynWebView.setEnv(ynWebView.ACTIVITY, activity)
-            ynWebView.setJEN()
+//            ynWebView.()
         }
 
         protected fun loadUrl(url: String) {
