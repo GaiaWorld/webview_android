@@ -296,7 +296,7 @@ class YNWebView {
             }
         }
 
-        fun evaluateJavascript(view: Any, message: String, isRPC: String, sender: String ){
+        fun evaluateJavascript(ctx: Activity,view: Any, message: String, isRPC: String, sender: String ){
             var callFun = ""
             if (isRPC == "true" ){
                 callFun = String.format("javascript:window.onWebViewPostMessage('%s','%s')", sender, message)
@@ -304,9 +304,9 @@ class YNWebView {
                 callFun = message
             }
             if (isX5) {
-                (view as X5Chrome).evaluateJavascript(callFun, null)
+                ctx.runOnUiThread {   (view as X5Chrome).evaluateJavascript(callFun, null) }
             }else{
-                (view as AndroidWebView).evaluateJavascript(callFun, null)
+                ctx.runOnUiThread {   (view as AndroidWebView).evaluateJavascript(callFun, null)  }
             }
         }
 

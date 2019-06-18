@@ -214,7 +214,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             intent.putExtra("from_web_view", fromWebView)
             ctx!!.sendBroadcast(intent)
         }else if (isNoShowViewExists(webViewName)){
-            YNWebView.evaluateJavascript(getNoShowView(webViewName) as Any,message,isRPC,nameByWebViewObj!!)
+            YNWebView.evaluateJavascript(ctx!!,getNoShowView(webViewName) as Any,message,isRPC,nameByWebViewObj!!)
         }
 
     }
