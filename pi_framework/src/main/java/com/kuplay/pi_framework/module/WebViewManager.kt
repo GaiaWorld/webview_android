@@ -138,8 +138,9 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             val intent = Intent(ctx, NewWebViewActivity::class.java)
             intent.putExtra("tag", webViewName)
             ctx!!.startActivity(intent)
-        }else if (isShow == 0) {
-            newView( webViewName, url, headers, injectContent, callBack )
+        }else if (isShow == 0 ) {
+            if (!isNoShowViewExists(webViewName)) newView( webViewName, url, headers, injectContent, callBack )
+            else callBack(BaseJSModule.FAIL, arrayOf("The WebViews name can not be null."))
         } else {
             if (!webViewName.equals(GAME_NAME) && isGameViewExists(GAME_NAME)){
                 sendCloseWebViewMessage(GAME_NAME)
@@ -202,17 +203,20 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
      * @param message     The message what you would like to send.
      */
     fun postWebViewMessage(webViewName: String, message: String, isRPC: String,callBack:(callType: Int, prames: Array<Any>)->Unit) {
-        if (!isGameViewExists(webViewName)) {
+        if (!isGameViewExists(webViewName) && !isNoShowViewExists(webViewName)) {
             callBack(BaseJSModule.FAIL, arrayOf("The WebView's name is not exists."))
             return
+        }else if(isGameViewExists(webViewName)){
+            val fromWebView = nameByWebViewObj
+            val intent = Intent("send_message$webViewName")
+            intent.putExtra("message", message)
+            intent.putExtra("rpc", isRPC)
+            intent.putExtra("from_web_view", fromWebView)
+            ctx!!.sendBroadcast(intent)
+        }else if (isNoShowViewExists(webViewName)){
+            YNWebView.evaluateJavascript(getNoShowView(webViewName) as Any,message,isRPC,nameByWebViewObj!!)
         }
-        val rpc: Int = isRPC.toInt()
-        val fromWebView = nameByWebViewObj
-        val intent = Intent("send_message$webViewName")
-        intent.putExtra("message", message)
-        intent.putExtra("rpc", rpc)
-        intent.putExtra("from_web_view", fromWebView)
-        ctx!!.sendBroadcast(intent)
+
     }
 
 
