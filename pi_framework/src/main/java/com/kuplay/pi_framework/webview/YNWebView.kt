@@ -281,7 +281,7 @@ class YNWebView {
                         super.onPageFinished(p0, p1)
                         val intent = Intent("send_message$defaultName")
                         intent.putExtra("web_view_name", name)
-                        intent.putExtra("message","window['handle_native_event']('reptile', 'pageFinished','页面加载完毕')")
+                        intent.putExtra("message","window['handle_native_event']('reptile', 'pageFinished','$name')")
                         intent.putExtra("rpc","false")
                         (ynWebView.getEnv(ynWebView.ACTIVITY) as Activity).sendBroadcast(intent)
                     }
@@ -298,7 +298,7 @@ class YNWebView {
                         super.onPageFinished(view, url)
                         val intent = Intent("send_message$defaultName")
                         intent.putExtra("web_view_name", name)
-                        intent.putExtra("message","window['handle_native_event']('reptile', 'pageFinished','页面加载完毕')")
+                        intent.putExtra("message","window['handle_native_event']('reptile', 'pageFinished','$name')")
                         intent.putExtra("rpc","false")
                         (ynWebView.getEnv(ynWebView.ACTIVITY) as Activity).sendBroadcast(intent)
                     }
