@@ -114,6 +114,44 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
         callBack(BaseJSModule.SUCCESS, arrayOf(""))
     }
 
+
+    fun openWebView(webViewName: String, url: String, title: String, injectContent: String, callBack: (callType: Int, prames: Array<Any>) -> Unit){
+        if (TextUtils.isEmpty(webViewName)) {
+            callBack(BaseJSModule.FAIL, arrayOf("The WebViews name can not be null."))
+            return
+        }
+        if (TextUtils.isEmpty(url)) {
+            callBack(BaseJSModule.FAIL, arrayOf("The url can not be null."))
+            return
+        }
+        if (isGameViewExists(webViewName) && GAME_NAME == webViewName) {
+            val intent = Intent(ctx, NewWebViewActivity::class.java)
+            intent.putExtra("tag", webViewName)
+            ctx!!.startActivity(intent)
+        } else {
+            if (!webViewName.equals(GAME_NAME) && isGameViewExists(GAME_NAME)){
+                sendCloseWebViewMessage(GAME_NAME)
+            }
+            GAME_NAME = webViewName
+            //注入字符串存本地文件的原因为： Android版本25一下，intent只支持500k大小的字符串
+            val file = File(ctx!!.cacheDir, "new_webview_inject")
+            try {
+                val bw = BufferedWriter(FileWriter(file))
+                bw.write(injectContent)
+                bw.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            val intent = Intent(ctx, NewWebViewActivity::class.java)
+            intent.putExtra("uagent", "YINENG_ANDROID_GAME/1.0")
+            intent.putExtra("inject", file.absolutePath)
+            intent.putExtra("title", title)
+            intent.putExtra("load_url", url)
+            intent.putExtra("tag", webViewName)
+            ctx!!.startActivity(intent)
+        }
+    }
+
     /**
      * Open a new WebView to display a web page.
      *

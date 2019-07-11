@@ -12,13 +12,18 @@ import com.kuplay.pi_framework.Util.ViewUtil
 import com.kuplay.pi_framework.base.BaseWebView
 import com.kuplay.pi_framework.module.WebViewManager
 import android.view.View
+import android.view.ViewTreeObserver
+import android.view.WindowManager
 import kotlinx.android.synthetic.main.activity_new_web_view.*
 import java.io.File
+import java.util.*
 
 
-class NewWebViewActivity : BaseWebView(){
+class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener{
     private lateinit var mRlRootView: RelativeLayout
     private var tag: String? = null
+    private var timer: Timer? = null
+    private var delay: Long = 2000
     /**
      * Get the layout resource from XML.
      *
@@ -40,12 +45,26 @@ class NewWebViewActivity : BaseWebView(){
     }
 
 
+    override fun onGlobalLayout() {
+        if (timer != null){
+            timer!!.cancel()
+            timer!!.purge()
+        }
+        timer = Timer()
+        val task = object : TimerTask() {
+            override fun run() {
+                mRlRootView.post { kotlin.run { hideSystemNavigationBar() } }
+            }
+        }
+        timer!!.schedule(task,delay)
+    }
 
     /**
      * As the method name said,this method is used to initialize views on this activity.
      */
     override fun initViews() {
         mRlRootView = root_view
+        mRlRootView.viewTreeObserver.addOnGlobalLayoutListener(this)
         val bootView = boot_view
         bootView.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
         mRlRootView.removeAllViews()
@@ -96,10 +115,15 @@ class NewWebViewActivity : BaseWebView(){
     }
 
     private fun hideSystemNavigationBar() {
-        val _window = window
-        val params = _window.attributes
-        params.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE
-        _window.attributes = params
+//        val _window = window
+//        val params = _window.attributes
+//        params.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE
+//        _window.attributes = params
+        val v = window.decorView
+        val UIOpts = ( View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE )
+        v.systemUiVisibility = UIOpts
+        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
     }
 
     fun minsizeActivity(){

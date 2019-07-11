@@ -146,19 +146,16 @@ class YNWebView {
     fun addNewJavaScript( mRlRootView: RelativeLayout, tag: String, url: String, content: String){
         if (isX5) {
             mX5!!.addJavascriptInterface(JSBridge(this, mX5), JSBridge::class.java.simpleName)
-            mX5?.addJavascriptInterface(JSIntercept(this), JSIntercept::class.java.simpleName)
             X5Chrome.sViewRoot.add(mRlRootView)
             WebViewManager.addGameView(tag, mX5!!)
             setWeb("",mX5!!)
             mX5!!.setInjectContent(url, content)
         } else {
-            mAndroidWebView!!.addJavascriptInterface(JSBridge(this, mX5), JSBridge::class.java.simpleName)
-            mAndroidWebView?.addJavascriptInterface(JSIntercept(this), JSIntercept::class.java.simpleName)
+            mAndroidWebView!!.addJavascriptInterface(JSBridge(this, mAndroidWebView), JSBridge::class.java.simpleName)
             AndroidWebView.sViewRoot.add(mRlRootView)
             WebViewManager.addGameView(tag, mAndroidWebView!!)
             setWeb("",mAndroidWebView!!)
             mAndroidWebView!!.setInjectContent(url, content)
-
         }
     }
 

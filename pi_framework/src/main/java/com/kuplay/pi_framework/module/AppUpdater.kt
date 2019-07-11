@@ -51,7 +51,7 @@ class AppUpdater(ynWebView: YNWebView,var listenerID: Int, var cbID: Int) : Base
 
     private fun updateDownloadProgress(total: Long, progress: Long) {
         val func = String.format("window.handle_jsintercept_update(%d, %d, %d)", cbID, total, progress)
-        ctx!!.runOnUiThread(CallJSRunnable(func, yn))
+        ctx!!.runOnUiThread(CallJSRunnable(func, yn.getWeb("")))
     }
 
     /**
@@ -61,7 +61,7 @@ class AppUpdater(ynWebView: YNWebView,var listenerID: Int, var cbID: Int) : Base
      */
     private fun prepareInstall(filePath: String) {
         val func = String.format("window.handle_jsintercept_callback(%d, true)", listenerID)
-        ctx!!.runOnUiThread(CallJSRunnable(func, yn))
+        ctx!!.runOnUiThread(CallJSRunnable(func, yn.getWeb("")))
         apkURL = filePath
         Log.d("TAG", "下载成功\t文件路径为：$filePath")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

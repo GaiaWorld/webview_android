@@ -67,7 +67,7 @@ class JSIntercept(ynWebView: YNWebView) {
         }
 
         val func = String.format("window.handle_jsintercept_callback(%d, true, '%s', %d)", listenerID, name, isUpdate)
-        mActivity.runOnUiThread(CallJSRunnable(func, yn))
+        mActivity.runOnUiThread(CallJSRunnable(func, yn.getWeb("")))
     }
 
     @JavascriptInterface
@@ -77,7 +77,7 @@ class JSIntercept(ynWebView: YNWebView) {
         val f = File(versionPath)
         f.writeText(name)
         val func = String.format("window.handle_jsintercept_callback(%d, true)",listenerID)
-        mActivity.runOnUiThread(CallJSRunnable(func, yn))
+        mActivity.runOnUiThread(CallJSRunnable(func, yn.getWeb("")))
     }
 
     @JavascriptInterface
@@ -103,7 +103,7 @@ class JSIntercept(ynWebView: YNWebView) {
         }
 
         val func = String.format("window.handle_jsintercept_callback(%d, true, '%s')", listenerID, result.toString())
-        mActivity.runOnUiThread(CallJSRunnable(func, yn))
+        mActivity.runOnUiThread(CallJSRunnable(func, yn.getWeb("")))
     }
 
     @JavascriptInterface
@@ -124,7 +124,7 @@ class JSIntercept(ynWebView: YNWebView) {
 
             Log.d("Intercept", "JSIntercept.saveFile: $fullPath")
             val func = String.format("window.handle_jsintercept_callback(%d, true)", listenerID)
-            mActivity.runOnUiThread(CallJSRunnable(func, yn))
+            mActivity.runOnUiThread(CallJSRunnable(func, yn.getWeb("")))
 
         } catch (e: Exception) {
             e.printStackTrace()

@@ -3,7 +3,6 @@ package com.kuplay.pi_module.ADList.douyin
 
 import com.bytedance.sdk.openadsdk.*
 import com.kuplay.pi_framework.base.BaseJSModule
-import com.kuplay.pi_framework.framework.CallJSRunnable
 import com.kuplay.pi_framework.webview.YNWebView
 import com.kuplay.pi_module.ADList.BaseAD
 
