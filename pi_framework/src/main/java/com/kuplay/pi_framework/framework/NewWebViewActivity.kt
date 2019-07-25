@@ -77,7 +77,7 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
      */
     override fun initData() {
         Log.d("WebView", "new WebView: " + intent?.getStringExtra("tag"))
-        tag = intent?.getStringExtra("tag")
+        tag = intent!!.getStringExtra("tag")
         if (null == tag) throw Exception("The tag can't be null!")
         val path = intent.getStringExtra("inject") ?: ""
         val file = File(path)
@@ -88,7 +88,7 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
         ynWebView.addNewJavaScript( mRlRootView, tagStr, url, content)
         addJEV(this)
         super.loadUrl(url)
-        ynWebView.finishLoading()
+//        ynWebView.finishLoading()
         registerCloseReceiver()
     }
 

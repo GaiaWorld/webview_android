@@ -90,7 +90,7 @@ class YNWebView {
                     val intent = Intent("send_messagedefault")
                     intent.putExtra("web_view_name", "default")
                     intent.putExtra("message","window['handle_native_event']('reptile', 'pageFinished','页面加载完毕')")
-                    intent.putExtra("rpc","false")
+                    intent.putExtra("rpc","true")
                     (getEnv(ACTIVITY) as Activity).sendBroadcast(intent)
                 }
             }

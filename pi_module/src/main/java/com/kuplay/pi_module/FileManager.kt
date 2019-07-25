@@ -13,7 +13,7 @@ class FileManager(ynWebView: YNWebView) : BaseJSModule(ynWebView)  {
      * @param content: 存储内容
      */
     fun saveFile(fileName: String, content: String, append: Number, callBack:(callType: Int, prames: Array<Any>)->Unit){
-        val ad = (append == 0)
+        val ad = (append != 0)
         FileUtil.writeFile(gamePath+fileName,content.toByteArray(), ad)
         callBack(BaseJSModule.SUCCESS, arrayOf(""))
     }

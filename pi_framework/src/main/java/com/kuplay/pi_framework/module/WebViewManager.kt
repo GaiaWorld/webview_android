@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.text.TextUtils
+import android.util.Log
+import com.kuplay.pi_framework.Util.FileUtil
 import com.kuplay.pi_framework.Util.ViewUtil
 import com.kuplay.pi_framework.base.BaseJSModule
 import com.kuplay.pi_framework.framework.NewWebViewActivity
@@ -116,6 +118,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
 
 
     fun openWebView(webViewName: String, url: String, title: String, injectContent: String, callBack: (callType: Int, prames: Array<Any>) -> Unit){
+        Log.d("z1u24", webViewName)
         if (TextUtils.isEmpty(webViewName)) {
             callBack(BaseJSModule.FAIL, arrayOf("The WebViews name can not be null."))
             return
@@ -136,6 +139,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             //注入字符串存本地文件的原因为： Android版本25一下，intent只支持500k大小的字符串
             val file = File(ctx!!.cacheDir, "new_webview_inject")
             try {
+
                 val bw = BufferedWriter(FileWriter(file))
                 bw.write(injectContent)
                 bw.close()
@@ -162,8 +166,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
      * @param url         The web page's url.
      * @param title       The title what would you like to show in the new View.
      */
-    fun openWebView(webViewName: String, url: String, title: String, injectContent: String, headers: String, isShow: Number, callBack:(callType: Int, prames: Array<Any>)->Unit) {
-
+    fun openBookWebView(webViewName: String, url: String, injectContent: String, headers: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
         if (TextUtils.isEmpty(webViewName)) {
             callBack(BaseJSModule.FAIL, arrayOf("The WebViews name can not be null."))
             return
@@ -172,34 +175,9 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             callBack(BaseJSModule.FAIL, arrayOf("The url can not be null."))
             return
         }
-        if (isGameViewExists(webViewName) && GAME_NAME == webViewName && isShow == 1) {
-            val intent = Intent(ctx, NewWebViewActivity::class.java)
-            intent.putExtra("tag", webViewName)
-            ctx!!.startActivity(intent)
-        }else if (isShow == 0 ) {
+        else {
             if (!isNoShowViewExists(webViewName)) newView( webViewName, url, headers, injectContent, callBack )
             else callBack(BaseJSModule.FAIL, arrayOf("The WebViews name can not be null."))
-        } else {
-            if (!webViewName.equals(GAME_NAME) && isGameViewExists(GAME_NAME)){
-                sendCloseWebViewMessage(GAME_NAME)
-            }
-            GAME_NAME = webViewName
-            //注入字符串存本地文件的原因为： Android版本25一下，intent只支持500k大小的字符串
-            val file = File(ctx!!.cacheDir, "new_webview_inject")
-            try {
-                val bw = BufferedWriter(FileWriter(file))
-                bw.write(injectContent)
-                bw.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-            val intent = Intent(ctx, NewWebViewActivity::class.java)
-            intent.putExtra("uagent", "YINENG_ANDROID_GAME/1.0")
-            intent.putExtra("inject", file.absolutePath)
-            intent.putExtra("title", title)
-            intent.putExtra("load_url", url)
-            intent.putExtra("tag", webViewName)
-            ctx!!.startActivity(intent)
         }
     }
 
@@ -215,6 +193,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             return
         }
         if (isGameViewExists(webViewName)) {
+            GAME_NAME = ""
             sendCloseWebViewMessage(webViewName)
         }else if (isNoShowViewExists(webViewName)){
             freeView(webViewName, callBack)
@@ -234,13 +213,28 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
         sendMinSizeWebViewMessage(webViewName)
     }
 
+    fun postWebViewMessage(webViewName: String, message: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
+        if (!isGameViewExists(webViewName) && !isNoShowViewExists(webViewName)) {
+            callBack(BaseJSModule.FAIL, arrayOf("The WebView's name is not exists."))
+            return
+        }else if(isGameViewExists(webViewName)){
+            val fromWebView = nameByWebViewObj
+            val intent = Intent("send_message$webViewName")
+            intent.putExtra("message", message)
+            intent.putExtra("rpc", "true")
+            intent.putExtra("from_web_view", fromWebView)
+            ctx!!.sendBroadcast(intent)
+        }
+
+    }
+
     /**
      * Send a message to the web page view with the specified name.
      *
      * @param webViewName The name of WebView which you want send message to.
      * @param message     The message what you would like to send.
      */
-    fun postWebViewMessage(webViewName: String, message: String, isRPC: String,callBack:(callType: Int, prames: Array<Any>)->Unit) {
+    fun postReciptMessage(webViewName: String, message: String, isRPC: String,callBack:(callType: Int, prames: Array<Any>)->Unit) {
         if (!isGameViewExists(webViewName) && !isNoShowViewExists(webViewName)) {
             callBack(BaseJSModule.FAIL, arrayOf("The WebView's name is not exists."))
             return
