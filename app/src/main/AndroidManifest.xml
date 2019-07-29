@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
-          package="com.kuplay.kuplay" >
+          package="com.baomix.shop">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 定位权限 -->
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- 录音权限 -->
-    <uses-permission android:name="android.permission.CAMERA" /> <!-- 访问相机的权限 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 获取网络状态的权限 -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- 联网权限 -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 获取使用WiFi等WLAN无线网络 -->
-    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" tools:ignore="ProtectedPermissions" /> <!-- 在SDCard中创建与删除文件权限 -->
-    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 往SDCard写入数据权限 -->
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- 蓝牙权限 -->
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.FLASHLIGHT" /> <!-- 闪光灯 -->
-    <uses-feature android:name="android.hardware.camera" /> <!-- 相机 -->
-    <uses-feature android:name="android.hardware.camera.autofocus" /> <!-- 自动聚焦 -->
-    <uses-permission android:name="android.permission.VIBRATE" /> <!-- 摇动 -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 读取SDCard权限 -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /><!--Android 8.0 允许安装未知来源的程序-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> <!-- 定位权限 -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/> <!-- 录音权限 -->
+    <uses-permission android:name="android.permission.CAMERA"/> <!-- 访问相机的权限 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/> <!-- 获取网络状态的权限 -->
+    <uses-permission android:name="android.permission.INTERNET"/> <!-- 联网权限 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/> <!-- 获取使用WiFi等WLAN无线网络 -->
+    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+                     tools:ignore="ProtectedPermissions"/> <!-- 在SDCard中创建与删除文件权限 -->
+    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> <!-- 往SDCard写入数据权限 -->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/> <!-- 蓝牙权限 -->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.FLASHLIGHT"/> <!-- 闪光灯 -->
+    <uses-feature android:name="android.hardware.camera"/> <!-- 相机 -->
+    <uses-feature android:name="android.hardware.camera.autofocus"/> <!-- 自动聚焦 -->
+    <uses-permission android:name="android.permission.VIBRATE"/> <!-- 摇动 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/> <!-- 读取SDCard权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/><!--Android 8.0 允许安装未知来源的程序-->
     <!--广点通权限-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <!--字节跳动权限-->
     <uses-permission android:name="android.permission.GET_TASKS"/>
 
 
-
     <application
             android:usesCleartextTraffic="true"
-            android:name=".App"
+            android:name="com.baomix.shop.App"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -48,50 +48,59 @@
             tools:ignore="GoogleAppIndexingWarning">
 
 
-    <!-- Android 7.0 文件共享配置，必须配置 -->
-    <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.kuplay.kuplay.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-        <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-    </provider>
+        <!-- Android 7.0 文件共享配置，必须配置 -->
+        <provider
+                android:name="android.support.v4.content.FileProvider"
+                android:authorities="com.baomix.shop.fileprovider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/file_paths"/>
+        </provider>
 
-    <activity
-            android:name=".SplashActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme">
+        <activity
+                android:name="com.baomix.shop.SplashActivity"
+                android:screenOrientation="portrait"
+                android:theme="@style/SplashTheme">
 
 
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW"/>
-            <category android:name="android.intent.category.DEFAULT"/>
-            <category android:name="android.intent.category.BROWSABLE"/>
-            <data android:scheme="haohai"/>
-        </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="haohai"/>
+            </intent-filter>
 
-    </activity>
+        </activity>
 
-        <activity android:name=".PopupPushActivity" />
+        <activity
+                android:name="com.baomix.shop.wxapi.WXEntryActivity"
+                android:label="@string/app_name"
+                android:theme="@android:style/Theme.Translucent.NoTitleBar"
+                android:exported="true"
+                android:taskAffinity="net.sourceforge.simcpux"
+                android:launchMode="singleTask">
+        </activity>
+
+        <activity android:name="com.baomix.shop.PopupPushActivity"/>
 
         <receiver
-                android:name=".YNMessageReceiver"
+                android:name="com.baomix.shop.YNMessageReceiver"
                 android:exported="false"> <!-- 为保证receiver安全，建议设置不可导出，如需对其他应用开放可通过android：permission进行限制 -->
             <intent-filter>
-                <action android:name="com.alibaba.push2.action.NOTIFICATION_OPENED" />
+                <action android:name="com.alibaba.push2.action.NOTIFICATION_OPENED"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="com.alibaba.push2.action.NOTIFICATION_REMOVED" />
+                <action android:name="com.alibaba.push2.action.NOTIFICATION_REMOVED"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="com.alibaba.sdk.android.push.RECEIVE" />
+                <action android:name="com.alibaba.sdk.android.push.RECEIVE"/>
             </intent-filter>
         </receiver>
 

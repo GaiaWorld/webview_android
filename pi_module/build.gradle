@@ -53,6 +53,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:28.0.0'
+    api 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
     testImplementation 'junit:junit:4.12'
     implementation 'com.github.dfqin:grantor:2.5'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
