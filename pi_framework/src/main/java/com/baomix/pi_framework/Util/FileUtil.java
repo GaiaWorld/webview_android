@@ -251,6 +251,7 @@ public class FileUtil {
             public void run() {
                 final File file = new File(savePath);
                 try {
+                    if (!file.exists()) file.mkdirs();
                     if (file.exists()) if (!file.delete()) return;
                     if (!file.createNewFile()) return;
                     BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));

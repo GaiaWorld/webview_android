@@ -14,8 +14,8 @@ MobSDK {
     ShareSDK {
         devInfo {
             Wechat {
-                appId "wx3d86fc2e76c0af41"
-                appSecret "36fee1ab731a7bda68ae0b24b7d6bdb5"
+                appId "wx352b4d158651ccf2"
+                appSecret "a7bc0c244d5d9311a508b8675c5d46cf"
                 userName "gh_afb25ac019c9"
                 path "pages/index/index.html?id=1"
                 withShareTicket true
@@ -23,8 +23,8 @@ MobSDK {
                 bypassApproval false
             }
             WechatMoments {
-                appId "wx3d86fc2e76c0af41"
-                appSecret "36fee1ab731a7bda68ae0b24b7d6bdb5"
+                appId "wx352b4d158651ccf2"
+                appSecret "a7bc0c244d5d9311a508b8675c5d46cf"
                 userName "gh_afb25ac019c9"
                 path "pages/index/index.html?id=1"
                 withShareTicket true
@@ -51,7 +51,7 @@ MobSDK {
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.kuplay.kuplay"
+        applicationId "com.baomix.shop"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1

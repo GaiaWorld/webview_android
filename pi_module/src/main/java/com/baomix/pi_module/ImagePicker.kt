@@ -3,9 +3,14 @@ package com.baomix.pi_module
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.media.MediaScannerConnection
 import android.os.AsyncTask
+import android.os.Environment
 import android.text.TextUtils
+import android.util.Base64
 import android.util.Log
+import android.webkit.MimeTypeMap
 import com.github.dfqin.grantor.PermissionListener
 import com.github.dfqin.grantor.PermissionsUtil
 import com.iqos.imageselector.utils.ImageSelector
@@ -14,6 +19,10 @@ import com.baomix.pi_framework.Util.FileUtil
 import com.baomix.pi_framework.base.BaseJSModule
 import com.baomix.pi_framework.framework.WebViewActivity
 import com.baomix.pi_framework.webview.YNWebView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
+import java.io.File
 
 class ImagePicker(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
     /**
@@ -36,6 +45,39 @@ class ImagePicker(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
      */
     protected val tipContentWithoutPermission: String
         get() = if (isUseCamera) ctx!!.resources.getString(R.string.tip_please_allow_app_read_gallery_with_camera) else ctx!!.resources.getString(R.string.tip_please_allow_app_read_gallery_without_camera)
+
+
+    fun saveImageToAlbum(imgName: String, saveImg: String, callBack: (callType: Int, prames: Array<Any>) -> Unit){
+        var filePath = Environment.getExternalStorageDirectory().absolutePath
+//        val appDir = File(filePath)
+//        if (!appDir.exists()) {
+//            appDir.mkdirs()
+//        }
+
+        val file = Glide.with(ctx!!).download(saveImg).submit().get()
+        val bitmap = FileUtil.file2Bitmap(file.absolutePath)
+
+        PermissionsUtil.requestPermission(ctx!!, object : PermissionListener {
+            override fun permissionGranted(permission: Array<String>) {
+                FileUtil.saveBitmapFile(bitmap,filePath+"/baomix/"+imgName,{
+                    val extension = MimeTypeMap.getFileExtensionFromUrl(it.absolutePath)
+                    val mimetype = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+                    MediaScannerConnection.scanFile(ctx!!, arrayOf(it.absolutePath), arrayOf(mimetype),{ path, uri ->
+                        callBack(BaseJSModule.SUCCESS, arrayOf("save successful"))
+                    })
+                })
+            }
+
+            override fun permissionDenied(permission: Array<String>) {
+                callBack(BaseJSModule.SUCCESS, arrayOf("用户拒绝了权限!"))
+                //JSCallback.callJS(null, null, callbackId, JSCallback.getFAIL(), "用户拒绝了权限!")
+            }
+        }, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), true, mTipInfo)
+
+
+
+    }
+
 
     /**
      * .

@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.widget.RelativeLayout
 import com.baomix.pi_framework.R
@@ -14,13 +16,16 @@ import com.baomix.pi_framework.Util.PrefMgr
 import com.baomix.pi_framework.Util.ViewUtil
 import com.baomix.pi_framework.base.BaseWebView
 import com.baomix.pi_framework.module.LocalLanguageMgr
-import kotlinx.android.synthetic.main.layout_fake_status_bar_view.*
+import kotlinx.android.synthetic.main.activity_webview.*
 import java.io.File
+import java.util.*
 
 
 class WebViewActivity : BaseWebView() {
     private lateinit var mJsIntercept: JSIntercept
     private lateinit var mRlRootView: RelativeLayout
+    private var timer: Timer? = null
+    private var delay: Long = 2000
     /**
      * Get the layout resource from XML.
      *
@@ -29,6 +34,7 @@ class WebViewActivity : BaseWebView() {
     override val layoutResources: Int get() = R.layout.activity_webview
 
     override fun onCreate(savedInstanceState: Bundle?) {
+//        hideSystemNavigationbar()
         ynWebView.createYnWebView(this)
         addJEV(this)
         super.onCreate(savedInstanceState)
@@ -39,18 +45,23 @@ class WebViewActivity : BaseWebView() {
      * As the method name said,this method is used to initialize views on this activity.
      */
     override fun initViews() {
-        mRlRootView = findViewById(R.id.app_main_rl_root_view)
+        val bootView = boot_view
+        bootView.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
+        mRlRootView = app_main_rl_root_view
         mRlRootView.removeAllViews()
         ynWebView.addYnWebView(mRlRootView)
-        status_bar.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
     }
+
+
+
 
     /**
      * Initialize basic data.
      */
     override fun initData() {
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)// 在setContentView之后，适配顶部状态栏
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)// 适配底部导航栏
+//        window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
+////        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)// 在setContentView之后，适配顶部状态栏
+//        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)// 适配底部导航栏
         mJsIntercept = ynWebView.addJavaScriptInterface( mRlRootView)
         addJEV(this)
         LocalLanguageMgr(ynWebView).setAppLanguage(
@@ -59,6 +70,15 @@ class WebViewActivity : BaseWebView() {
         onloadUrl()
         registerBc()
     }
+
+//    fun hideSystemNavigationbar(){
+////        val _window = window
+////        val params = _window.attributes
+////        params.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_VISIBLE
+////        _window.attributes = params
+////        window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
+////        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+//    }
 
     private fun onloadUrl(){
         //获取当前app版本号
