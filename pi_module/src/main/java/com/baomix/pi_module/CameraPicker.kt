@@ -42,7 +42,7 @@ class CameraPicker(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
                     if (photoFile != null) {
                         val photoURI = FileProvider.getUriForFile(
                             ctx!!,
-                            "com.kuplay.kuplay.fileprovider",
+                            "com.baomtx.shop.fileprovider",
                             photoFile
                         )
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
