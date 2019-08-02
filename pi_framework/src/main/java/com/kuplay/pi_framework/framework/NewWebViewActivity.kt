@@ -14,6 +14,7 @@ import com.kuplay.pi_framework.module.WebViewManager
 import android.view.View
 import android.view.ViewTreeObserver
 import android.view.WindowManager
+import com.kuplay.pi_framework.webview.YNWebView
 import kotlinx.android.synthetic.main.activity_new_web_view.*
 import java.io.File
 import java.util.*
@@ -78,6 +79,7 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
     override fun initData() {
         Log.d("WebView", "new WebView: " + intent?.getStringExtra("tag"))
         tag = intent!!.getStringExtra("tag")
+        YNWebView.addWithName(tag!!)
         if (null == tag) throw Exception("The tag can't be null!")
         val path = intent.getStringExtra("inject") ?: ""
         val file = File(path)

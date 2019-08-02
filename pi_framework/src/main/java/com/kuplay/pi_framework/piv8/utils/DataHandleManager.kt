@@ -2,11 +2,16 @@ package com.kuplay.pi_framework.piv8.utils
 
 import com.kuplay.pi_framework.piv8.V8
 
-class DataHandleManager(private val v8: V8){
+object DataHandleManager{
 
     private var dataHandleID: Int = 0;
     private val dataHandleMap:MutableMap<Int,DataHandle> = mutableMapOf();
 
+    private lateinit var v8: V8
+
+    fun setV8(v8: V8){
+        this.v8 = v8
+    }
 
     fun createNewDataHandle():Int{
         dataHandleID++

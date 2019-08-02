@@ -38,9 +38,9 @@ class piv8DB( private val ctx: Context,private val v8:V8, private var fileName: 
         sExecutorService.execute {
             try {
                 db.execSQL(createSql)
-                mainHandler.post { call(v8Success, null, null) }
+                mainHandler.post { call(v8Success, null, null); v8Fail.close()}
             } catch (e: SQLException) {
-                mainHandler.post {  val arg = V8Array(v8);arg.push(e.message!!);call(v8Fail, null, arg);arg.close() }
+                mainHandler.post {  val arg = V8Array(v8);arg.push(e.message!!);call(v8Fail, null, arg);arg.close();v8Success.close() }
             }
             mainHandler.post { call(v8Complete, null, null) }
         }

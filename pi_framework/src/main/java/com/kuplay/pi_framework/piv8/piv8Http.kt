@@ -40,10 +40,10 @@ class piv8Http(private val v8:V8){
         call.enqueue(object : Callback {
             override fun onResponse(call: Call?, response: Response?) {
                 if (respType == "string"){
-                    val s = response!!.body().string()
+                    val s = response!!.body()!!.string()
                     mainHandler.post { val arr = V8Array(v8);arr.push(s);callBack.call(null, arr);arr.close() }
                 }else{
-                    val s = response!!.body().bytes()
+                    val s = response!!.body()!!.bytes()
                     val st = Base64.encodeToString(s, Base64.NO_WRAP)
                     mainHandler.post { val arr = V8Array(v8);arr.push(st);callBack.call(null, arr);arr.close() }
                 }

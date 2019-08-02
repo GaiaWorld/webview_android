@@ -121,14 +121,6 @@ class YNWebView {
         }
     }
 
-//    fun setJEN(){
-//        if (mX5 != null) {
-//            setEnv(WEBVIEW, mX5 as X5Chrome)
-//        } else {
-//            setEnv(WEBVIEW, mAndroidWebView as AndroidWebView)
-//        }
-//    }
-
     fun loadURL(url: String, extraHeaders: HashMap<String, String>){
         if (isX5) mX5?.loadUrl(url, extraHeaders)
         else mAndroidWebView?.loadUrl(url, extraHeaders)
@@ -213,6 +205,20 @@ class YNWebView {
     companion object {
         var isX5 = false
         lateinit var sAppCtx: Application
+        val managerMap = mutableMapOf<String, YNWebView>()
+
+        fun addWithName(name: String){
+            val ynWebView = YNWebView()
+            managerMap.set(name,ynWebView)
+        }
+
+        fun getYNWebView(name: String):YNWebView?{
+            if (name in managerMap.keys){
+                return managerMap.get(name)
+            }else{
+                return null
+            }
+        }
 
         //判断是否使用X5浏览器
         fun getX5Open(Ctx: Application) {

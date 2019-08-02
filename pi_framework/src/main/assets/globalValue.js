@@ -1,6 +1,7 @@
 
 //添加jsc需要的对象
 var navigator = {};
+navigator.userAgent = "Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Mobile Safari/537.36 YINENG_ANDROID/1.0 JSVM_ANDROID"
 JSVM.module = {};
 var document = {};
 document.body = {};

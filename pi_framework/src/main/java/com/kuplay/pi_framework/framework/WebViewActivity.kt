@@ -14,6 +14,7 @@ import com.kuplay.pi_framework.Util.PrefMgr
 import com.kuplay.pi_framework.Util.ViewUtil
 import com.kuplay.pi_framework.base.BaseWebView
 import com.kuplay.pi_framework.module.LocalLanguageMgr
+import com.kuplay.pi_framework.webview.YNWebView
 import kotlinx.android.synthetic.main.layout_fake_status_bar_view.*
 import java.io.File
 
@@ -30,6 +31,7 @@ class WebViewActivity : BaseWebView() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ynWebView.createYnWebView(this)
+        YNWebView.addWithName("default")
         addJEV(this)
         super.onCreate(savedInstanceState)
     }

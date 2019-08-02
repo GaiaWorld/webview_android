@@ -1,9 +1,15 @@
 package com.kuplay.pi_framework.piv8
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import com.kuplay.pi_framework.framework.CallJSRunnable
+import com.kuplay.pi_framework.module.StageUtils
 import com.kuplay.pi_framework.piv8.utils.DataHandleManager
+import com.kuplay.pi_framework.webview.YNWebView
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.security.SecureRandom
@@ -33,25 +39,27 @@ class JSVMManager constructor(){
         runtime!!.add("piv8DHManager",v8DataHandle)
         runtime!!.add("console",v8Console)
         v8Console.registerJavaMethod(logCallBack,"log")
+        val vmBridge = VMBridge(runtime)
         val piv8timer = piv8Timer()
-        val piv8dataHandle = DataHandleManager(runtime!!)
+        val piv8dataHandle = DataHandleManager
+        piv8dataHandle.setV8(runtime!!)
         val piv8http = piv8Http(runtime!!)
         val piv8ws = piv8WebSocket(runtime!!)
         val piv8db = piv8DB(ctx!!,runtime!!)
         val bootManager = PiV8JsBootManager(ctx!!,runtime!!)
-        runtime!!.executeVoidScript("var JSVM = {};")
-        runtime!!.executeVoidScript("var piv8WebSocket = {};")
-        runtime!!.executeVoidScript("JSVM.store = {};")
-        runtime!!.executeVoidScript("JSVM.Boot = {}")
+        runtime!!.executeVoidScript("var JSVM = {};var piv8WebSocket = {};JSVM.store = {};JSVM.Boot = {};")
         val jsWS = runtime!!.getObject("piv8WebSocket")
         val jsvm = runtime!!.getObject("JSVM")
         val store = jsvm.getObject("store")
         val boot = jsvm.getObject("Boot")
         v8DataHandle.registerJavaMethod(piv8dataHandle,"createNewDataHandle", "createNewDataHandle" , arrayOf())
-        v8DataHandle.registerJavaMethod(piv8dataHandle,"getContent", "getContent" , arrayOf(Int::class.java))
-        v8DataHandle.registerJavaMethod(piv8dataHandle,"runScript", "runScript" , arrayOf(Int::class.java))
-        v8DataHandle.registerJavaMethod(piv8dataHandle,"setContent", "setContent" , arrayOf(Int::class.java, String::class.java, String::class.java))
+        v8DataHandle.registerJavaMethod(piv8dataHandle,"getContent", "getContent" , arrayOf<Class<*>>(Int::class.java))
+        v8DataHandle.registerJavaMethod(piv8dataHandle,"runScript", "runScript" , arrayOf<Class<*>>(Int::class.java))
+        v8DataHandle.registerJavaMethod(piv8dataHandle,"setContent", "setContent" , arrayOf<Class<*>>(Int::class.java, String::class.java, String::class.java))
+        jsvm.registerJavaMethod(vmBridge,"postMessage","messageReciver", arrayOf<Class<*>>(Array<Any>::class.java))
         jsvm.registerJavaMethod(this,"getRandomValues","getRandomValues", arrayOf())
+        jsvm.registerJavaMethod(this,"getReady","getReady", arrayOf<Class<*>>(String::class.java))
+        jsvm.registerJavaMethod(this,"postMessage","postMessage", arrayOf<Class<*>>(String::class.java, String::class.java))
         jsvm.registerJavaMethod(piv8http, "request", "request", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java,String::class.java,String::class.java,String::class.java,V8Function::class.java,V8Function::class.java,V8Function::class.java))
         jsWS.registerJavaMethod(piv8ws, "startWebSocket", "startWebSocket", arrayOf<Class<*>>(String::class.java))
         jsWS.registerJavaMethod(piv8ws, "onOpen", "onOpen", arrayOf<Class<*>>(String::class.java,V8Function::class.java))
@@ -75,6 +83,19 @@ class JSVMManager constructor(){
 
         val base64js = getLocalJSScript("base64js.min.js")
         runtime!!.executeScript(base64js!!,"base64js.min.js",0)
+
+        val globaljs = getLocalJSScript("globalValue.js")
+        runtime!!.executeScript(globaljs!!,"globalValue.js",0)
+
+        val envjs = getLocalJSScript("env.js")
+        runtime!!.executeScript(envjs!!,"env.js",0)
+
+        val dhManagerjs = getLocalJSScript("piv8DHManager.js")
+        runtime!!.executeScript(dhManagerjs!!,"piv8DHManager.js",0)
+
+        val cryptojs = getLocalJSScript("crypto.js")
+        runtime!!.executeScript(cryptojs!!,"crypto.js",0)
+
         runtime?.startDebugger()
 
         v8Console.close()
@@ -92,9 +113,39 @@ class JSVMManager constructor(){
     }
 
     fun postMessage(webName: String, message: String){
-
-
+        val ynWebView = YNWebView.getYNWebView(webName)
+        val fullCode: String = "window['onWebViewPostMessage']('JSVM', '"+ message + "')"
+        (ynWebView!!.getEnv(ynWebView!!.ACTIVITY) as Activity).runOnUiThread { CallJSRunnable(fullCode, ynWebView.getWeb("")) }
     }
+
+    fun getReady(stage: String){
+        val b = StageUtils.makeStages(stage,"JSVM")
+        if (b){
+            val fullCode = "window['onLoadTranslation']('" + stage + "')"
+            Handler(Looper.getMainLooper()).post {
+                CallJSRunnable(fullCode, YNWebView.getYNWebView("default")!!.getWeb(""))
+            }
+            runtime!!.executeVoidScript(fullCode)
+        }
+    }
+
+    fun getDownRead(filePath: String, fileName: String, okCB: V8Function, errCB: V8Function){
+        val ok = okCB.twin()
+        val err = errCB.twin()
+        val handler = Handler()
+        handler.post {
+            val fileString = getLocalJSScript(filePath)
+            if (fileString == null){
+                Handler(Looper.getMainLooper()).post {
+                    val arr = V8Array(runtime!!); arr.push("can not find"); err.call(null,arr); arr.close(); err.close();ok.close();
+                }
+            }
+            val dh = DataHandleManager.createNewDataHandle()
+            DataHandleManager.setContent(dh,fileString!!,fileName)
+
+        }
+    }
+
 
     fun getRandomValues():Int{
         val sercurirandom = SecureRandom()
