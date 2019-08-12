@@ -1,23 +1,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.baomix.pi_framework">
+          package="com.baomtx.pi_framework">
     <application>
         <activity
-                android:name="com.baomix.pi_framework.framework.WebViewActivity"
+                android:name="com.baomtx.pi_framework.framework.WebViewActivity"
                 android:screenOrientation="portrait"
                 android:launchMode="singleTask"
                 android:theme="@style/FullScreenWithoutAny">
         </activity>
         <activity
-                android:name="com.baomix.pi_framework.framework.NewWebViewActivity"
+                android:name="com.baomtx.pi_framework.framework.NewWebViewActivity"
                 android:launchMode="singleInstance"
                 android:screenOrientation="portrait"
                 android:theme="@style/GameScreenWithoutAny" />
         <service
-                android:name="com.baomix.pi_framework.module.service.UpdateAppService"
+                android:name="com.baomtx.pi_framework.module.service.UpdateAppService"
                 android:enabled="true"
                 android:exported="true" />
         <service
-                android:name="com.baomix.pi_framework.module.service.RestartService"
+                android:name="com.baomtx.pi_framework.module.service.RestartService"
                 android:enabled="true"
                 android:exported="true" />
     </application>

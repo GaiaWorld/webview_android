@@ -49,9 +49,10 @@ MobSDK {
 
 
 android {
+
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.baomix.shop"
+        applicationId "com.baomtx.shop"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
@@ -67,6 +68,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.assembleDebug
+        }
+        debug {
+//            signingConfig signingConfigs.assembleDebug
         }
     }
 }
@@ -91,5 +96,5 @@ dependencies {
     implementation project(':pi_framework')
     implementation project(':pi_module')
     api 'com.aliyun.ams:alicloud-android-push:3.1.4'
-    api 'com.aliyun.ams:alicloud-android-third-push:3.0.5@aar'
+    api 'com.aliyun.ams:alicloud-android-third-push:3.0.6@aar'
 }
