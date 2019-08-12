@@ -73,4 +73,36 @@ class PiV8JsBootManager(private val context: Context, private val v8: V8){
         mainHander.post { JSVMManager.get().restartJSVM() }
     }
 
+    fun loadJS(){
+
+    }
+
+    fun updateApp(){
+
+    }
+
+    fun getAppVersion(){
+
+    }
+
+    fun getMobileBootFiles(){
+
+    }
+
+    fun updateFinish(){
+
+    }
+
+    fun updateDownload(){
+
+    }
+
+    fun saveDepend(){
+
+    }
+
+    fun saveIndexJS(content: String){
+
+    }
+
 }

@@ -142,7 +142,9 @@ class JSVMManager constructor(){
             }
             val dh = DataHandleManager.createNewDataHandle()
             DataHandleManager.setContent(dh,fileString!!,fileName)
-
+            Handler(Looper.getMainLooper()).post {
+                val arr = V8Array(runtime!!); arr.push(dh); ok.call(null,arr); arr.close(); err.close();ok.close();
+            }
         }
     }
 
