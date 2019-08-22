@@ -5,6 +5,7 @@ import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.os.Handler
 import android.os.Looper
+import com.kuplay.pi_framework.piv8.utils.DataHandleManager
 import org.json.JSONObject
 import java.io.File
 import java.util.concurrent.Executors
@@ -89,7 +90,9 @@ class piv8DB( private val ctx: Context,private val v8:V8, private var fileName: 
                 if (c.moveToNext()) {
                     val name = c.getColumnIndex("json")
                     val temp = c.getString(name)
-                    mainHandler.post { val arg = V8Array(v8);arg.push(temp);call(v8Success, null, arg); arg.close() }
+                    val dh = DataHandleManager.createNewDataHandle()
+                    DataHandleManager.setContent(dh,temp,key)
+                    mainHandler.post { val arg = V8Array(v8);arg.push(dh);call(v8Success, null, arg); arg.close() }
                 } else {
                     mainHandler.post { val arg = V8Array(v8);arg.push("The key does not exist");call(v8Fail, null, arg);arg.close() }
                 }

@@ -3,12 +3,18 @@ package com.kuplay.pi_framework.module
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import android.util.Log
 import com.kuplay.pi_framework.Util.FileUtil
 import com.kuplay.pi_framework.Util.ViewUtil
 import com.kuplay.pi_framework.base.BaseJSModule
+import com.kuplay.pi_framework.framework.CallJSRunnable
 import com.kuplay.pi_framework.framework.NewWebViewActivity
+import com.kuplay.pi_framework.piv8.JSVMManager
+import com.kuplay.pi_framework.piv8.piv8Service
+import com.kuplay.pi_framework.piv8.serviceRunCode
 import com.kuplay.pi_framework.webview.YNWebView
 import org.json.JSONObject
 import java.io.BufferedWriter
@@ -258,6 +264,21 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
         callBack(BaseJSModule.SUCCESS, arrayOf(high,0))
     }
 
+    fun getReady(stage: String, callBack: (callType: Int, prames: Array<Any>) -> Unit){
+        val fromWebView = nameByWebViewObj
+        if (fromWebView!!.equals("default")){
+            val b = StageUtils.makeStages(stage,"default")
+            if (b){
+                val fullCode = "window['onLoadTranslation']('" + stage + "')"
+                ctx!!.runOnUiThread { CallJSRunnable(fullCode, yn.getWeb("")) }
+                val intent = Intent(ctx!!, piv8Service::class.java)
+                intent.putExtra(serviceRunCode.key,serviceRunCode.runScript)
+                intent.putExtra(serviceRunCode.scriptKey,fullCode)
+                ctx!!.startService(intent)
+            }
+        }
+    }
+
     /**
      * Close the WebView by webView's name.Finished by send broadcast,
      * because in this way, the coupling is the lowest.
@@ -276,6 +297,8 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
         intent.putExtra("web_view_name", webViewName)
         ctx!!.sendBroadcast(intent)
     }
+
+
 
 
 

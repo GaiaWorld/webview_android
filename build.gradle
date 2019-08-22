@@ -13,26 +13,8 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
-    ext {
-        POM_NAME = 'ShortcutBadger'
-        POM_DESCRIPTION = 'The ShortcutBadger makes your Android App show the count of unread messages as a badge on your App shortcut!'
-        POM_URL = 'https://github.com/leolin310148/ShortcutBadger'
-        POM_SCM_URL = 'https://github.com/leolin310148/ShortcutBadger'
-        POM_SCM_CONNECTION = 'https://github.com/leolin310148/ShortcutBadger.git'
-        POM_SCM_DEV_CONNECTION = 'https://github.com/leolin310148/ShortcutBadger.git'
-        POM_LICENCE_NAME = 'The Apache Software License, Version 2.0'
-        POM_LICENCE_URL = 'http://www.apache.org/licenses/LICENSE-2.0'
-        POM_LICENCE_DIST = 'repo'
-        POM_DEVELOPER_ID = 'leolin310148'
-        POM_DEVELOPER_NAME = 'Leo Lin'
-        POM_PACKAGING = 'aar'
-        POM_ARTIFACT_ID = 'ShortcutBadger'
-        VERSION_NAME = '1.1.8'
-        VERSION_CODE = 1
-        GROUP = 'me.leolin'
-    }
-}
 
+}
 
 
 allprojects {
@@ -48,6 +30,7 @@ allprojects {
             // 下把Library module中的libs目录添加到依赖关系中
             dirs 'libs'
             dirs project(':pi_module').file('libs') //借助 project()函数的位置查找
+            dirs project(':pi_framework').file('libs')
         }
     }
 }

@@ -48,38 +48,43 @@
             tools:ignore="GoogleAppIndexingWarning">
 
 
-    <!-- Android 7.0 文件共享配置，必须配置 -->
-    <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.kuplay.kuplay.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-        <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-    </provider>
+        <!-- Android 7.0 文件共享配置，必须配置 -->
+        <provider
+               android:name="android.support.v4.content.FileProvider"
+               android:authorities="com.kuplay.kuplay.fileprovider"
+               android:exported="false"
+               android:grantUriPermissions="true">
+           <meta-data
+                  android:name="android.support.FILE_PROVIDER_PATHS"
+                  android:resource="@xml/file_paths" />
+        </provider>
 
-    <activity
+        <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
-
-
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW"/>
-            <category android:name="android.intent.category.DEFAULT"/>
-            <category android:name="android.intent.category.BROWSABLE"/>
-            <data android:scheme="haohai"/>
-        </intent-filter>
-
-    </activity>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="haohai"/>
+            </intent-filter>
+        </activity>
 
         <activity android:name=".PopupPushActivity" />
+
+        <activity
+                android:name=".wxapi.WXPayEntryActivity"
+                android:label="@string/app_name"
+                android:theme="@android:style/Theme.Translucent.NoTitleBar"
+                android:exported="true"
+                android:taskAffinity="com.kuplay.wx.WXPayEntry"
+                android:launchMode="singleTask">
+        </activity>
 
         <receiver
                 android:name=".YNMessageReceiver"

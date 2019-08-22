@@ -12,6 +12,16 @@
                 android:launchMode="singleInstance"
                 android:screenOrientation="portrait"
                 android:theme="@style/GameScreenWithoutAny" />
+
+        <activity
+                android:name=".gameView.ShareActivity"
+                android:screenOrientation="portrait" />
+        <activity
+                android:name=".gameView.ChargeInGameActivity"
+                android:screenOrientation="portrait" />
+        <activity
+                android:name=".gameView.ChargeActivity"
+                android:screenOrientation="portrait" />
         <service
                 android:name=".module.service.UpdateAppService"
                 android:enabled="true"
@@ -20,6 +30,12 @@
                 android:name=".module.service.RestartService"
                 android:enabled="true"
                 android:exported="true" />
+
+        <service
+                android:name=".piv8.piv8Service"
+                android:enabled="true"
+                android:exported="true" />
+
     </application>
 </manifest>
 

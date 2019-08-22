@@ -24,7 +24,6 @@ object DataHandleManager{
         if (dhID in dataHandleMap.keys){
             val dh = dataHandleMap[dhID]
             val result = dh!!.getContent()
-            dataHandleMap.remove(dhID)
             return result
         }
         return ""
@@ -34,7 +33,6 @@ object DataHandleManager{
         if (dhID in dataHandleMap.keys){
             val dh = dataHandleMap[dhID]
             dh!!.runScript()
-            dataHandleMap.remove(dhID)
         }
     }
 

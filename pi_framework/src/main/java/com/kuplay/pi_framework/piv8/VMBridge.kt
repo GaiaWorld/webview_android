@@ -17,7 +17,8 @@ import java.util.HashMap
 
 class VMBridge( private val webview: V8?) {
 
-    private val ynWebView = YNWebView.getYNWebView("default")!!
+    private var ynWebView : YNWebView? = null
+        get() = YNWebView.getYNWebView("default")!!
 
     //获取主线程
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -78,7 +79,7 @@ class VMBridge( private val webview: V8?) {
             }
             when (methodName) {
                 METHOD_INIT -> {
-                    val id = newInstance(className, ynWebView)
+                    val id = newInstance(className, ynWebView!!)
                     callJS(listenerID, BaseJSModule.SUCCESS, arrayOf(id))
                 }
                 METHOD_CLOSE -> {

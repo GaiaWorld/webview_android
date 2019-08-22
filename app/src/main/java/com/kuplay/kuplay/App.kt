@@ -12,6 +12,11 @@ import com.alibaba.sdk.android.push.CommonCallback
 import com.alibaba.sdk.android.push.noonesdk.PushServiceFactory
 import com.alibaba.sdk.android.push.register.HuaWeiRegister
 import com.alibaba.sdk.android.push.register.MiPushRegister
+import android.content.Intent
+import com.kuplay.pi_framework.Util.WXContants
+import com.kuplay.pi_framework.piv8.piv8Service
+import com.tencent.mm.opensdk.openapi.WXAPIFactory
+
 
 class App : Application(){
     private val TAG = "Init"
@@ -19,8 +24,15 @@ class App : Application(){
         super.onCreate()
         YNWebView.getX5Open(this)
         initCloudChannel(this)
+        //注册微信
+        regToWx()
     }
 
+    private fun regToWx(){
+        var api = WXAPIFactory.createWXAPI(this, WXContants.APP_ID, true)
+        // 将应用的appId注册到微信
+        api!!.registerApp(WXContants.APP_ID)
+    }
 
 
     /**

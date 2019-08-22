@@ -1,6 +1,7 @@
 package com.kuplay.pi_framework.piv8.utils
 
-import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import com.kuplay.pi_framework.piv8.V8
 
 class DataHandle(private val v8: V8){
@@ -13,7 +14,9 @@ class DataHandle(private val v8: V8){
     }
 
     fun runScript(){
-        v8.executeVoidScript(data, filePath, 0)
+        Handler(Looper.getMainLooper()).post {
+            v8.executeVoidScript(data, filePath, 0)
+        }
     }
 
     fun setContent(content: String, fileName: String){

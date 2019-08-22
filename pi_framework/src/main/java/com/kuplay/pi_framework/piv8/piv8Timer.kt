@@ -21,11 +21,10 @@ class piv8Timer() {
             mainHandler.post {
                 v8Function.call(null,null)
                 v8Function.close()
+                this.cancel()
+                removeFromMap(this)
             }
-            this.cancel()
-            removeFromMap(this)
         }
-
         mtimer.schedule(timerTask, time.toLong())
         i += 1
         managerTimeMap.set(i.toString(),timerTask)
@@ -57,15 +56,14 @@ class piv8Timer() {
     }
 
     private fun removeFromMap(timer: TimerTask) {
-        val iter = managerTimeMap.keys.iterator()
-        while (iter.hasNext()) {
-            val key = iter.next()
-            val target = managerTimeMap[key]
-            if (target === timer) {
-                managerTimeMap.remove(key)
+        for ( i in managerTimeMap.keys){
+            var target = managerTimeMap.get(i)!!
+            if (target == timer){
+                managerTimeMap.remove(i)
                 break
             }
         }
+
     }
 
 }

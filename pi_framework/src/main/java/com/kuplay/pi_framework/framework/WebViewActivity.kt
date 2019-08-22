@@ -14,6 +14,9 @@ import com.kuplay.pi_framework.Util.PrefMgr
 import com.kuplay.pi_framework.Util.ViewUtil
 import com.kuplay.pi_framework.base.BaseWebView
 import com.kuplay.pi_framework.module.LocalLanguageMgr
+import com.kuplay.pi_framework.piv8.JSVMManager
+import com.kuplay.pi_framework.piv8.V8
+import com.kuplay.pi_framework.piv8.piv8Service
 import com.kuplay.pi_framework.webview.YNWebView
 import kotlinx.android.synthetic.main.layout_fake_status_bar_view.*
 import java.io.File
@@ -22,6 +25,9 @@ import java.io.File
 class WebViewActivity : BaseWebView() {
     private lateinit var mJsIntercept: JSIntercept
     private lateinit var mRlRootView: RelativeLayout
+
+
+    private lateinit var runtime: V8
     /**
      * Get the layout resource from XML.
      *
@@ -34,6 +40,8 @@ class WebViewActivity : BaseWebView() {
         YNWebView.addWithName("default")
         addJEV(this)
         super.onCreate(savedInstanceState)
+        val intent = Intent(this, piv8Service::class.java)
+        this.startService(intent)
     }
 
 

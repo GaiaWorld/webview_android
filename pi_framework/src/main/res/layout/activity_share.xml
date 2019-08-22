@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true">
+
+    <!-- 背景底图 -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@mipmap/share_bg"
+        android:scaleType="fitXY" />
+
+    <!-- 下方渐变底图 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="300dp"
+        android:background="@drawable/shape_corner_purple" />
+
+
+    <!-- 返回按钮 -->
+    <ImageView
+        android:id="@+id/share_back_btn"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="40dp"
+        android:background="@mipmap/back_btn_white"
+        android:scaleType="fitXY" />
+
+    <!-- 用户名 -->
+    <TextView
+        android:id="@+id/share_nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="348dp"
+        android:text="专属邀请码"
+        android:textColor="#ffffff"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <!-- 文字邀请码 -->
+    <LinearLayout
+        android:id="@+id/share_code_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_below="@+id/share_nickname"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/share_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text=""
+            android:textColor="@color/shareWhite"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/share_code_copy"
+            android:layout_width="42dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/shape_corner_white"
+            android:gravity="center"
+            android:text="复制"
+            android:textColor="@color/shareWhite"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 图片邀请码 -->
+    <ImageView
+        android:id="@+id/share_code_pic"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_below="@+id/share_code_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@mipmap/share_code_pic"
+        android:scaleType="fitXY" />
+    <!-- 扫码下载-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/share_code_pic"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="扫码下载"
+        android:textColor="@color/shareWhite"
+        android:textSize="12sp" />
+
+    <!--下方分享按钮-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_below="@+id/share_code_pic"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="39dp">
+
+        <ImageView
+            android:id="@+id/share_btn1"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/share_btn1" />
+
+        <ImageView
+            android:id="@+id/share_btn2"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="35dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/share_btn2" />
+
+        <ImageView
+            android:id="@+id/share_btn3"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="35dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/share_btn3" />
+
+        <ImageView
+            android:id="@+id/share_btn4"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="35dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/share_btn4" />
+
+    </LinearLayout>
+
+</RelativeLayout>

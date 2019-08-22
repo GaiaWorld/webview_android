@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/chargeBg"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <!-- 正文内容-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- 顶部-->
+        <ImageView
+            android:id="@+id/charge_back_btn"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="13dp"
+            android:layout_marginTop="13dp"
+            android:background="@mipmap/back_btn_black"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="13dp"
+            android:text="充值"
+            android:textColor="@color/chargeText"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="69dp"
+            android:text="银两余额"
+            android:textColor="@color/chargeText"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/charge_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="69dp"
+            android:layout_marginRight="15dp"
+            android:text="0.00"
+            android:textColor="@color/chargeTextLight2"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/charge_quick_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/charge_balance"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:text="快捷充值"
+            android:textColor="@color/chargeText"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <!-- 充值档次-->
+        <LinearLayout
+            android:id="@+id/charge_layout_top"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/charge_quick_text"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="15dp"
+            android:orientation="horizontal">
+
+            <!-- 最好封装view-->
+            <LinearLayout
+                android:id="@+id/charge_grade1_layout"
+                android:layout_width="110dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_corner_charge_gray"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/charge_grade1_text1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="20银两"
+                    android:textColor="@color/chargeTextLight2"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/charge_grade1_text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="售价：20元"
+                    android:textColor="@color/chargeTextLight2"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/charge_grade2_layout"
+                android:layout_width="110dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_corner_charge_gray"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/charge_grade2_text1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="50银两"
+                    android:textColor="@color/chargeTextLight2"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/charge_grade2_text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="售价：50元"
+                    android:textColor="@color/chargeTextLight2"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/charge_grade3_layout"
+                android:layout_width="110dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_corner_charge_gray"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/charge_grade3_text1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="100银两"
+                    android:textColor="@color/chargeTextLight2"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/charge_grade3_text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="售价：100元"
+                    android:textColor="@color/chargeTextLight2"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/charge_layout_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/charge_layout_top"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/charge_grade4_layout"
+                android:layout_width="110dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_corner_charge_gray"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/charge_grade4_text1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="200银两"
+                    android:textColor="@color/chargeTextLight2"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/charge_grade4_text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="售价：200元"
+                    android:textColor="@color/chargeTextLight2"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/charge_grade5_layout"
+                android:layout_width="110dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_corner_charge_gray"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/charge_grade5_text1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="500银两"
+                    android:textColor="@color/chargeTextLight2"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/charge_grade5_text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="售价：500元"
+                    android:textColor="@color/chargeTextLight2"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/charge_grade6_layout"
+                android:layout_width="110dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_corner_charge_gray"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/charge_grade6_text1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1000银两"
+                    android:textColor="@color/chargeTextLight2"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/charge_grade6_text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="售价：1000元"
+                    android:textColor="@color/chargeTextLight2"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- 自定义价格-->
+        <EditText
+            android:id="@+id/charge_customize"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/charge_quick_text"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="155dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/shape_corner_charge_gray"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center|left"
+            android:inputType="number"
+            android:lines="1"
+            android:paddingLeft="15dp"
+            android:text="自定义充值金额"
+            android:textColor="@color/chargeTextLight"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/charge_customize_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/charge_customize"
+            android:layout_alignTop="@+id/charge_customize"
+            android:layout_alignRight="@+id/charge_customize"
+            android:layout_alignBottom="@+id/charge_customize"
+            android:gravity="center|right"
+            android:paddingRight="15dp"
+            android:text="0.00银两"
+            android:textColor="@color/chargeTextLight"
+            android:textSize="18sp" />
+
+        <!-- 赠送提示-->
+        <TextView
+            android:id="@+id/charge_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/charge_customize"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="10dp"
+            android:text="充银两，送10倍嗨豆"
+            android:textColor="@color/chargeTextTips"
+            android:textSize="14sp" />
+
+        <!-- 分隔线-->
+        <TextView
+            android:id="@+id/charge_divider1"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_below="@+id/charge_tips"
+            android:layout_marginTop="25dp"
+            android:background="@color/chargeDivider" />
+
+
+        <!-- 支付方式 ，可以考虑做成自定义view，先不弄-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/charge_divider1"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:text="支付方式"
+            android:textColor="@color/chargeText"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+        <!-- 微信支付-->
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="25dp"
+            android:layout_below="@+id/charge_divider1"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="69dp"
+            android:background="@mipmap/wxpay"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:id="@+id/charge_wxpay_text"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/charge_divider1"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="54dp"
+            android:layout_marginRight="40dp"
+            android:gravity="left|center"
+            android:text="微信"
+            android:textColor="@color/chargeText"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+
+        <!-- 支付宝支付-->
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/charge_divider1"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="116dp"
+            android:background="@mipmap/alipay"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:id="@+id/charge_alipay_text"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/charge_divider1"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="105dp"
+            android:layout_marginRight="40dp"
+            android:gravity="left|center"
+            android:text="支付宝"
+            android:textColor="@color/chargeText"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <!-- 单选按钮-->
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/charge_divider1"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="66dp"
+            android:layout_marginRight="15dp"
+            android:orientation="vertical">
+
+
+            <RadioButton
+                android:id="@+id/charge_wxpay_checked"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/radio_charge"
+                android:button="@null"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/charge_alipay_checked"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="28dp"
+                android:background="@drawable/radio_charge"
+                android:button="@null"
+                android:checked="false" />
+
+        </RadioGroup>
+
+
+        <!-- 支付按钮-->
+        <TextView
+            android:id="@+id/charge_pay_btn"
+            android:layout_width="315dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="28dp"
+            android:background="@drawable/shape_corner_blue"
+            android:gravity="center"
+            android:text="支付"
+            android:textColor="@color/chargePayBtnText"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <!-- 网络请求等待动画-->
+    <RelativeLayout
+        android:id="@+id/charge_loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <!-- 黑色背景-->
+        <TextView
+            android:id="@+id/charge_loading_shadow"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:alpha="0.7"
+            android:background="@drawable/shape_corner_loading" />
+
+        <!-- 圆环-->
+        <ImageView
+            android:id="@+id/charge_loading_image"
+            android:layout_width="51dp"
+            android:layout_height="51dp"
+            android:layout_alignTop="@+id/charge_loading_shadow"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/shape_circle_loading" />
+
+        <!-- 提示文字-->
+        <TextView
+            android:id="@+id/charge_loading_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/charge_loading_shadow"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:text="支付中"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
