@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import android.widget.RelativeLayout
@@ -29,7 +30,12 @@ class NewWebViewActivity : BaseWebView(){
     override fun onCreate(savedInstanceState: Bundle?) {
         gameExit = true
         hideSystemNavigationBar()
-
+        val screenOrientation = intent?.getStringExtra("screenOrientation")
+        if (screenOrientation == "landscape"){
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        }else{
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
         val uAgent = intent?.getStringExtra("uagent")
         if ( uAgent != null){
             ynWebView.createYnWebView(this, uAgent)

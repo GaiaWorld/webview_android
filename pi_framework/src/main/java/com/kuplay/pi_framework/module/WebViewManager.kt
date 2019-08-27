@@ -123,7 +123,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
      * @param url         The web page's url.
      * @param title       The title what would you like to show in the new View.
      */
-    fun openWebView(webViewName: String, url: String, title: String, injectContent: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
+    fun openWebView(webViewName: String, url: String, title: String, injectContent: String, screenOrientation: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
         if (TextUtils.isEmpty(webViewName)) {
             callBack(BaseJSModule.FAIL, arrayOf("The WebViews name cant be null."))
             return
@@ -153,6 +153,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             intent.putExtra("inject", file.absolutePath)
             intent.putExtra("uagent", "YINENG_ANDROID_GAME1.0")
             intent.putExtra("title", title)
+            intent.putExtra("screenOrientation", screenOrientation)
             intent.putExtra("load_url", url)
             intent.putExtra("tag", webViewName)
             ctx!!.runOnUiThread { ctx!!.startActivity(intent) }

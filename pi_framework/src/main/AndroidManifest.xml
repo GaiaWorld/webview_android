@@ -10,7 +10,6 @@
         <activity
                 android:name=".framework.NewWebViewActivity"
                 android:launchMode="singleInstance"
-                android:screenOrientation="portrait"
                 android:theme="@style/GameScreenWithoutAny" />
         <service
                 android:name=".module.service.UpdateAppService"
