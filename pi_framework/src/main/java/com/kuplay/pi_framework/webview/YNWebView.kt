@@ -133,6 +133,7 @@ class YNWebView {
         }
     }
 
+
     fun addJavaScriptInterface( mRlRootView: RelativeLayout): JSIntercept{
         lateinit var mJsIntercept: JSIntercept
         if (isX5) {

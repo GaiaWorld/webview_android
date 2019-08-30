@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.widget.RelativeLayout
@@ -13,6 +14,7 @@ import com.kuplay.pi_framework.Util.ViewUtil
 import com.kuplay.pi_framework.base.BaseWebView
 import com.kuplay.pi_framework.module.WebViewManager
 import android.view.View
+import com.kuplay.pi_framework.Util.FileUtil
 import kotlinx.android.synthetic.main.activity_new_web_view.*
 import java.io.File
 
@@ -72,9 +74,19 @@ class NewWebViewActivity : BaseWebView(){
         file.delete()
         val url = intent?.getStringExtra("load_url") ?: "https://cn.bing.com"
         val tagStr = tag as String
-        ynWebView.addNewJavaScript( mRlRootView, tagStr, url, content)
+        ynWebView.addNewJavaScript( mRlRootView, tagStr, "file:///android_asset" + url, content)
         addJEV(this)
-        super.loadUrl(url)
+        if (url.startsWith("/")) {
+            val stream = this.getAssets().open(url.substring(1))
+            val content = FileUtil.readFile(stream)
+            if (content != "") {
+                super.loadDataWithBaseUrl("file:///android_asset" + url, content);
+            } else {
+                Log.d("JSIntercept", "loadUrl Error!!!");
+            }
+        } else {
+            super.loadUrl(url)
+        }
         registerCloseReceiver()
     }
 
@@ -84,6 +96,9 @@ class NewWebViewActivity : BaseWebView(){
     }
 
 
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+    }
 
 
     override fun onBackPressed() {

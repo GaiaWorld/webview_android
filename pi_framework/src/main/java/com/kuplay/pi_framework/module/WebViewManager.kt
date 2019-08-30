@@ -3,6 +3,7 @@ package com.kuplay.pi_framework.module
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.text.TextUtils
 import com.kuplay.pi_framework.Util.ViewUtil
 import com.kuplay.pi_framework.base.BaseJSModule
