@@ -18,6 +18,7 @@ import com.kuplay.pi_framework.gameView.ChargeInGameActivity
 import com.kuplay.pi_framework.module.StageUtils
 import com.kuplay.pi_framework.module.WeChatPay
 import com.kuplay.pi_framework.piv8.utils.DataHandleManager
+import com.kuplay.pi_framework.piv8.utils.PiEthBtcWrapper
 import com.kuplay.pi_framework.webview.YNWebView
 import java.io.BufferedReader
 import java.io.File
@@ -75,13 +76,19 @@ class JSVMManager constructor(){
         piv8dataHandle.setV8(runtime!!)
         val piv8http = piv8Http(runtime!!)
         val piv8ws = piv8WebSocket(runtime!!)
+        val piEthBtcWrapper = PiEthBtcWrapper(runtime!!)
         val piv8db = piv8DB(ctx!!,runtime!!)
         val bootManager = PiV8JsBootManager(ctx!!,runtime!!)
         runtime!!.executeVoidScript("var JSVM = {};var piv8WebSocket = {};JSVM.store = {};JSVM.Boot = {};")
+        runtime!!.executeVoidScript("var api = {};api.eth = {};api.btc = {};api.cipher = {};")
         val jsWS = runtime!!.getObject("piv8WebSocket")
         val jsvm = runtime!!.getObject("JSVM")
         val store = jsvm.getObject("store")
         val boot = jsvm.getObject("Boot")
+        val api  = runtime!!.getObject("api")
+        val eth = api.getObject("eth")
+        val btc = api.getObject("btc")
+        val cipher = api.getObject("cipher")
         v8DataHandle.registerJavaMethod(piv8dataHandle,"createNewDataHandle", "createNewDataHandle" , arrayOf())
         v8DataHandle.registerJavaMethod(piv8dataHandle,"getContent", "getContent" , arrayOf<Class<*>>(Int::class.java))
         v8DataHandle.registerJavaMethod(piv8dataHandle,"runScript", "runScript" , arrayOf<Class<*>>(Int::class.java))
@@ -125,6 +132,25 @@ class JSVMManager constructor(){
         jsvm.registerJavaMethod(this, "removeChareInGameActionListen", "removeChareInGameActionListen", arrayOf())
         jsvm.registerJavaMethod(this, "addChareInGameActionListen", "addChareInGameActionListen", arrayOf<Class<*>>(V8Function::class.java, V8Function::class.java))
         jsvm.registerJavaMethod(this, "goWXPay", "goWXPay", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java,String::class.java,String::class.java,String::class.java,String::class.java, V8Function::class.java))
+        eth.registerJavaMethod(piEthBtcWrapper, "eth_from_mnemonic","eth_from_mnemonic", arrayOf<Class<*>>(String::class.java, String::class.java))
+        eth.registerJavaMethod(piEthBtcWrapper, "eth_generate","eth_generate", arrayOf<Class<*>>(Int::class.java, String::class.java))
+        eth.registerJavaMethod(piEthBtcWrapper, "eth_select_wallet","eth_select_wallet", arrayOf<Class<*>>(String::class.java, String::class.java, Int::class.java))
+        eth.registerJavaMethod(piEthBtcWrapper, "eth_sign_raw_transaction","eth_sign_raw_transaction", arrayOf<Class<*>>(Int::class.java, String::class.java, String::class.java, String::class.java, String::class.java, String::class.java, String::class.java, String::class.java))
+        eth.registerJavaMethod(piEthBtcWrapper, "get_public_key_by_mnemonic","get_public_key_by_mnemonic", arrayOf<Class<*>>(String::class.java, String::class.java))
+        eth.registerJavaMethod(piEthBtcWrapper, "token_balance_call_data","token_balance_call_data", arrayOf<Class<*>>(String::class.java))
+        eth.registerJavaMethod(piEthBtcWrapper, "token_transfer_call_data","token_transfer_call_data", arrayOf<Class<*>>(String::class.java, String::class.java))
+        btc.registerJavaMethod(piEthBtcWrapper, "btc_build_raw_transaction_from_single_address","btc_build_raw_transaction_from_single_address", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java,String::class.java))
+        btc.registerJavaMethod(piEthBtcWrapper, "btc_from_mnemonic","btc_from_mnemonic", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java,String::class.java))
+        btc.registerJavaMethod(piEthBtcWrapper, "btc_from_seed","btc_from_seed", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java))
+        btc.registerJavaMethod(piEthBtcWrapper, "btc_generate","btc_generate", arrayOf<Class<*>>(Int::class.java,String::class.java,String::class.java,String::class.java))
+        btc.registerJavaMethod(piEthBtcWrapper, "btc_private_key_of","btc_private_key_of", arrayOf<Class<*>>(Int::class.java, String::class.java))
+        btc.registerJavaMethod(piEthBtcWrapper, "btc_to_address","btc_to_address", arrayOf<Class<*>>(String::class.java,String::class.java))
+        btc.registerJavaMethod(piEthBtcWrapper, "btc_build_pay_to_pub_key_hash","btc_build_pay_to_pub_key_hash", arrayOf<Class<*>>(String::class.java))
+        cipher.registerJavaMethod(piEthBtcWrapper, "rust_decrypt","rust_decrypt", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java,String::class.java))
+        cipher.registerJavaMethod(piEthBtcWrapper, "rust_encrypt","rust_encrypt", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java,String::class.java))
+        cipher.registerJavaMethod(piEthBtcWrapper, "rust_sha256","rust_sha256", arrayOf<Class<*>>(String::class.java))
+        cipher.registerJavaMethod(piEthBtcWrapper, "rust_sign","rust_sign", arrayOf<Class<*>>(String::class.java, String::class.java))
+
 
         val base64js = getLocalJSScript("base64js.min.js")
         runtime!!.executeScript(base64js!!,"base64js.min.js",0)
@@ -169,7 +195,10 @@ class JSVMManager constructor(){
         }
         runtime!!.executeScript( content, url,0)
 
-
+        eth.close()
+        btc.close()
+        cipher.close()
+        api.close()
         v8Console.close()
         jsWS.close()
         boot.close()

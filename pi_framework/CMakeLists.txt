@@ -82,6 +82,7 @@ add_library( # Sets the name of the library.
         src/main/cpp/util.cpp
         src/main/cpp/util.h
         src/main/cpp/log.h
+        src/main/cpp/wrapper.h
         )
 
 
@@ -107,6 +108,7 @@ find_library( # Sets the name of the path variable.
         # you want CMake to locate.
         log )
 #target_link_libraries(native-lib ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libzip.a)
+target_link_libraries(native-lib ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libethbtcwrapper.a)
 target_link_libraries(native-lib ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libv8_base.a)
 target_link_libraries(native-lib ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libv8_external_snapshot.a)
 target_link_libraries(native-lib ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libv8_init.a)

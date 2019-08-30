@@ -11,6 +11,7 @@
 class util{
 public:
     static std::string jstring2string(JNIEnv *env, jstring jStr);
+    static jstring charTojstring(JNIEnv* env, const char* pat);
 private:
 };
 
