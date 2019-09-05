@@ -58,7 +58,11 @@ class JSBridge(private val ynWebView: YNWebView, private val webview: Any?) {
             }
         }
         try {
-            val js = JSONArray(jsonArray)
+            var newJsonArray = jsonArray
+            if (jsonArray.contains("\\\\")){
+                newJsonArray = jsonArray.replace("\\\\","\\\\\\\\")
+            }
+            val js = JSONArray(newJsonArray)
             val params = arrayOfNulls<Any>(1 + js.length())
             for (i in 0 until params.size) {
                 if (i == js.length()){

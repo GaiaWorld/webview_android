@@ -6,20 +6,5 @@
     <color name="asdfsa">#ff0e4223</color>
 
 
-    <color name="shareWhite">#ffffff</color>
-    <color name="shareBgStart">#21013F</color>
-    <color name="shareBgEnd">#16220440</color>
-    <color name="chargeBg">#ffffff</color>
-    <color name="chargeText">#222222</color>
-    <color name="chargeTextPay">#F5A264</color>
-    <color name="chargeDivider">#F2F2F2</color>
-    <color name="chargePayChooseBg">#ffffff</color>
-    <color name="chargePayChooseBorder">#C9C9C9</color>
-    <color name="chargePayBtnStart">#3EB3F1</color>
-    <color name="chargePayBtnEnd">#44CEED</color>
-    <color name="chargePayBtnText">#ffffff</color>
-    <color name="chargeTextLight">#CCCCCC</color>
-    <color name="chargeTextLight2">#888888</color>
-    <color name="chargeTextTips">#F5A264</color>
-    <color name="chargeTextChecked">#318DE6</color>
+    
 </resources>

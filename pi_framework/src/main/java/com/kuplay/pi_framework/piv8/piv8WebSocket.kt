@@ -105,10 +105,10 @@ class piv8WebSocket(private val v8:V8){
 
 
 
-    fun sendMsg(wId: String, type: String, data: String){
+    fun sendMsg(wId: String,  data: String, type: String){
         val w = managerWebSocket.get(wId)
         if (type == "bin"){
-            w!!.send(ByteString.decodeBase64(data))
+            w!!.send(ByteString.decodeBase64(data)!!)
         }else{
             w!!.send(data)
         }

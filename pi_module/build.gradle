@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+
+
 android {
     compileSdkVersion 28
 
@@ -58,9 +60,9 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.github.GaiaWorld:ImageSelector:v1.0.5'
-    implementation 'com.github.z1u24:QRScanner:v3.0.0'
     implementation 'com.github.GaiaWorld:Argon2Hash:v1.0'
     implementation project(':pi_framework')
     api(name: 'open_ad_sdk', ext: 'aar')
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.6'
+    implementation 'com.github.z1u24:QRScanner:v3.0.0'
 }

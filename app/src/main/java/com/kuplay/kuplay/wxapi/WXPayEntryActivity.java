@@ -3,7 +3,7 @@ package com.kuplay.kuplay.wxapi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import com.kuplay.pi_framework.Util.WXContants;
+import com.kuplay.kuplay.utils.WXContants;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;

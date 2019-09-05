@@ -8,7 +8,7 @@ class WebSocket{
 
     send(sendData){
         if( typeof(sendData) == "string" ){
-            piv8WebSocket.sendMsg(this.ws, sendData,'string');
+            piv8WebSocket.sendMsg(this.ws, sendData, 'string');
         }else{
             var u8 = new Uint8Array(sendData)
             piv8WebSocket.sendMsg(this.ws, self.base64js.fromByteArray(u8),'bin');
@@ -28,16 +28,21 @@ class WebSocket{
     }
 
     set onerror(cb){
-        piv8WebSocket.onerror(this.ws,cb);
+        piv8WebSocket.onfail(this.ws,cb);
     }
 
     set onmessage(cb){
         var om = function (dic, type){
             if( type == "string" ){
-                cb(dic);
+                var result = {};
+                result.data = dic;
+                result.type = type;
+                cb(result);
             }else{
-                dic.data = base64js.toByteArray(dic.data).buffer;
-                cb(dic);
+                var result = {};
+                result.data = base64js.toByteArray(dic).buffer;
+                result.type = type;
+                cb(result);
             }
         }
         piv8WebSocket.onmessage(this.ws,om);

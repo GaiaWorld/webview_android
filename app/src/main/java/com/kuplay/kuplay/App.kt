@@ -12,9 +12,7 @@ import com.alibaba.sdk.android.push.CommonCallback
 import com.alibaba.sdk.android.push.noonesdk.PushServiceFactory
 import com.alibaba.sdk.android.push.register.HuaWeiRegister
 import com.alibaba.sdk.android.push.register.MiPushRegister
-import android.content.Intent
-import com.kuplay.pi_framework.Util.WXContants
-import com.kuplay.pi_framework.piv8.piv8Service
+import com.kuplay.kuplay.utils.WXContants
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
 
 

@@ -79,6 +79,8 @@ add_library( # Sets the name of the library.
 
         src/main/cpp/com_kuplay_pi_1framework_piv8_impl.h
         src/main/cpp/com_kuplay_pi_1framework_piv8_impl.cpp
+        src/main/cpp/ethbtcbridge.h
+        src/main/cpp/ethbtcbridge.cpp
         src/main/cpp/util.cpp
         src/main/cpp/util.h
         src/main/cpp/log.h

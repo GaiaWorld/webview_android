@@ -1,6 +1,5 @@
-package com.kuplay.pi_framework.gameView;
+package com.kuplay.kuplay.gameView;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,9 +19,9 @@ import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.alipay.sdk.app.PayTask;
-import com.kuplay.pi_framework.R;
+import com.kuplay.kuplay.R;
 import com.kuplay.pi_framework.Util.ToastManager;
-import com.kuplay.pi_framework.module.PayResult;
+import com.kuplay.kuplay.utils.PayResult;
 import com.kuplay.pi_framework.piv8.piv8Service;
 import com.kuplay.pi_framework.piv8.serviceRunCode;
 
@@ -130,7 +129,8 @@ public class ChargeActivity extends AppCompatActivity {
 
         //赋值
         Bundle bundle = getIntent().getExtras();
-        balanceView.setText(bundle.getString("balance"));
+        String balanceString = String.format("%0.2f",bundle.getFloat("balance",0));
+        balanceView.setText(balanceString);
 
         //onclick
         backBtn.setOnClickListener(new View.OnClickListener() {

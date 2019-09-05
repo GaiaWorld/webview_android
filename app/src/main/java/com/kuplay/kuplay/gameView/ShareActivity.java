@@ -1,8 +1,10 @@
-package com.kuplay.pi_framework.gameView;
+package com.kuplay.kuplay.gameView;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +12,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.kuplay.pi_framework.R;
+import com.iqos.qrscanner.utils.QRCodeUtils;
+import com.kuplay.kuplay.R;
 
 
 public class ShareActivity extends AppCompatActivity {
@@ -50,6 +53,8 @@ public class ShareActivity extends AppCompatActivity {
         codeView.setText(code);
         String codeURL = bundle.getString("codeURL");
         //TODO 根据url生成二维码图片
+        Bitmap bitmap = QRCodeUtils.createCode(this, codeURL);
+        urlView.setImageBitmap(bitmap);
 
         //onclick
         copyBtn.setOnClickListener(new View.OnClickListener() {
@@ -135,6 +140,17 @@ public class ShareActivity extends AppCompatActivity {
     }
 
 
+
+    //
+    private Bitmap getScreenShot(){
+        View view = getWindow().getDecorView();
+        Bitmap screenshot = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(screenshot);
+        canvas.translate(-view.getScaleX(), -view.getScaleY());
+        view.draw(canvas);
+        return screenshot;
+    }
+
     //TODO click
 
     /**
@@ -143,8 +159,15 @@ public class ShareActivity extends AppCompatActivity {
      * @param shareType 1=微信，2=朋友圈，3=QQ，4=QQ空间
      */
     private void shareTo(int shareType) {
+        //截图
+        Bitmap screenshot = getScreenShot();
+        //分享图片
+
+
 
     }
+
+
 
 
 }

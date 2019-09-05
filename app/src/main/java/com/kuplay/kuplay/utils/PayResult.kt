@@ -1,4 +1,4 @@
-package com.kuplay.pi_framework.module
+package com.kuplay.kuplay.utils
 
 import android.text.TextUtils
 

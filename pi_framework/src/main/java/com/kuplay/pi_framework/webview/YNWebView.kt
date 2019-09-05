@@ -207,8 +207,7 @@ class YNWebView {
         lateinit var sAppCtx: Application
         val managerMap = mutableMapOf<String, YNWebView>()
 
-        fun addWithName(name: String){
-            val ynWebView = YNWebView()
+        fun addWithName(name: String, ynWebView: YNWebView){
             managerMap.set(name,ynWebView)
         }
 

@@ -205,24 +205,24 @@ public class PiEthBtcWrapper(v8: V8){
     }
 
 
-    private external fun _eth_from_mnemonic(mneonic: String, language: String, oa: Array<String>):Int
-    private external fun _eth_generate(generate: Int, language: String, oa: Array<String>):Int
-    private external fun _eth_select_wallet(wallet: String, master_seed: String, index: Int, oa: Array<String>):Int
-    private external fun _eth_sign_raw_transaction(transaction: Int, nonce: String, to: String, value: String, gas: String, gas_price: String, data: String, priv_key: String, oa: Array<String>):Int
-    private external fun _get_public_key_by_mnemonic(mneonic: String, language: String, oa: Array<String>):Int
-    private external fun _token_balance_call_data(data: String):String
-    private external fun _token_transfer_call_data(data: String, value: String):String
-    private external fun _btc_build_raw_transaction_from_single_address(address: String, priv_key: String, input: String, output: String, oa: Array<String>):Int
-    private external fun _btc_from_mnemonic(mnemonic: String, network: String, language: String, pass_phrase: String, oa: Array<String>):Int
-    private external fun _btc_from_seed(seed: String, network: String, language: String, oa: Array<String>):Int
-    private external fun _btc_generate(generate: Int, network: String, language: String, pass_phrase: String, oa: Array<String>):Int
-    private external fun _btc_private_key_of(index: Int, root_xpriv: String, oa: Array<String>):Int
-    private external fun _btc_to_address(network: String, priv_key: String, oa: Array<String>):Int
-    private external fun _btc_build_pay_to_pub_key_hash(address: String, oa: Array<String>):Int
-    private external fun _rust_decrypt(key: String, nonce: String, aad: String, cipher_text: String, oa: Array<String>):Int
-    private external fun _rust_encrypt(key: String, nonce: String, aad: String, plain_text: String, oa: Array<String>):Int
-    private external fun _rust_sha256(data: String, oa: Array<String>):Int
-    private external fun _rust_sign(priv_key: String, msg: String, oa: Array<String>):Int
+    external fun _eth_from_mnemonic(mneonic: String, language: String, oa: Array<String>):Int
+    external fun _eth_generate(generate: Int, language: String, oa: Array<String>):Int
+    external fun _eth_select_wallet(wallet: String, master_seed: String, index: Int, oa: Array<String>):Int
+    external fun _eth_sign_raw_transaction(transaction: Int, nonce: String, to: String, value: String, gas: String, gas_price: String, data: String, priv_key: String, oa: Array<String>):Int
+    external fun _get_public_key_by_mnemonic(mneonic: String, language: String, oa: Array<String>):Int
+    external fun _token_balance_call_data(data: String):String
+    external fun _token_transfer_call_data(data: String, value: String):String
+    external fun _btc_build_raw_transaction_from_single_address(address: String, priv_key: String, input: String, output: String, oa: Array<String>):Int
+    external fun _btc_from_mnemonic(mnemonic: String, network: String, language: String, pass_phrase: String, oa: Array<String>):Int
+    external fun _btc_from_seed(seed: String, network: String, language: String, oa: Array<String>):Int
+    external fun _btc_generate(generate: Int, network: String, language: String, pass_phrase: String, oa: Array<String>):Int
+    external fun _btc_private_key_of(index: Int, root_xpriv: String, oa: Array<String>):Int
+    external fun _btc_to_address(network: String, priv_key: String, oa: Array<String>):Int
+    external fun _btc_build_pay_to_pub_key_hash(address: String, oa: Array<String>):Int
+    external fun _rust_decrypt(key: String, nonce: String, aad: String, cipher_text: String, oa: Array<String>):Int
+    external fun _rust_encrypt(key: String, nonce: String, aad: String, plain_text: String, oa: Array<String>):Int
+    external fun _rust_sha256(data: String, oa: Array<String>):Int
+    external fun _rust_sign(priv_key: String, msg: String, oa: Array<String>):Int
 
     companion object {
 

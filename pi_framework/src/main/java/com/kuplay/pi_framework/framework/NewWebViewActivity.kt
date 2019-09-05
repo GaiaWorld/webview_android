@@ -79,7 +79,7 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
     override fun initData() {
         Log.d("WebView", "new WebView: " + intent?.getStringExtra("tag"))
         tag = intent!!.getStringExtra("tag")
-        YNWebView.addWithName(tag!!)
+        YNWebView.addWithName(tag!!,ynWebView)
         if (null == tag) throw Exception("The tag can't be null!")
         val path = intent.getStringExtra("inject") ?: ""
         val file = File(path)

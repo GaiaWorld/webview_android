@@ -2,21 +2,17 @@ package com.kuplay.pi_framework.piv8
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import com.kuplay.pi_framework.R
+import com.kuplay.pi_framework.Util.ClassInfo
 import com.kuplay.pi_framework.Util.FileUtil
 import com.kuplay.pi_framework.framework.CallJSRunnable
-import com.kuplay.pi_framework.gameView.ChargeActivity
-import com.kuplay.pi_framework.gameView.ChargeInGameActivity
-import com.kuplay.pi_framework.module.StageUtils
-import com.kuplay.pi_framework.module.WeChatPay
+import com.kuplay.pi_framework.piv8.utils.StageUtils
 import com.kuplay.pi_framework.piv8.utils.DataHandleManager
 import com.kuplay.pi_framework.piv8.utils.PiEthBtcWrapper
 import com.kuplay.pi_framework.webview.YNWebView
@@ -29,11 +25,9 @@ class JSVMManager constructor(){
 
     private var runtime: V8? = null
     private var ctx: Context? = null
-
-    private var chareSuccessFunction: V8Function? = null
-    private var chareFailFunction: V8Function? = null
-    private var chareInGameSuccessFunction: V8Function? = null
-    private var chareInGameFailFunction: V8Function? = null
+    private var vmViewModule: Any? = null
+    private var vmViewModuleInfo: ClassInfo? = null
+    private val callBackMap = HashMap<String, V8Function>()
 
     fun getRuntime():V8?{
         return runtime
@@ -71,6 +65,9 @@ class JSVMManager constructor(){
         runtime!!.registerJavaMethod(alertCallBack,"alert")
         v8Console.registerJavaMethod(logCallBack,"log")
         val vmBridge = VMBridge(runtime)
+        vmViewModuleInfo =  vmBridge.clsMap["piActivityManager"]
+        val c = vmViewModuleInfo!!.clazz.constructors[0];
+        vmViewModule = c.newInstance()
         val piv8timer = piv8Timer()
         val piv8dataHandle = DataHandleManager
         piv8dataHandle.setV8(runtime!!)
@@ -93,17 +90,17 @@ class JSVMManager constructor(){
         v8DataHandle.registerJavaMethod(piv8dataHandle,"getContent", "getContent" , arrayOf<Class<*>>(Int::class.java))
         v8DataHandle.registerJavaMethod(piv8dataHandle,"runScript", "runScript" , arrayOf<Class<*>>(Int::class.java))
         v8DataHandle.registerJavaMethod(piv8dataHandle,"setContent", "setContent" , arrayOf<Class<*>>(Int::class.java, String::class.java, String::class.java))
-        jsvm.registerJavaMethod(vmBridge,"postMessage","messageReciver", arrayOf<Class<*>>(Array<Any>::class.java))
+        jsvm.registerJavaMethod(vmBridge,"postMessage","messageReciver", arrayOf<Class<*>>(V8Array::class.java))
         jsvm.registerJavaMethod(this,"getRandomValues","getRandomValues", arrayOf())
         jsvm.registerJavaMethod(this,"getDownRead","getDownReadDH", arrayOf<Class<*>>(String::class.java, String::class.java, V8Function::class.java, V8Function::class.java))
         jsvm.registerJavaMethod(this,"getReady","getReady", arrayOf<Class<*>>(String::class.java))
         jsvm.registerJavaMethod(this,"postMessage","postMessage", arrayOf<Class<*>>(String::class.java, String::class.java))
         jsvm.registerJavaMethod(piv8http, "request", "request", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java,String::class.java,String::class.java,String::class.java,V8Function::class.java,V8Function::class.java,V8Function::class.java))
         jsWS.registerJavaMethod(piv8ws, "startWebSocket", "startWebSocket", arrayOf<Class<*>>(String::class.java))
-        jsWS.registerJavaMethod(piv8ws, "onOpen", "onOpen", arrayOf<Class<*>>(String::class.java,V8Function::class.java))
-        jsWS.registerJavaMethod(piv8ws, "onFail", "onFail", arrayOf<Class<*>>(String::class.java,V8Function::class.java))
-        jsWS.registerJavaMethod(piv8ws, "onMessage", "onMessage", arrayOf<Class<*>>(String::class.java,V8Function::class.java))
-        jsWS.registerJavaMethod(piv8ws, "onClose", "onClose", arrayOf<Class<*>>(String::class.java,V8Function::class.java))
+        jsWS.registerJavaMethod(piv8ws, "onOpen", "onopen", arrayOf<Class<*>>(String::class.java,V8Function::class.java))
+        jsWS.registerJavaMethod(piv8ws, "onFail", "onfail", arrayOf<Class<*>>(String::class.java,V8Function::class.java))
+        jsWS.registerJavaMethod(piv8ws, "onMessage", "onmessage", arrayOf<Class<*>>(String::class.java,V8Function::class.java))
+        jsWS.registerJavaMethod(piv8ws, "onClose", "onclose", arrayOf<Class<*>>(String::class.java,V8Function::class.java))
         jsWS.registerJavaMethod(piv8ws, "close", "close", arrayOf<Class<*>>(String::class.java))
         jsWS.registerJavaMethod(piv8ws, "sendMsg", "sendMsg", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java))
         runtime!!.registerJavaMethod(piv8timer, "setTimeout", "setTimeout", arrayOf<Class<*>>(V8Function::class.java,Int::class.java))
@@ -125,13 +122,6 @@ class JSVMManager constructor(){
         boot.registerJavaMethod(bootManager,"updateDownload","updateDownloadDH", arrayOf<Class<*>>(V8Array::class.java,String::class.java,String::class.java,V8Function::class.java,V8Function::class.java,V8Function::class.java))
         boot.registerJavaMethod(bootManager,"saveDepend","saveDepend", arrayOf<Class<*>>(String::class.java))
         boot.registerJavaMethod(bootManager,"saveIndexJS","saveIndexJS", arrayOf<Class<*>>(String::class.java))
-        jsvm.registerJavaMethod(this, "goChareActivity", "goChareActivity", arrayOf<Class<*>>(Int::class.java))
-        jsvm.registerJavaMethod(this, "removeChareActionListen", "removeChareActionListen", arrayOf())
-        jsvm.registerJavaMethod(this, "addChareActionListen", "addChareActionListen", arrayOf<Class<*>>(V8Function::class.java, V8Function::class.java))
-        jsvm.registerJavaMethod(this, "goChareInGameActivity", "goChareInGameActivity", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java,String::class.java,String::class.java,Int::class.java))
-        jsvm.registerJavaMethod(this, "removeChareInGameActionListen", "removeChareInGameActionListen", arrayOf())
-        jsvm.registerJavaMethod(this, "addChareInGameActionListen", "addChareInGameActionListen", arrayOf<Class<*>>(V8Function::class.java, V8Function::class.java))
-        jsvm.registerJavaMethod(this, "goWXPay", "goWXPay", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java,String::class.java,String::class.java,String::class.java,String::class.java, V8Function::class.java))
         eth.registerJavaMethod(piEthBtcWrapper, "eth_from_mnemonic","eth_from_mnemonic", arrayOf<Class<*>>(String::class.java, String::class.java))
         eth.registerJavaMethod(piEthBtcWrapper, "eth_generate","eth_generate", arrayOf<Class<*>>(Int::class.java, String::class.java))
         eth.registerJavaMethod(piEthBtcWrapper, "eth_select_wallet","eth_select_wallet", arrayOf<Class<*>>(String::class.java, String::class.java, Int::class.java))
@@ -152,6 +142,16 @@ class JSVMManager constructor(){
         cipher.registerJavaMethod(piEthBtcWrapper, "rust_sign","rust_sign", arrayOf<Class<*>>(String::class.java, String::class.java))
 
 
+        jsvm.registerJavaMethod(this,"goshare","goshare", arrayOf<Class<*>>(String::class.java, String::class.java, String::class.java, String::class.java, V8Function::class.java))
+        jsvm.registerJavaMethod(this, "goChareActivity", "goChareActivity", arrayOf<Class<*>>(Int::class.java))
+        jsvm.registerJavaMethod(this, "removeChareActionListen", "removeChareActionListen", arrayOf())
+        jsvm.registerJavaMethod(this, "addChareActionListen", "addChareActionListen", arrayOf<Class<*>>(V8Function::class.java))
+        jsvm.registerJavaMethod(this, "goChareInGameActivity", "goChareInGameActivity", arrayOf<Class<*>>(String::class.java,String::class.java,Int::class.java,String::class.java,String::class.java,Int::class.java))
+        jsvm.registerJavaMethod(this, "removeChareInGameActionListen", "removeChareInGameActionListen", arrayOf())
+        jsvm.registerJavaMethod(this, "addChareInGameActionListen", "addChareInGameActionListen", arrayOf<Class<*>>(V8Function::class.java))
+        jsvm.registerJavaMethod(this, "goWXPay", "goWXPay", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java,String::class.java,String::class.java,String::class.java,String::class.java, V8Function::class.java))
+        jsvm.registerJavaMethod(this,"goAliPay","goAliPay", arrayOf<Class<*>>(String::class.java, V8Function::class.java))
+
         val base64js = getLocalJSScript("base64js.min.js")
         runtime!!.executeScript(base64js!!,"base64js.min.js",0)
 
@@ -167,7 +167,7 @@ class JSVMManager constructor(){
         val cryptojs = getLocalJSScript("crypto.js")
         runtime!!.executeScript(cryptojs!!,"crypto.js",0)
 
-//        runtime?.startDebugger()
+        runtime?.startDebugger()
 
         val pm = ctx!!.packageManager
         val info = pm.getPackageInfo(ctx!!.packageName, 0)
@@ -213,18 +213,24 @@ class JSVMManager constructor(){
     }
 
     fun postMessage(webName: String, message: String){
-        val ynWebView = YNWebView.getYNWebView(webName)
-        val fullCode: String = "window['onWebViewPostMessage']('JSVM', '"+ message + "')"
-        (ynWebView!!.getEnv(ynWebView!!.ACTIVITY) as Activity).runOnUiThread { CallJSRunnable(fullCode, ynWebView.getWeb("")) }
+        val intent = Intent("send_message$webName")
+        intent.putExtra("message", message)
+        intent.putExtra("rpc", "true")
+        intent.putExtra("from_web_view", "JSVM")
+        ctx!!.sendBroadcast(intent)
     }
 
     fun getReady(stage: String){
         val b = StageUtils.makeStages(stage,"JSVM")
         if (b){
+            //wallet
             val fullCode = "window['onLoadTranslation']('" + stage + "')"
-            Handler(Looper.getMainLooper()).post {
-                CallJSRunnable(fullCode, YNWebView.getYNWebView("default")!!.getWeb(""))
-            }
+            val intent = Intent("send_messagedefault")
+            intent.putExtra("message", fullCode)
+            intent.putExtra("rpc", "false")
+            intent.putExtra("from_web_view", "JSVM")
+            ctx!!.sendBroadcast(intent)
+            //JSVM
             runtime!!.executeVoidScript(fullCode)
         }
     }
@@ -266,83 +272,84 @@ class JSVMManager constructor(){
     }
 
 
+    /**
+     * 打开分享界面
+     */
+    fun goshare(imageName: String, userName: String, shareCode: String, shareUrl: String, callBack: V8Function){
+        val cb = callBack.twin();
+        callBackMap.set("goshare",cb)
+        val method = vmViewModuleInfo!!.methods!!["goshare"]
+        method!!.invoke(vmViewModule, imageName, userName, shareCode, shareUrl)
+    }
 
     /**
      * 打开去充值界面
      */
     fun goChareActivity(slv: Int){
-        val intent = Intent(ctx!!,ChargeActivity::class.java)
-        intent.putExtra("balance",slv.toString())
-        ctx!!.startActivity(intent)
+        val method = vmViewModuleInfo!!.methods!!["goChareActivity"]
+        method!!.invoke(vmViewModule, slv)
     }
 
     /**
      * 打开充值界面监听
      */
-    fun addChareActionListen(success: V8Function, fail: V8Function){
-        chareSuccessFunction = success.twin()
-        chareFailFunction = fail.twin()
+    fun addChareActionListen(callBack: V8Function){
+        val cb = callBack.twin()
+        callBackMap.set("chareAction",cb)
     }
 
     /**
      * 释放充值界面监听
      */
     fun removeChareActionListen(){
-        if (chareSuccessFunction != null && !chareSuccessFunction!!.isReleased){
-            chareSuccessFunction!!.close()
-            chareSuccessFunction = null
+        val cb = callBackMap.get("chareAction")
+        if (cb != null && !cb.isReleased){
+            cb.close()
         }
-        if (chareFailFunction != null && !chareFailFunction!!.isReleased){
-            chareFailFunction!!.close()
-            chareFailFunction = null
-        }
+        callBackMap.remove("chareAction")
     }
 
     /**
      * 打开游戏内支付界面
      */
-    fun goChareInGameActivity(orderId: String, kupayId: String, balance: String, seller: String, price: String, pay: Int){
-        val intent = Intent(ctx!!, ChargeInGameActivity::class.java)
-        intent.putExtra("balance",balance)
-        intent.putExtra("orderId",orderId)
-        intent.putExtra("kupayId",kupayId)
-        intent.putExtra("seller",seller)
-        intent.putExtra("price",price)
-        intent.putExtra("pay",pay)
-        ctx!!.startActivity(intent)
+    fun goChareInGameActivity(orderId: String, kupayId: String, balance: Int, seller: String, price: String, pay: Int){
+        val method = vmViewModuleInfo!!.methods!!["goChareInGameActivity"]
+        method!!.invoke(vmViewModule, orderId, kupayId, balance, seller, price, pay)
     }
 
     /**
      * 打开游戏内支付充值界面监听
      */
-    fun addChareInGameActionListen(success: V8Function, fail: V8Function){
-        chareSuccessFunction = success.twin()
-        chareFailFunction = fail.twin()
+    fun addChareInGameActionListen(callBack: V8Function){
+        val cb = callBack.twin()
+        callBackMap.set("chareInGameAction",cb)
     }
 
     /**
      * 释放游戏内支付充值界面监听
      */
     fun removeChareInGameActionListen(){
-        if (chareInGameSuccessFunction != null && !chareInGameSuccessFunction!!.isReleased){
-            chareInGameSuccessFunction!!.close()
-            chareInGameSuccessFunction = null
+        val cb = callBackMap.get("chareInGameAction")
+        if (cb != null && !cb.isReleased){
+            cb.close()
         }
-        if (chareInGameFailFunction != null && !chareInGameFailFunction!!.isReleased){
-            chareInGameFailFunction!!.close()
-            chareInGameFailFunction = null
-        }
+        callBackMap.remove("chareInGameAction")
     }
 
     //打开微信宝控件
     fun goWXPay(app_id: String, partnerid: String, prepayid: String, packages: String, noncestr: String, timestamp: String, sign: String, callBack: V8Function){
-        val weChatPay = WeChatPay(ctx!!, runtime!!)
-        weChatPay.goWXPay(app_id, partnerid, prepayid, packages, noncestr, timestamp, sign, callBack)
+        val cb = callBack.twin();
+        callBackMap.set("goWXPay",cb)
+        val method = vmViewModuleInfo!!.methods!!["goWXPay"]
+        method!!.invoke(vmViewModule, app_id, partnerid, prepayid, packages, noncestr, timestamp, sign)
     }
 
     //打开阿里支付控件
-    fun goAliPay(app_id: String, biz_content: String, chareset: String, method: String, sign_type: String, timestamp: String, callBack: V8Function){
-
+    fun goAliPay(payInfo: String, callBack: V8Function){
+        val cb = callBack.twin();
+        callBackMap.set("goAliPay",cb)
+        val method = vmViewModuleInfo!!.methods!!["goAliPay"]
+        method!!.invoke(vmViewModule, payInfo)
     }
 
     fun distributionMessage(messageKey: String, bundle: Bundle){
@@ -350,20 +357,22 @@ class JSVMManager constructor(){
             serviceRunCode.chargeMessage -> {
                 val code = bundle.getInt(serviceRunCode.statusCodeKey)
                 if (code == serviceRunCode.statusSuccess){
+                    val sucode = bundle.getInt("code",0)
                     val payWay = bundle.getString(serviceRunCode.payKey)
                     val payAmount = bundle.getInt(serviceRunCode.payAmount)
                     Handler(Looper.getMainLooper()).post {
                         val array = V8Array(runtime)
+                        array.push(sucode)
                         array.push(payAmount)
                         array.push(payWay!!)
-                        functionCallWithOutNull(chareSuccessFunction, array)
+//                        functionCallWithOutNull(chareSuccessFunction, array)
                         array.close()
                     }
                 }else{
                     Handler(Looper.getMainLooper()).post {
                         val array = V8Array(runtime)
                         array.push(code)
-                        functionCallWithOutNull(chareFailFunction, array)
+//                        functionCallWithOutNull(chareFailFunction, array)
                         array.close()
                     }
                 }
@@ -376,14 +385,14 @@ class JSVMManager constructor(){
                     Handler(Looper.getMainLooper()).post {
                         val array = V8Array(runtime)
                         array.push(payWay!!)
-                        functionCallWithOutNull(chareInGameSuccessFunction, array)
+//                        functionCallWithOutNull(chareInGameSuccessFunction, array)
                         array.close()
                     }
                 }else{
                     Handler(Looper.getMainLooper()).post {
                         val array = V8Array(runtime)
                         array.push(code)
-                        functionCallWithOutNull(chareInGameFailFunction, array)
+//                        functionCallWithOutNull(chareInGameFailFunction, array)
                         array.close()
                     }
                 }

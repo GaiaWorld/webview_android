@@ -86,6 +86,16 @@
                 android:launchMode="singleTask">
         </activity>
 
+        <activity
+                android:name=".gameView.ShareActivity"
+                android:screenOrientation="portrait" />
+        <activity
+                android:name=".gameView.ChargeInGameActivity"
+                android:screenOrientation="portrait" />
+        <activity
+                android:name=".gameView.ChargeActivity"
+                android:screenOrientation="portrait" />
+
         <receiver
                 android:name=".YNMessageReceiver"
                 android:exported="false"> <!-- 为保证receiver安全，建议设置不可导出，如需对其他应用开放可通过android：permission进行限制 -->

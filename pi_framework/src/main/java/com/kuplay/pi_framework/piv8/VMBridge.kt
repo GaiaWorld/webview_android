@@ -1,7 +1,5 @@
 package com.kuplay.pi_framework.piv8
 
-import android.app.Activity
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -10,15 +8,11 @@ import com.kuplay.pi_framework.Util.CodeUtil
 import com.kuplay.pi_framework.Util.ContainerUtil
 import com.kuplay.pi_framework.base.BaseJSModule
 import com.kuplay.pi_framework.base.JSExecutable
-import com.kuplay.pi_framework.framework.CallJSRunnable
 import com.kuplay.pi_framework.webview.YNWebView
 import org.json.JSONArray
 import java.util.HashMap
 
 class VMBridge( private val webview: V8?) {
-
-    private var ynWebView : YNWebView? = null
-        get() = YNWebView.getYNWebView("default")!!
 
     //获取主线程
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -31,7 +25,7 @@ class VMBridge( private val webview: V8?) {
     /**
      * 类映射表，键是类名
      */
-    private val clsMap = HashMap<String, ClassInfo>()
+    val clsMap = HashMap<String, ClassInfo>()
     init {
         val classes = CodeUtil.getAllClassByInterface(JSExecutable::class.java)
         if (!ContainerUtil.isNullOrEmpty(classes)){
@@ -52,13 +46,11 @@ class VMBridge( private val webview: V8?) {
     }
 
     //高层调用底层
-    fun postMessage(arr: Array<Any>){
+    fun postMessage(arr:V8Array){
         val className: String = arr[0].toString()
         val methodName: String = arr[1].toString()
         val nativeID: Int = arr[2] as Int
         val listenerID: Int = arr[3] as Int
-        val jsonArray: String = arr[4].toString()
-        Log.d("VMBridge","$className,$methodName,$jsonArray")
         var callBack = { callType: Int, prames: Array<Any> ->
             if (callType == 3){
                 throwJS(className,methodName,prames[0] as String)
@@ -67,19 +59,27 @@ class VMBridge( private val webview: V8?) {
             }
         }
         try {
-            val js = JSONArray(jsonArray)
-            val params = arrayOfNulls<Any>(1 + js.length())
-            for (i in 0 until params.size) {
-                if (i == js.length()){
-                    params[i] = callBack
+            var params = arrayOfNulls<Any>(1 )
+            if (arr.length() > 4){
+                params = arrayOfNulls<Any>(arr.length() - 3)
+                for (i in 4 until (arr.length() + 1)){
+                    if (i == arr.length()){
+                        params[i-4] = callBack
+                    }else{
+                        var js = arr[i]
+                        if (js.toString().contains("\\\\")){
+                            js = js.toString().replace("\\\\","\\\\\\\\")
+                        }
+                        params[i-4] = js
+                    }
                 }
-                else {
-                    params[i] = js.get(i)
-                }
+            }else{
+                params[0] = callBack
             }
             when (methodName) {
                 METHOD_INIT -> {
-                    val id = newInstance(className, ynWebView!!)
+                    val yn = YNWebView.getYNWebView("default")!!
+                    val id = newInstance(className, yn!!)
                     callJS(listenerID, BaseJSModule.SUCCESS, arrayOf(id))
                 }
                 METHOD_CLOSE -> {

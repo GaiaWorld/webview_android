@@ -1,4 +1,4 @@
-package com.kuplay.pi_framework.gameView;
+package com.kuplay.kuplay.gameView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +8,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import com.kuplay.pi_framework.R;
+import com.kuplay.kuplay.R;
 import com.kuplay.pi_framework.piv8.piv8Service;
 import com.kuplay.pi_framework.piv8.serviceRunCode;
 

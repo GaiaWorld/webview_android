@@ -37,7 +37,7 @@ class WebViewActivity : BaseWebView() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ynWebView.createYnWebView(this)
-        YNWebView.addWithName("default")
+        YNWebView.addWithName("default",ynWebView)
         addJEV(this)
         super.onCreate(savedInstanceState)
         val intent = Intent(this, piv8Service::class.java)

@@ -3,7 +3,6 @@ package com.kuplay.kuplay.module
 import android.Manifest
 import android.content.ComponentName
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Environment
 import android.util.Log
@@ -17,7 +16,6 @@ import cn.sharesdk.wechat.moments.WechatMoments
 import com.github.dfqin.grantor.PermissionListener
 import com.github.dfqin.grantor.PermissionsUtil
 import com.iqos.qrscanner.utils.QRCodeUtils
-import com.kuplay.kuplay.R
 import com.kuplay.pi_framework.Util.FileUtil
 import com.kuplay.pi_framework.base.BaseJSModule
 import com.kuplay.pi_framework.webview.YNWebView
@@ -103,7 +101,8 @@ class ShareToPlatforms(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
     fun shareLink( webName: String, url: String, title: String, content: String, comment: String, platform: Int, callBack:(callType: Int, prames: Array<Any>)->Unit) {
         PermissionsUtil.requestPermission(ctx, object : PermissionListener {
             override fun permissionGranted(permission: Array<String>) {
-                val bitmap = BitmapFactory.decodeResource(ctx!!.resources, R.mipmap.ic_launcher, BitmapFactory.Options())
+                val bitmap = BitmapFactory.decodeResource(ctx!!.resources,
+                    com.kuplay.pi_module.R.mipmap.ic_launcher, BitmapFactory.Options())
                 val bmp = FileUtil.changeColor(bitmap)
                 FileUtil.saveBitmapFile(bmp, appIconFile) {
                     val oks = OnekeyShare()
@@ -287,6 +286,7 @@ class ShareToPlatforms(ynWebView: YNWebView) : BaseJSModule(ynWebView) {
                 val timeGetTime = Date().getTime()
                 fileDirPath = fileDocDirPath + "/share_image_" + timeGetTime.toString() + ".jpg"
                 FileUtil.saveBitmapFile(bitmap, fileDirPath) { shareImageContent(platform) }
+
             }
 
             override fun permissionDenied(permission: Array<String>) {
