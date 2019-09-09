@@ -35,6 +35,6 @@ object serviceRunCode{
      * 状态码
      */
     const val statusCodeKey = "statusCode"
-    const val statusSuccess = 1
-    const val statusFail = 0
+    const val statusSuccess = 0
+    const val statusFail = -1
 }

@@ -88,12 +88,15 @@
 
         <activity
                 android:name=".gameView.ShareActivity"
+                android:excludeFromRecents="true"
                 android:screenOrientation="portrait" />
         <activity
                 android:name=".gameView.ChargeInGameActivity"
+                android:excludeFromRecents="true"
                 android:screenOrientation="portrait" />
         <activity
                 android:name=".gameView.ChargeActivity"
+                android:excludeFromRecents="true"
                 android:screenOrientation="portrait" />
 
         <receiver

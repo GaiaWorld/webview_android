@@ -67,7 +67,7 @@ class JSVMManager constructor(){
         val vmBridge = VMBridge(runtime)
         vmViewModuleInfo =  vmBridge.clsMap["piActivityManager"]
         val c = vmViewModuleInfo!!.clazz.constructors[0];
-        vmViewModule = c.newInstance()
+        vmViewModule = c.newInstance(ctx!!)
         val piv8timer = piv8Timer()
         val piv8dataHandle = DataHandleManager
         piv8dataHandle.setV8(runtime!!)
@@ -86,10 +86,12 @@ class JSVMManager constructor(){
         val eth = api.getObject("eth")
         val btc = api.getObject("btc")
         val cipher = api.getObject("cipher")
+
         v8DataHandle.registerJavaMethod(piv8dataHandle,"createNewDataHandle", "createNewDataHandle" , arrayOf())
         v8DataHandle.registerJavaMethod(piv8dataHandle,"getContent", "getContent" , arrayOf<Class<*>>(Int::class.java))
         v8DataHandle.registerJavaMethod(piv8dataHandle,"runScript", "runScript" , arrayOf<Class<*>>(Int::class.java))
         v8DataHandle.registerJavaMethod(piv8dataHandle,"setContent", "setContent" , arrayOf<Class<*>>(Int::class.java, String::class.java, String::class.java))
+
         jsvm.registerJavaMethod(vmBridge,"postMessage","messageReciver", arrayOf<Class<*>>(V8Array::class.java))
         jsvm.registerJavaMethod(this,"getRandomValues","getRandomValues", arrayOf())
         jsvm.registerJavaMethod(this,"getDownRead","getDownReadDH", arrayOf<Class<*>>(String::class.java, String::class.java, V8Function::class.java, V8Function::class.java))
@@ -103,16 +105,20 @@ class JSVMManager constructor(){
         jsWS.registerJavaMethod(piv8ws, "onClose", "onclose", arrayOf<Class<*>>(String::class.java,V8Function::class.java))
         jsWS.registerJavaMethod(piv8ws, "close", "close", arrayOf<Class<*>>(String::class.java))
         jsWS.registerJavaMethod(piv8ws, "sendMsg", "sendMsg", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java))
+
         runtime!!.registerJavaMethod(piv8timer, "setTimeout", "setTimeout", arrayOf<Class<*>>(V8Function::class.java,Int::class.java))
         runtime!!.registerJavaMethod(piv8timer, "clearTimeout", "clearTimeout", arrayOf<Class<*>>(Int::class.java))
         runtime!!.registerJavaMethod(piv8timer, "setInterval", "setInterval", arrayOf<Class<*>>(V8Function::class.java,Int::class.java))
+
         store.registerJavaMethod(piv8db,"create","create",arrayOf<Class<*>>(String::class.java,V8Function::class.java,V8Function::class.java,V8Function::class.java))
         store.registerJavaMethod(piv8db,"delete","delete",arrayOf<Class<*>>(String::class.java,V8Function::class.java,V8Function::class.java,V8Function::class.java))
         store.registerJavaMethod(piv8db,"iterate","iterate",arrayOf<Class<*>>(String::class.java,V8Function::class.java,V8Function::class.java,V8Function::class.java))
         store.registerJavaMethod(piv8db,"read","readDH",arrayOf<Class<*>>(String::class.java,String::class.java,V8Function::class.java,V8Function::class.java,V8Function::class.java))
         store.registerJavaMethod(piv8db,"remove","remove",arrayOf<Class<*>>(String::class.java,String::class.java,V8Function::class.java,V8Function::class.java,V8Function::class.java))
         store.registerJavaMethod(piv8db,"write","write",arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java,V8Function::class.java,V8Function::class.java,V8Function::class.java))
+
 //        boot.registerJavaMethod(bootManager, "saveFile", "saveFile", arrayOf<Class<*>>(String::class.java, String::class.java, V8Function::class.java))
+
         boot.registerJavaMethod(bootManager, "getMobileBootFiles", "getMobileBootFilesDH", arrayOf<Class<*>>(V8Function::class.java))
         boot.registerJavaMethod(bootManager, "restartJSVM", "restartJSVM", arrayOf())
         boot.registerJavaMethod(bootManager,"loadJS","loadJSDH", arrayOf<Class<*>>(String::class.java,String::class.java))
@@ -122,6 +128,7 @@ class JSVMManager constructor(){
         boot.registerJavaMethod(bootManager,"updateDownload","updateDownloadDH", arrayOf<Class<*>>(V8Array::class.java,String::class.java,String::class.java,V8Function::class.java,V8Function::class.java,V8Function::class.java))
         boot.registerJavaMethod(bootManager,"saveDepend","saveDepend", arrayOf<Class<*>>(String::class.java))
         boot.registerJavaMethod(bootManager,"saveIndexJS","saveIndexJS", arrayOf<Class<*>>(String::class.java))
+
         eth.registerJavaMethod(piEthBtcWrapper, "eth_from_mnemonic","eth_from_mnemonic", arrayOf<Class<*>>(String::class.java, String::class.java))
         eth.registerJavaMethod(piEthBtcWrapper, "eth_generate","eth_generate", arrayOf<Class<*>>(Int::class.java, String::class.java))
         eth.registerJavaMethod(piEthBtcWrapper, "eth_select_wallet","eth_select_wallet", arrayOf<Class<*>>(String::class.java, String::class.java, Int::class.java))
@@ -129,6 +136,7 @@ class JSVMManager constructor(){
         eth.registerJavaMethod(piEthBtcWrapper, "get_public_key_by_mnemonic","get_public_key_by_mnemonic", arrayOf<Class<*>>(String::class.java, String::class.java))
         eth.registerJavaMethod(piEthBtcWrapper, "token_balance_call_data","token_balance_call_data", arrayOf<Class<*>>(String::class.java))
         eth.registerJavaMethod(piEthBtcWrapper, "token_transfer_call_data","token_transfer_call_data", arrayOf<Class<*>>(String::class.java, String::class.java))
+
         btc.registerJavaMethod(piEthBtcWrapper, "btc_build_raw_transaction_from_single_address","btc_build_raw_transaction_from_single_address", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java,String::class.java))
         btc.registerJavaMethod(piEthBtcWrapper, "btc_from_mnemonic","btc_from_mnemonic", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java,String::class.java))
         btc.registerJavaMethod(piEthBtcWrapper, "btc_from_seed","btc_from_seed", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java))
@@ -136,11 +144,11 @@ class JSVMManager constructor(){
         btc.registerJavaMethod(piEthBtcWrapper, "btc_private_key_of","btc_private_key_of", arrayOf<Class<*>>(Int::class.java, String::class.java))
         btc.registerJavaMethod(piEthBtcWrapper, "btc_to_address","btc_to_address", arrayOf<Class<*>>(String::class.java,String::class.java))
         btc.registerJavaMethod(piEthBtcWrapper, "btc_build_pay_to_pub_key_hash","btc_build_pay_to_pub_key_hash", arrayOf<Class<*>>(String::class.java))
+
         cipher.registerJavaMethod(piEthBtcWrapper, "rust_decrypt","rust_decrypt", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java,String::class.java))
         cipher.registerJavaMethod(piEthBtcWrapper, "rust_encrypt","rust_encrypt", arrayOf<Class<*>>(String::class.java,String::class.java,String::class.java,String::class.java))
         cipher.registerJavaMethod(piEthBtcWrapper, "rust_sha256","rust_sha256", arrayOf<Class<*>>(String::class.java))
         cipher.registerJavaMethod(piEthBtcWrapper, "rust_sign","rust_sign", arrayOf<Class<*>>(String::class.java, String::class.java))
-
 
         jsvm.registerJavaMethod(this,"goshare","goshare", arrayOf<Class<*>>(String::class.java, String::class.java, String::class.java, String::class.java, V8Function::class.java))
         jsvm.registerJavaMethod(this, "goChareActivity", "goChareActivity", arrayOf<Class<*>>(Int::class.java))
@@ -277,8 +285,8 @@ class JSVMManager constructor(){
      */
     fun goshare(imageName: String, userName: String, shareCode: String, shareUrl: String, callBack: V8Function){
         val cb = callBack.twin();
-        callBackMap.set("goshare",cb)
-        val method = vmViewModuleInfo!!.methods!!["goshare"]
+        callBackMap.set("goShare",cb)
+        val method = vmViewModuleInfo!!.methods!!["goShare"]
         method!!.invoke(vmViewModule, imageName, userName, shareCode, shareUrl)
     }
 
@@ -357,22 +365,27 @@ class JSVMManager constructor(){
             serviceRunCode.chargeMessage -> {
                 val code = bundle.getInt(serviceRunCode.statusCodeKey)
                 if (code == serviceRunCode.statusSuccess){
-                    val sucode = bundle.getInt("code",0)
                     val payWay = bundle.getString(serviceRunCode.payKey)
                     val payAmount = bundle.getInt(serviceRunCode.payAmount)
                     Handler(Looper.getMainLooper()).post {
                         val array = V8Array(runtime)
-                        array.push(sucode)
+                        array.push(code)
                         array.push(payAmount)
                         array.push(payWay!!)
-//                        functionCallWithOutNull(chareSuccessFunction, array)
+                        val cb = callBackMap["chareAction"]
+                        if (cb != null && !cb.isReleased){
+                            cb.call(null, array)
+                        }
                         array.close()
                     }
                 }else{
                     Handler(Looper.getMainLooper()).post {
                         val array = V8Array(runtime)
                         array.push(code)
-//                        functionCallWithOutNull(chareFailFunction, array)
+                        val cb = callBackMap["chareAction"]
+                        if (cb != null && !cb.isReleased){
+                            cb.call(null, array)
+                        }
                         array.close()
                     }
                 }

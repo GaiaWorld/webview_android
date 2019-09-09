@@ -25,6 +25,7 @@ import com.kuplay.kuplay.utils.PayResult;
 import com.kuplay.pi_framework.piv8.piv8Service;
 import com.kuplay.pi_framework.piv8.serviceRunCode;
 
+import java.text.DecimalFormat;
 import java.util.Map;
 
 public class ChargeActivity extends AppCompatActivity {
@@ -129,7 +130,10 @@ public class ChargeActivity extends AppCompatActivity {
 
         //赋值
         Bundle bundle = getIntent().getExtras();
-        String balanceString = String.format("%0.2f",bundle.getFloat("balance",0));
+        int balance = bundle.getInt("balance",0);
+        float fb = (float) (balance/100.00);
+        DecimalFormat decimalFormat = new DecimalFormat("###,###.00");
+        String balanceString = decimalFormat.format(fb).toString();
         balanceView.setText(balanceString);
 
         //onclick

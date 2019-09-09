@@ -19,6 +19,9 @@ class piv8Service: Service() {
      * runCode:
      */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent == null){
+            return super.onStartCommand(intent, flags, startId)
+        }
         val bundle = intent!!.getExtras()
         if (bundle != null){
             val code = bundle.getInt(serviceRunCode.key,0)

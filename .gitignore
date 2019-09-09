@@ -9,3 +9,6 @@
 /build
 /captures
 .externalNativeBuild
+/app/src/main/assets/browser
+/app/src/main/assets/vm
+/app/src/main/assets/dst
