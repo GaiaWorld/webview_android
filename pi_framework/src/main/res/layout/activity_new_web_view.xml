@@ -9,15 +9,15 @@
             android:id="@+id/root_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_above="@+id/boot_view"/>
+            android:layout_alignParentTop="true" />
+            <!--android:layout_above="@+id/boot_view"/>-->
 
     <!--<include layout="@layout/layout_fake_status_bar_view" />-->
-    <RelativeLayout
-            android:id="@+id/boot_view"
-            android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_height="20.0dp"/>
+    <!--<RelativeLayout-->
+            <!--android:id="@+id/boot_view"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_height="20.0dp"/>-->
 
 
 </RelativeLayout>

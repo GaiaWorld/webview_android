@@ -14,14 +14,18 @@ import com.kuplay.pi_framework.Util.ViewUtil
 import com.kuplay.pi_framework.base.BaseWebView
 import com.kuplay.pi_framework.module.WebViewManager
 import android.view.View
+import android.view.ViewTreeObserver
 import com.kuplay.pi_framework.Util.FileUtil
 import kotlinx.android.synthetic.main.activity_new_web_view.*
 import java.io.File
+import java.util.*
 
 
-class NewWebViewActivity : BaseWebView(){
+class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener{
     private lateinit var mRlRootView: RelativeLayout
     private var tag: String? = null
+    private var timer: Timer? = null
+    private val delay: Long = 2000
     /**
      * Get the layout resource from XML.
      *
@@ -54,8 +58,9 @@ class NewWebViewActivity : BaseWebView(){
      */
     override fun initViews() {
         mRlRootView = root_view
-        val bootView = boot_view
-        bootView.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
+        mRlRootView.viewTreeObserver.addOnGlobalLayoutListener (this)
+//        val bootView = boot_view
+//        bootView.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
         mRlRootView.removeAllViews()
         ynWebView.addYnWebView(mRlRootView)
 //        status_bar.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
@@ -74,7 +79,11 @@ class NewWebViewActivity : BaseWebView(){
         file.delete()
         val url = intent?.getStringExtra("load_url") ?: "https://cn.bing.com"
         val tagStr = tag as String
-        ynWebView.addNewJavaScript( mRlRootView, tagStr, "file:///android_asset" + url, content)
+        if (url.startsWith("/")) {
+            ynWebView.addNewJavaScript( mRlRootView, tagStr, "file:///android_asset" + url, content)
+        }else{
+            ynWebView.addNewJavaScript( mRlRootView, tagStr, url, content)
+        }
         addJEV(this)
         if (url.startsWith("/")) {
             val stream = this.getAssets().open(url.substring(1))
@@ -121,8 +130,9 @@ class NewWebViewActivity : BaseWebView(){
     private fun hideSystemNavigationBar() {
         val _window = window
         val params = _window.attributes
-        params.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE
-        _window.attributes = params
+        params.systemUiVisibility =   View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN;
+        this.runOnUiThread { _window.attributes = params }
+
     }
 
     fun minsizeActivity(){
@@ -195,6 +205,20 @@ class NewWebViewActivity : BaseWebView(){
         super.onDestroy()
     }
 
+
+    override fun onGlobalLayout() {
+        if (timer != null){
+            timer!!.cancel()
+            timer!!.purge()
+        }
+        timer = Timer()
+        val task = object : TimerTask() {
+            override fun run() {
+                hideSystemNavigationBar()
+            }
+        }
+        timer!!.schedule(task, delay);
+    }
 
     companion object {
         var gameExit: Boolean = false

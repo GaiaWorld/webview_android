@@ -26,5 +26,6 @@
     </style>
 
     <style name="GameScreenWithoutAny" parent="Theme.AppCompat.Light.NoActionBar">
+        <!--<item name="android:windowTranslucentStatus">true</item>-->
     </style>
 </resources>
