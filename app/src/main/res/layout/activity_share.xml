@@ -6,9 +6,10 @@
 
     <!-- 背景底图 -->
     <ImageView
+        android:id="@+id/backImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@mipmap/share_bg"
+        android:background="@mipmap/wallet"
         android:scaleType="fitXY" />
 
     <!-- 下方渐变底图 -->

@@ -18,7 +18,6 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
-import com.alipay.sdk.app.PayTask;
 import com.kuplay.kuplay.R;
 import com.kuplay.pi_framework.Util.ToastManager;
 import com.kuplay.kuplay.utils.PayResult;
@@ -69,38 +68,7 @@ public class ChargeActivity extends AppCompatActivity {
     int payAmount = 0;
     Animation circleAnimation;
 
-    //handler事件
-    private static final int WHAT_ORDER_OK = 1;
-    private static final int WHAT_ORDER_ERRO = 2;
 
-    private static final int SDK_PAY_FLAG = 1;
-    private Handler mHandler = new Handler() {
-        @SuppressWarnings("unused")
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case SDK_PAY_FLAG: {
-                    @SuppressWarnings("unchecked")
-                    PayResult payResult = new PayResult((Map<String, String>) msg.obj);
-                    /**
-                     * 对于支付结果，请商户依赖服务端的异步通知结果。同步通知结果，仅作为支付结束的通知。
-                     */
-                    String resultInfo = payResult.getResult();// 同步返回需要验证的信息
-                    String resultStatus = payResult.getResultStatus();
-                    // 判断resultStatus 为9000则代表支付成功
-                    if (TextUtils.equals(resultStatus, "9000")) {
-                        // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
-                        ToastManager.Companion.toast(ChargeActivity.this, "支付成功！");
-                    } else {
-                        // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
-                        ToastManager.Companion.toast(ChargeActivity.this, "支付失败！");
-                    }
-                    break;
-                }
-                default:
-                    break;
-            }
-        };
-    };
 
     //广播
     private BroadcastReceiver wxReceiver = new BroadcastReceiver() {
@@ -452,15 +420,15 @@ public class ChargeActivity extends AppCompatActivity {
     }
 
 
-    /**
-     * 获取支付宝 SDK 版本号。
-     */
-    public String getSdkVersion() {
-        PayTask payTask = new PayTask(this);
-        String version = payTask.getVersion();
-        return version;
-    }
-
+//
+/**
+ //     * 获取支付宝 SDK 版本号。
+ //     */
+//    public String getSdkVersion() {
+//        PayTask payTask = new PayTask(this);
+//        String version = payTask.getVersion();
+//        return version;
+//    }
 
 
     /**

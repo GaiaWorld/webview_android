@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +19,8 @@ import com.kuplay.kuplay.R;
 
 public class ShareActivity extends AppCompatActivity {
 
+    //背景图
+    ImageView backImg;
     //返回
     ImageView backBtn;
     //昵称
@@ -52,9 +55,13 @@ public class ShareActivity extends AppCompatActivity {
         code = bundle.getString("code");
         codeView.setText(code);
         String codeURL = bundle.getString("codeURL");
-        //TODO 根据url生成二维码图片
         Bitmap bitmap = QRCodeUtils.createCode(this, codeURL);
         urlView.setImageBitmap(bitmap);
+        String imageName = bundle.getString("imageName");
+        int id = getResources().getIdentifier(imageName, "mipmap", getPackageName());
+        Bitmap backMp = BitmapFactory.decodeResource(getResources(), id);
+        backImg.setImageBitmap(backMp);
+
 
         //onclick
         copyBtn.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +135,7 @@ public class ShareActivity extends AppCompatActivity {
 
 
     private void initViews() {
+        backImg = findViewById(R.id.backImage);
         backBtn = findViewById(R.id.share_back_btn);
         nameView = findViewById(R.id.share_nickname);
         codeView = findViewById(R.id.share_code);
