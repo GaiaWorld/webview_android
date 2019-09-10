@@ -130,7 +130,7 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
     private fun hideSystemNavigationBar() {
         val _window = window
         val params = _window.attributes
-        params.systemUiVisibility =   View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN;
+        params.systemUiVisibility =   View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         this.runOnUiThread { _window.attributes = params }
 
     }
