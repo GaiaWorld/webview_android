@@ -2,10 +2,15 @@ package com.kuplay.kuplay.module
 
 import android.content.Context
 import android.content.Intent
+import android.os.Message
+import android.util.Log
+import com.alipay.sdk.app.PayTask
 import com.kuplay.kuplay.gameView.ChargeActivity
 import com.kuplay.kuplay.gameView.ChargeInGameActivity
 import com.kuplay.kuplay.gameView.ShareActivity
 import com.kuplay.pi_framework.base.JSExecutable
+import com.tencent.mm.opensdk.modelpay.PayReq
+import com.tencent.mm.opensdk.openapi.WXAPIFactory
 
 class piActivityManager(private val ctx: Context) : JSExecutable{
 
@@ -39,11 +44,22 @@ class piActivityManager(private val ctx: Context) : JSExecutable{
     }
 
     fun goWXPay(app_id: String, partnerid: String, prepayid: String, packages: String, noncestr: String, timestamp: String, sign: String){
-        //
+        val req = PayReq()
+        val api = WXAPIFactory.createWXAPI(ctx, app_id, true)
+        req.appId = app_id
+        req.partnerId = partnerid
+        req.prepayId= prepayid
+        req.packageValue = packages
+        req.nonceStr= noncestr
+        req.timeStamp= timestamp
+        req.sign= sign
+        api!!.sendReq(req)
     }
 
     fun goAliPay(payInfo: String){
-
+        val intent = Intent("startAliPay")
+        intent.putExtra("payInfo",payInfo)
+        ctx.sendBroadcast(intent)
     }
 
 }

@@ -1,8 +1,10 @@
 package com.kuplay.kuplay.gameView;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -11,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -18,7 +21,9 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
+import com.alipay.sdk.app.PayTask;
 import com.kuplay.kuplay.R;
+import com.kuplay.kuplay.utils.AuthResult;
 import com.kuplay.pi_framework.Util.ToastManager;
 import com.kuplay.kuplay.utils.PayResult;
 import com.kuplay.pi_framework.piv8.piv8Service;
@@ -68,25 +73,8 @@ public class ChargeActivity extends AppCompatActivity {
     int payAmount = 0;
     Animation circleAnimation;
 
+    private static final int SDK_PAY_FLAG = 1;
 
-
-    //广播
-    private BroadcastReceiver wxReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action != null && action.equals("wx_pay_action")){
-                int ruselt = intent.getIntExtra("ruselt",0);
-                circleView.clearAnimation();
-                loadingLayout.setVisibility(View.GONE);
-                if (ruselt == 0){
-                    ToastManager.Companion.toast(ChargeActivity.this, "充值成功！");
-                }else{
-                    ToastManager.Companion.toast(ChargeActivity.this, "充值失败！");
-                }
-            }
-        }
-    };
 
 
     @Override
@@ -296,6 +284,12 @@ public class ChargeActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(mReceiver);
+        super.onDestroy();
+    }
+
     /**
      * 点击充值档位
      *
@@ -419,6 +413,80 @@ public class ChargeActivity extends AppCompatActivity {
         }
     }
 
+    private void registerBc() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("wx_pay_action");
+        intentFilter.addAction("startAliPay");
+        registerReceiver(mReceiver, intentFilter);
+    }
+
+    //广播
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action != null && action.equals("wx_pay_action")){
+                int ruselt = intent.getIntExtra("ruselt",0);
+                circleView.clearAnimation();
+                loadingLayout.setVisibility(View.GONE);
+                if (ruselt == 0){
+                    ToastManager.Companion.toast(ChargeActivity.this, "充值成功！");
+                }else{
+                    ToastManager.Companion.toast(ChargeActivity.this, "充值失败！");
+                }
+            }else if(action != null && action.equals("startAliPay")){
+                final String payInfo = intent.getStringExtra("payInfo");
+                final Runnable payRunnable = new Runnable() {
+
+                    @Override
+                    public void run() {
+                        PayTask alipay = new PayTask(ChargeActivity.this);
+                        Map<String, String> result = alipay.payV2(payInfo, true);
+                        Log.i("msp", result.toString());
+                        Message msg = new Message();
+                        msg.what = SDK_PAY_FLAG;
+                        msg.obj = result;
+                        mHandler.sendMessage(msg);
+                    }
+                };
+
+                // 必须异步调用
+                Thread payThread = new Thread(payRunnable);
+                payThread.start();
+
+            }
+        }
+    };
+
+
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @SuppressWarnings("unused")
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case SDK_PAY_FLAG: {
+                    @SuppressWarnings("unchecked")
+                    PayResult payResult = new PayResult((Map<String, String>) msg.obj);
+                    /**
+                     * 对于支付结果，请商户依赖服务端的异步通知结果。同步通知结果，仅作为支付结束的通知。
+                     */
+                    String resultInfo = payResult.getResult();// 同步返回需要验证的信息
+                    String resultStatus = payResult.getResultStatus();
+                    // 判断resultStatus 为9000则代表支付成功
+                    if (TextUtils.equals(resultStatus, "9000")) {
+                        // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
+//                        showAlert(PayDemoActivity.this, getString(R.string.pay_success) + payResult);
+                    } else {
+                        // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
+//                        showAlert(PayDemoActivity.this, getString(R.string.pay_failed) + payResult);
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+        };
+    };
 
 //
 /**

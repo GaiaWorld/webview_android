@@ -153,17 +153,21 @@ public class ChargeInGameActivity extends AppCompatActivity {
      * 拉起支付插件
      */
     private void doPay() {
-        if (payAmount > 0) {
-            // 会实际支付RMB
-            // 可能用到参数：orderId,kupayId,payAmount
-            if (useWxPay) {
-                //使用微信支付
-            } else {
-                //使用支付宝
-            }
+        Intent intent = new Intent(this, piv8Service.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(serviceRunCode.key, serviceRunCode.sendMessage);
+        bundle.putString(serviceRunCode.messageKey, serviceRunCode.chargeMessage);
+        bundle.putInt(serviceRunCode.statusCodeKey, serviceRunCode.statusSuccess);
+        bundle.putInt(serviceRunCode.payAmount, payAmount);
+        if (useWxPay) {
+            //使用微信支付
+            bundle.putString(serviceRunCode.payKey, serviceRunCode.weChatPay);
         } else {
-            //账上余额足够支付，不用拉起支付插件，通知后台扣费
+            //使用支付宝
+            bundle.putString(serviceRunCode.payKey, serviceRunCode.aLiPay);
         }
+        intent.putExtras(bundle);
+        startService(intent);
     }
 
 
