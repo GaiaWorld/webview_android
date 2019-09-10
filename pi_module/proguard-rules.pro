@@ -34,3 +34,15 @@
 -keep class com.androidquery.callback.** {*;}
 
 -keep class com.bytedance.sdk.openadsdk.service.TTDownloadProvider
+
+-keep class com.tencent.mm.opensdk.** {
+    *;
+}
+
+-keep class com.tencent.wxop.** {
+    *;
+}
+
+-keep class com.tencent.mm.sdk.** {
+    *;
+}

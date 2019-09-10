@@ -62,4 +62,5 @@ dependencies {
     implementation project(':pi_framework')
     api(name: 'open_ad_sdk', ext: 'aar')
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.6'
+    api 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
 }
