@@ -117,17 +117,21 @@ class YNWebView {
         mRlRootView.addView(if (isX5) mX5 else mAndroidWebView)
     }
 
-    fun addNewJavaScript( mRlRootView: RelativeLayout, tag: String, url: String, content: String){
+    fun addNewJavaScript( mRlRootView: RelativeLayout, tag: String, url: String, content: String, make: Int){
         if (isX5) {
             mX5!!.addJavascriptInterface(JSBridge(this), JSBridge::class.java.simpleName)
             mX5?.addJavascriptInterface(JSIntercept(this), JSIntercept::class.java.simpleName)
             X5Chrome.sViewRoot.add(mRlRootView)
+            mX5!!.setBackgroundColor(0)
+            mX5!!.setBackgroundResource(make)
             WebViewManager.addWebView(tag, mX5!!)
             mX5!!.setInjectContent(url, content)
         } else {
             mAndroidWebView!!.addJavascriptInterface(JSBridge(this), JSBridge::class.java.simpleName)
             mAndroidWebView?.addJavascriptInterface(JSIntercept(this), JSIntercept::class.java.simpleName)
             AndroidWebView.sViewRoot.add(mRlRootView)
+            mAndroidWebView!!.setBackgroundColor(0)
+            mAndroidWebView!!.setBackgroundResource(make)
             WebViewManager.addWebView(tag, mAndroidWebView!!)
             mAndroidWebView!!.setInjectContent(url, content)
         }

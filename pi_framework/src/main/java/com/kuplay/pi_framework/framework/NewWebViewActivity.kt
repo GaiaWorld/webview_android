@@ -58,6 +58,7 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
      */
     override fun initViews() {
         mRlRootView = root_view
+
         mRlRootView.viewTreeObserver.addOnGlobalLayoutListener (this)
 //        val bootView = boot_view
 //        bootView.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
@@ -80,9 +81,9 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
         val url = intent?.getStringExtra("load_url") ?: "https://cn.bing.com"
         val tagStr = tag as String
         if (url.startsWith("/")) {
-            ynWebView.addNewJavaScript( mRlRootView, tagStr, "file:///android_asset" + url, content)
+            ynWebView.addNewJavaScript( mRlRootView, tagStr, "file:///android_asset" + url, content, R.drawable.ydzm)
         }else{
-            ynWebView.addNewJavaScript( mRlRootView, tagStr, url, content)
+            ynWebView.addNewJavaScript( mRlRootView, tagStr, url, content, R.drawable.ydzm)
         }
         addJEV(this)
         if (url.startsWith("/")) {
@@ -161,9 +162,23 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
             file.delete()
             val url = intent.getStringExtra("load_url") ?: "https://cn.bing.com"
             val tagStr = tag as String
-            ynWebView.addNewJavaScript( mRlRootView, tagStr, url, content)
+            if (url.startsWith("/")) {
+                ynWebView.addNewJavaScript( mRlRootView, tagStr, "file:///android_asset" + url, content, R.drawable.ydzm)
+            }else{
+                ynWebView.addNewJavaScript( mRlRootView, tagStr, url, content, R.drawable.ydzm)
+            }
+            if (url.startsWith("/")) {
+                val stream = this.getAssets().open(url.substring(1))
+                val content = FileUtil.readFile(stream)
+                if (content != "") {
+                    super.loadDataWithBaseUrl("file:///android_asset" + url, content);
+                } else {
+                    Log.d("JSIntercept", "loadUrl Error!!!");
+                }
+            } else {
+                super.loadUrl(url)
+            }
             addJEV(this)
-            super.loadUrl(url)
             registerCloseReceiver()
         }
     }
