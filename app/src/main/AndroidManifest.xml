@@ -85,6 +85,14 @@
                 android:taskAffinity="com.kuplay.wx.WXPayEntry"
                 android:launchMode="singleTask">
         </activity>
+        <activity
+                android:name=".wxapi.WXEntryActivity"
+                android:label="@string/app_name"
+                android:theme="@android:style/Theme.Translucent.NoTitleBar"
+                android:exported="true"
+                android:taskAffinity="com.kuplay.wx.WXEntry"
+                android:launchMode="singleTask">
+        </activity>
 
         <activity
                 android:name=".gameView.ShareActivity"
