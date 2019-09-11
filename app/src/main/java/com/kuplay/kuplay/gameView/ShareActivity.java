@@ -9,12 +9,18 @@ import android.graphics.Canvas;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.onekeyshare.OnekeyShare;
 import com.iqos.qrscanner.utils.QRCodeUtils;
 import com.kuplay.kuplay.R;
+
+import java.util.HashMap;
 
 
 public class ShareActivity extends AppCompatActivity {
@@ -170,9 +176,28 @@ public class ShareActivity extends AppCompatActivity {
         //截图
         Bitmap screenshot = getScreenShot();
         //分享图片
+        OnekeyShare oks = new OnekeyShare();
+        oks.disableSSOWhenAuthorize();
+        oks.setImageData(screenshot);
+        if (null != platform)
+            oks.setPlatform(platform);
+        oks.setCallback(new PlatformActionListener() {
+            @Override
+            public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
+                //分享完成
+            }
 
+            @Override
+            public void onError(Platform platform, int i, Throwable throwable) {
+                //分享出错
+            }
 
-
+            @Override
+            public void onCancel(Platform platform, int i) {
+                //分享取消
+            }
+        });
+        oks.show(this);
     }
 
 
