@@ -3,7 +3,8 @@
     <application>
         <activity
                 android:name=".framework.WebViewActivity"
-                android:screenOrientation="portrait"
+                android:screenOrientation="landscape"
+                android:configChanges="orientation|keyboardHidden|screenSize"
                 android:launchMode="singleTask"
                 android:theme="@style/FullScreenWithoutAny">
         </activity>
