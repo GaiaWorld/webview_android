@@ -201,7 +201,12 @@ class JSVMManager constructor(){
             val stream = ctx!!.assets.open(url.substring(1))
             content = FileUtil.readFile(stream)
         }
-        runtime!!.executeScript( content, url,0)
+        try{
+            runtime!!.executeScript( content, url,0)
+        }catch (e: Exception){
+            Log.e("piv8",e.toString())
+        }
+
 
         eth.close()
         btc.close()
@@ -239,7 +244,13 @@ class JSVMManager constructor(){
             intent.putExtra("from_web_view", "JSVM")
             ctx!!.sendBroadcast(intent)
             //JSVM
-            runtime!!.executeVoidScript(fullCode)
+            try{
+                runtime!!.executeVoidScript(fullCode)
+            }catch (e: Exception){
+                Log.e("piv8",e.toString())
+            }
+
+
         }
     }
 

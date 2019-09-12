@@ -3,6 +3,7 @@ package com.kuplay.pi_framework.piv8
 import android.app.Service
 import android.content.Intent
 import android.os.*
+import android.util.Log
 
 
 class piv8Service: Service() {
@@ -30,7 +31,11 @@ class piv8Service: Service() {
                     val scriptString = bundle.getString(serviceRunCode.scriptKey)
                     if (scriptString != null){
                         Handler(Looper.getMainLooper()).post {
-                            runtime!!.executeVoidScript(scriptString)
+                            try{
+                                runtime!!.executeVoidScript(scriptString)
+                            }catch (e: Exception){
+                                Log.e("piv8",e.toString())
+                            }
                         }
                     }
                 }

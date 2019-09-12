@@ -1,6 +1,7 @@
 package com.kuplay.pi_framework.piv8;
 
 import android.app.Activity;
+import android.util.Log;
 import com.kuplay.pi_framework.piv8.utils.V8Executor;
 import com.kuplay.pi_framework.piv8.utils.V8Map;
 import com.kuplay.pi_framework.piv8.utils.V8Runnable;
@@ -286,13 +287,24 @@ public class V8 extends V8Object {
     }
 
     public int executeIntegerScript(final String script) {
-        return executeIntegerScript(script, null, 0);
+        try{
+            return executeIntegerScript(script, null, 0);
+        }catch (Exception e){
+            Log.e("V8Execute",e.toString());
+            return 0;
+        }
     }
 
     public int executeIntegerScript(final String script, final String scriptName, final int lineNumber) {
-        checkThread();
-        checkScript(script);
-        return executeIntegerScript(v8RuntimePtr, script, scriptName, lineNumber);
+        try{
+            checkThread();
+            checkScript(script);
+            return executeIntegerScript(v8RuntimePtr, script, scriptName, lineNumber);
+        }catch (Exception e){
+            Log.e("V8Execute",e.toString());
+            return 0;
+        }
+
     }
 
     protected void createTwin(final V8Value value, final V8Value twin) {
@@ -344,7 +356,15 @@ public class V8 extends V8Object {
     }
 
     public Object executeScript(final String script) {
-        return executeScript(script, null, 0);
+        try{
+            checkThread();
+            checkScript(script);
+            return executeScript(script, null, 0);
+        }catch (Exception e){
+            Log.e("V8Execute",e.toString());
+            return 0;
+        }
+
     }
 
     public Object executeScript(final String script, final String scriptName, final int lineNumber) {
