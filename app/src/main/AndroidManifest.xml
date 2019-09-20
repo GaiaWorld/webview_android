@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
-          package="com.kuplay.kuplay" >
+          package="com.high.ydzm" >
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 定位权限 -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -37,21 +37,21 @@
 
     <application
             android:usesCleartextTraffic="true"
-            android:name=".App"
+            android:name="com.high.ydzm.App"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:largeHeap="true"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             tools:ignore="GoogleAppIndexingWarning">
 
 
     <!-- Android 7.0 文件共享配置，必须配置 -->
     <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.kuplay.kuplay.fileprovider"
+            android:authorities="com.high.ydzm.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
         <meta-data
@@ -60,7 +60,7 @@
     </provider>
 
     <activity
-            android:name=".SplashActivity"
+            android:name="com.high.ydzm.SplashActivity"
             android:screenOrientation="landscape"
             android:theme="@style/SplashTheme">
 
@@ -79,28 +79,28 @@
 
     </activity>
 
-        <activity android:name=".PopupPushActivity" />
+        <activity android:name="com.high.ydzm.PopupPushActivity" />
 
         <activity
-                android:name="com.kuplay.kuplay.wxapi.WXEntryActivity"
+                android:name="com.high.ydzm.wxapi.WXEntryActivity"
                 android:label="@string/app_name"
                 android:theme="@android:style/Theme.Translucent.NoTitleBar"
                 android:exported="true"
-                android:taskAffinity="com.kuplay.kuplay.WXEntryActivity"
+                android:taskAffinity="com.high.ydzm.WXEntryActivity"
                 android:launchMode="singleTask">
         </activity>
 
         <activity
-                android:name="com.kuplay.kuplay.wxapi.WXPayEntryActivity"
+                android:name="com.high.ydzm.wxapi.WXPayEntryActivity"
                 android:label="@string/app_name"
                 android:theme="@android:style/Theme.Translucent.NoTitleBar"
                 android:exported="true"
-                android:taskAffinity="com.kuplay.kuplay.WXPayEntryActivity"
+                android:taskAffinity="com.high.ydzm.WXPayEntryActivity"
                 android:launchMode="singleTask">
         </activity>
 
         <receiver
-                android:name=".YNMessageReceiver"
+                android:name="com.high.ydzm.YNMessageReceiver"
                 android:exported="false"> <!-- 为保证receiver安全，建议设置不可导出，如需对其他应用开放可通过android：permission进行限制 -->
             <intent-filter>
                 <action android:name="com.alibaba.push2.action.NOTIFICATION_OPENED" />

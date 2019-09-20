@@ -49,9 +49,17 @@ MobSDK {
 
 
 android {
+    signingConfigs {
+        debug {
+            keyAlias 'YINENG'
+            keyPassword '123456'
+            storeFile file('/Users/yineng/Desktop/work/yineng.keystore')
+            storePassword '123456'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.kuplay.kuplay"
+        applicationId "com.high.ydzm"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
@@ -67,6 +75,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.debug
         }
     }
 }

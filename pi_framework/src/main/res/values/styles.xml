@@ -26,6 +26,8 @@
     </style>
 
     <style name="GameScreenWithoutAny" parent="Theme.AppCompat.Light.NoActionBar">
-        <!--<item name="android:windowTranslucentStatus">true</item>-->
+        <item name="android:windowFullscreen">true</item>
+        <!--<item name="android:background">@drawable/ydzm</item>-->
+        <!--<item name="android:windowTranslucentStatus">trueia</item>-->
     </style>
 </resources>
