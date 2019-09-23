@@ -70,6 +70,7 @@ android {
                 cppFlags ""
             }
         }
+        ndk { abiFilters "armeabi", "armeabi-v7a" }
     }
     buildTypes {
         release {
