@@ -163,7 +163,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
      * App已经进入后台
      */
     private fun gotoBackground() {
-        WebViewActivity.isWebViewFirst = "true"
+//        WebViewActivity.isWebViewFirst = "true"
         Logger.error("BaseActivity", "App进入后台")
 //        JSBridge.sendJS(ynWebView,"PI_App",ON_BACK_PRESSED, arrayOf("App进入后台"))
 
