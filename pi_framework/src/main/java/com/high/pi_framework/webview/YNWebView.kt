@@ -14,6 +14,8 @@ import com.high.pi_framework.framework.JSBridge
 import com.high.pi_framework.framework.JSIntercept
 import com.high.pi_framework.module.WebViewManager
 import com.tencent.smtt.sdk.QbSdk
+import com.tencent.smtt.sdk.WebView
+import com.tencent.smtt.sdk.WebViewClient
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.HashMap

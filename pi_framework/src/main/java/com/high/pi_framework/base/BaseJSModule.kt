@@ -53,6 +53,8 @@ abstract class BaseJSModule constructor(ynWebView: YNWebView) : JSExecutable, JS
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {}
 
+    override fun onDestroy() {}
+
     companion object {
         const val SUCCESS = 0
         const val FAIL = 1

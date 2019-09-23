@@ -134,45 +134,39 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             callBack(BaseJSModule.FAIL, arrayOf("The url cant be null."))
             return
         }
-        if (webViewName != "default"){
+        if (nameByWebViewObj == "default" && NewWebViewActivity.gameExit == true){
             NewWebViewActivity.isDefaultClose = true
             ctx!!.finish()
-            if (NewWebViewActivity.gameExit == true){
-                return
-            }else{
-                if (isWebViewNameExists(webViewName) && Game_Name.equals(webViewName)) {
-                    val intent = Intent(ctx!!, NewWebViewActivity::class.java)
-                    intent.putExtra("tag",webViewName)
-                    ctx!!.startActivity(intent)
-                } else {
-                    val file = File(ctx!!.cacheDir, "new_webview_inject")
-                    try {
-                        val bw = BufferedWriter(FileWriter(file))
-                        bw.write(injectContent)
-                        bw.close()
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
-                    if (isWebViewNameExists(Game_Name)){
-                        sendCloseWebViewMessage(Game_Name)
-                    }
-                    Game_Name = webViewName
-                    val intent = Intent(ctx, NewWebViewActivity::class.java)
-                    intent.putExtra("inject", file.absolutePath)
-                    intent.putExtra("uagent", "YINENG_ANDROID_GAME1.0")
-                    intent.putExtra("title", title)
-                    intent.putExtra("screenOrientation", screenOrientation)
-                    intent.putExtra("load_url", url)
-                    intent.putExtra("tag", webViewName)
-                    ctx!!.runOnUiThread {
-                        ctx!!.startActivity(intent);
-                        ctx!!.overridePendingTransition(0, 0);
-                        if (webViewName != "default") ctx!!.finish()
-                    }
-//            ctx!!.startActivity(intent)
+        }else{
+            if (isWebViewNameExists(webViewName) && Game_Name.equals(webViewName)) {
+                val intent = Intent(ctx!!, NewWebViewActivity::class.java)
+                intent.putExtra("tag",webViewName)
+                ctx!!.startActivity(intent)
+            } else {
+                val file = File(ctx!!.cacheDir, "new_webview_inject")
+                try {
+                    val bw = BufferedWriter(FileWriter(file))
+                    bw.write(injectContent)
+                    bw.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+                if (isWebViewNameExists(Game_Name)){
+                    sendCloseWebViewMessage(Game_Name)
+                }
+                Game_Name = webViewName
+                val intent = Intent(ctx, NewWebViewActivity::class.java)
+                intent.putExtra("inject", file.absolutePath)
+                intent.putExtra("uagent", "YINENG_ANDROID_GAME1.0")
+                intent.putExtra("title", title)
+                intent.putExtra("screenOrientation", screenOrientation)
+                intent.putExtra("load_url", url)
+                intent.putExtra("tag", webViewName)
+                ctx!!.runOnUiThread {
+                    ctx!!.startActivity(intent);
+                    ctx!!.overridePendingTransition(0, 0);
                 }
             }
-
         }
     }
 

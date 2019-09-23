@@ -60,35 +60,40 @@ class WeChatLogin(ynWebView: YNWebView): BaseJSModule(ynWebView) {
         }, IntentFilter(ConstantsAPI.ACTION_REFRESH_WXAPP))
     }
 
-
     fun getCodeFromWX(scope: String, state: String, callBack:(callType: Int, prames: Array<Any>)->Unit){
         //获取微信访问Token
         this.callBack = callBack
-
-        val req = SendAuth.Req()
-        req.scope = scope
-        req.state = state
-        api!!.sendReq(req)
+        if (!api!!.isWXAppInstalled){
+            callBack(BaseJSModule.SUCCESS, arrayOf(-7))
+        }else{
+            val req = SendAuth.Req()
+            req.scope = scope
+            req.state = state
+            api!!.sendReq(req)
+        }
     }
 
     fun goWXPay(app_id: String, partnerid: String, prepayid: String, packages: String, noncestr: String, timestamp: String, sign: String, callBack: (callType: Int, prames: Array<Any>) -> Unit){
         this.callBack = callBack
-        val req = PayReq()
-        req.appId = app_id
-        req.partnerId = partnerid
-        req.prepayId= prepayid
-        req.packageValue = packages
-        req.nonceStr= noncestr
-        req.timeStamp= timestamp
-        req.sign= sign
-        api!!.sendReq(req)
+        if (!api!!.isWXAppInstalled){
+            callBack(BaseJSModule.SUCCESS, arrayOf(-7))
+        }else{
+            val req = PayReq()
+            req.appId = app_id
+            req.partnerId = partnerid
+            req.prepayId= prepayid
+            req.packageValue = packages
+            req.nonceStr= noncestr
+            req.timeStamp= timestamp
+            req.sign= sign
+            api!!.sendReq(req)
+        }
     }
 
 
-    override fun onResume() {
+    override fun onDestroy() {
         ctx!!.unregisterReceiver(mReceiver)
-        super.onResume()
-
+        super.onDestroy()
     }
 
 }

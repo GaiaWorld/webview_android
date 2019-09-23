@@ -322,3 +322,4 @@
 
 -keep class **JNI* {*;}
 
+

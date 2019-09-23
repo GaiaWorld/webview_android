@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.Message
 import android.support.v7.app.AlertDialog
 import android.util.AttributeSet
+import android.util.Log
 import android.webkit.*
 import android.widget.EditText
 import android.widget.RelativeLayout
@@ -122,6 +123,10 @@ class AndroidWebView constructor(private val ctx: Context, private var uAgent: S
             handler!!.proceed()  // 接受所有网站的证书
         }
 
+        override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
+            super.onReceivedError(view, request, error)
+            Log.d("z1u24","打开失败咯")
+        }
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)

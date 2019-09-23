@@ -1,11 +1,9 @@
 package com.high.pi_framework.framework
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
@@ -25,14 +23,28 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
     private lateinit var mRlRootView: RelativeLayout
     private var timer: Timer? = null
     private val delay: Long = 2000
-
-    /**
-     * Get the layout resource from XML.
-     *
-     * @return layout resource from XML.
-     */
     override val layoutResources: Int get() = R.layout.activity_webview
+    private val mReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val action = intent?.action ?: return
+            when (action) {
+                "send_messagedefault" -> {
+                    val message = intent.getStringExtra("message")
+                    val sender = intent.getStringExtra("from_web_view")
+                    val callFun = String.format("javascript:window.onWebViewPostMessage('%s','%s')", sender, message)
+                    ynWebView.evaluateJavascript(callFun)
+                }
+                "relive_webView" -> {
+                    reliveWebView()
+                }
+                "close_webView" -> {
+                    closeWebView()
+                }
+            }
+        }
+    }
 
+    //==============life==========
     override fun onCreate(savedInstanceState: Bundle?) {
         if (isWebViewFirst == "false"){
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -41,37 +53,75 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
         ynWebView.createYnWebView(this)
         addJEV(this)
         super.onCreate(savedInstanceState)
-//        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
     }
 
-
-    /**
-     * As the method name said,this method is used to initialize views on this activity.
-     */
     override fun initViews() {
         mRlRootView = findViewById(R.id.app_main_rl_root_view)
         mRlRootView.viewTreeObserver.addOnGlobalLayoutListener (this)
         mRlRootView.removeAllViews()
         ynWebView.addYnWebView(mRlRootView)
-//        status_bar.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
     }
 
-    /**
-     * Initialize basic data.
-     */
     override fun initData() {
-//        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)// 在setContentView之后，适配顶部状态栏
-//        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)// 适配底部导航栏
         loadWebView(isWebViewFirst)
         registerBc()
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        Log.d("activity","onNewIntent")
+        val screenOrientation = intent?.getStringExtra("screen")
+        if (screenOrientation == "portrait"){
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
+    }
+
+    override fun onBackPressed() {
+        AlertDialog.Builder(this)
+            .setTitle("退出")
+            .setMessage("是否立即退出游戏？")
+            .setNegativeButton("取消", null)
+            .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which -> System.exit(0) }).show()
+    }
+
+    override fun onDestroy() {
+        ynWebView.jsImpl!!.onDestroy()
+        unregisterReceiver(mReceiver)
+        super.onDestroy()
+    }
+
+    override fun onResume() {
+        addJEV(this)
+        super.onResume()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        ynWebView.jsImpl!!.onActivityResult(requestCode, resultCode, data)
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    //===========delegates==========
+    override fun onGlobalLayout() {
+        if (timer != null){
+            timer!!.cancel()
+            timer!!.purge()
+        }
+        timer = Timer()
+        val task = object : TimerTask() {
+            override fun run() {
+                hideSystemNavigationBar()
+            }
+        }
+        timer!!.schedule(task, delay);
+    }
+
+    //==========private==============
     private fun loadWebView(stage: String){
         mJsIntercept = ynWebView.addJavaScriptInterface( mRlRootView)
         addJEV(this)
-//        LocalLanguageMgr(ynWebView).setAppLanguage(
-//            PrefMgr.getInstance(this).appLan,
-//            callBack = { callType, prames -> JSBridge(ynWebView).callJS(null, null, 0, callType, prames) })
+        LocalLanguageMgr(ynWebView).setAppLanguage(
+            PrefMgr.getInstance(this).appLan,
+            callBack = { callType, prames -> JSBridge(ynWebView).callJS(null, null, 0, callType, prames) })
         onloadUrl(stage)
     }
 
@@ -114,36 +164,6 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
         }
     }
 
-    override fun onRestart() {
-//        if (NewWebViewActivity.gameExit == true){
-//            startActivity(Intent(this, NewWebViewActivity::class.java))
-//            overridePendingTransition(0, 0)
-//        }
-        super.onRestart()
-//        JSBridge.sendJS(ynWebView,"PI_App",ON_APP_RESUMED, arrayOf("App进入前台"))
-    }
-
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        Log.d("activity","onNewIntent")
-        val screenOrientation = intent?.getStringExtra("screen")
-        if (screenOrientation == "portrait"){
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
-//        reliveWebView()
-    }
-
-
-    override fun onBackPressed() {
-//        JSBridge.sendJS(ynWebView,"PI_Activity",ON_BACK_PRESSED, arrayOf("App进入后台"))
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        ynWebView.jsImpl!!.onActivityResult(requestCode, resultCode, data)
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
     private fun registerBc() {
         val intentFilter = IntentFilter()
         intentFilter.addAction("send_messagedefault")
@@ -157,50 +177,6 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
         val uiOptions =   View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
         this.runOnUiThread { _window.systemUiVisibility = uiOptions; window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION) }
 
-    }
-
-    private val mReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            val action = intent?.action ?: return
-            when (action) {
-                "send_messagedefault" -> {
-                    val message = intent.getStringExtra("message")
-                    val sender = intent.getStringExtra("from_web_view")
-                    val callFun = String.format("javascript:window.onWebViewPostMessage('%s','%s')", sender, message)
-                    ynWebView.evaluateJavascript(callFun)
-                }
-                "relive_webView" -> {
-                    reliveWebView()
-                }
-                "close_webView" -> {
-                    closeWebView()
-                }
-            }
-        }
-    }
-
-    override fun onGlobalLayout() {
-        if (timer != null){
-            timer!!.cancel()
-            timer!!.purge()
-        }
-        timer = Timer()
-        val task = object : TimerTask() {
-            override fun run() {
-                hideSystemNavigationBar()
-            }
-        }
-        timer!!.schedule(task, delay);
-    }
-
-    override fun onDestroy() {
-        unregisterReceiver(mReceiver)
-        super.onDestroy()
-    }
-
-    override fun onResume() {
-        addJEV(this)
-        super.onResume()
     }
 
     fun closeWebView(){

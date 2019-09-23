@@ -15,14 +15,16 @@ import com.alibaba.sdk.android.push.register.MiPushRegister
 
 class App : Application(){
     private val TAG = "Init"
+
+    //==============life===========
     override fun onCreate() {
         super.onCreate()
         YNWebView.getX5Open(this)
-//        initCloudChannel(this)
+        initCloudChannel(this)
     }
 
 
-
+    //===============private==========
     /**
      * 初始化云推送通道
      * @param applicationContext

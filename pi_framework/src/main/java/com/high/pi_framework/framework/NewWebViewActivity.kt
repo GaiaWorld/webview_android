@@ -30,13 +30,31 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
     private var tag: String? = null
     private var timer: Timer? = null
     private val delay: Long = 2000
-    /**
-     * Get the layout resource from XML.
-     *
-     * @return layout resource from XML.
-     */
     override val layoutResources: Int get() = R.layout.activity_new_web_view
+    private val mCloseReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val action = intent?.action ?: return
+            when (action) {
+                "close_web_view" -> {
+                    if (tag == intent.getStringExtra("web_view_name")) {
+                        this@NewWebViewActivity.closeActivicty()
+                    }
+                }
+                "mine_size_activity" -> {
+                    val screen = intent.getStringExtra("screen")
+                    this@NewWebViewActivity.minsizeActivity(screen)
+                }
+                "send_message$tag" -> {
+                    val message = intent.getStringExtra("message")
+                    val sender = intent.getStringExtra("from_web_view")
+                    val callFun = String.format("javascript:window.onWebViewPostMessage('%s','%s')", sender, message)
+                    ynWebView.evaluateJavascript(callFun)
+                }
+            }
+        }
+    }
 
+    //====================life===================
     override fun onCreate(savedInstanceState: Bundle?) {
         gameExit = true
         hideSystemNavigationBar()
@@ -55,23 +73,12 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
     }
 
 
-    /**
-     * As the method name said,this method is used to initialize views on this activity.
-     */
     override fun initViews() {
         mRlRootView = root_view
-
         mRlRootView.viewTreeObserver.addOnGlobalLayoutListener (this)
-//        val bootView = boot_view
-//        bootView.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
-//        mRlRootView.removeAllViews()
         ynWebView.addYnWebView(mRlRootView)
-//        status_bar.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
     }
 
-    /**
-     * Initialize basic data.
-     */
     override fun initData() {
         Log.d("WebView", "new WebView: " + intent?.getStringExtra("tag"))
         tag = intent?.getStringExtra("tag")
@@ -99,52 +106,6 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
         }
         registerCloseReceiver()
     }
-
-
-
-    override fun onRestart() {
-        super.onRestart()
-//        JSBridge.sendJS(ynWebView,"PI_App", ON_APP_RESUMED, arrayOf("App进入前台"))
-    }
-
-
-    override fun onConfigurationChanged(newConfig: Configuration?) {
-        super.onConfigurationChanged(newConfig)
-    }
-
-
-    override fun onBackPressed() {
-        AlertDialog.Builder(this)
-            .setTitle("退出")
-            .setMessage("是否立即退出游戏？")
-            .setNegativeButton("取消", null)
-            .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which -> System.exit(0) }).show()
-    }
-
-    fun closeActivicty(){
-        gameExit = false
-        val closeIntent = Intent(this, WebViewActivity::class.java)
-        startActivity(closeIntent)
-        finish()
-    }
-
-    private fun hideSystemNavigationBar() {
-        val _window = window
-        val params = _window.attributes
-        params.systemUiVisibility =   View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        _window.attributes = params
-
-    }
-
-    fun minsizeActivity(screen: String){
-        gameExit = false
-//        JSBridge.sendJS(ynWebView,"PI_Activity",ON_BACK_PRESSED, arrayOf("Activity进入后台"))
-        val minintent = Intent(this, WebViewActivity::class.java)
-        minintent.putExtra("screen", screen)
-        startActivity(minintent)
-        overridePendingTransition(0, 0);
-    }
-
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
@@ -183,45 +144,22 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
         }
     }
 
-
-    private fun registerCloseReceiver() {
-        val intentFilter = IntentFilter()
-        intentFilter.addAction("close_web_view")
-        intentFilter.addAction("send_message$tag")
-        intentFilter.addAction("mine_size_activity")
-        registerReceiver(mCloseReceiver, intentFilter)
-    }
-
-    private val mCloseReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            val action = intent?.action ?: return
-            when (action) {
-                "close_web_view" -> {
-                    if (tag == intent.getStringExtra("web_view_name")) {
-                        this@NewWebViewActivity.closeActivicty()
-                    }
-                }
-                "mine_size_activity" -> {
-                    val screen = intent.getStringExtra("screen")
-                    this@NewWebViewActivity.minsizeActivity(screen)
-                }
-                "send_message$tag" -> {
-                    val message = intent.getStringExtra("message")
-                    val sender = intent.getStringExtra("from_web_view")
-                    val callFun = String.format("javascript:window.onWebViewPostMessage('%s','%s')", sender, message)
-                    ynWebView.evaluateJavascript(callFun)
-                }
-            }
-        }
+    override fun onBackPressed() {
+        AlertDialog.Builder(this)
+            .setTitle("退出")
+            .setMessage("是否立即退出游戏？")
+            .setNegativeButton("取消", null)
+            .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which -> System.exit(0) }).show()
     }
 
     override fun onDestroy() {
+        ynWebView.jsImpl!!.onDestroy()
         WebViewManager.removeWebView(this.tag!!)
         unregisterReceiver(mCloseReceiver)
         super.onDestroy()
     }
 
-
+    //=============delegate============
     override fun onGlobalLayout() {
         if (timer != null){
             timer!!.cancel()
@@ -234,6 +172,38 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
             }
         }
         timer!!.schedule(task, delay);
+    }
+
+    //==============orivate===========
+    fun closeActivicty(){
+        gameExit = false
+        val closeIntent = Intent(this, WebViewActivity::class.java)
+        startActivity(closeIntent)
+        finish()
+    }
+
+    private fun hideSystemNavigationBar() {
+        val _window = window
+        val params = _window.attributes
+        params.systemUiVisibility =   View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        _window.attributes = params
+
+    }
+
+    fun minsizeActivity(screen: String){
+        gameExit = false
+        val minintent = Intent(this, WebViewActivity::class.java)
+        minintent.putExtra("screen", screen)
+        startActivity(minintent)
+        overridePendingTransition(0, 0);
+    }
+
+    private fun registerCloseReceiver() {
+        val intentFilter = IntentFilter()
+        intentFilter.addAction("close_web_view")
+        intentFilter.addAction("send_message$tag")
+        intentFilter.addAction("mine_size_activity")
+        registerReceiver(mCloseReceiver, intentFilter)
     }
 
     companion object {
