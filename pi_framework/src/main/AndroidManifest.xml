@@ -7,12 +7,12 @@
                 android:screenOrientation="landscape"
                 android:windowSoftInputMode="adjustNothing"
                 android:configChanges="orientation|keyboardHidden|screenSize"
-                android:launchMode="singleTask"
+                android:launchMode="standard"
                 android:theme="@style/FullScreenWithoutAny">
         </activity>
         <activity
                 android:name="com.high.pi_framework.framework.NewWebViewActivity"
-                android:launchMode="singleInstance"
+                android:launchMode="standard"
                 android:screenOrientation="landscape"
                 android:configChanges="orientation|keyboardHidden|screenSize"
                 android:theme="@style/GameScreenWithoutAny" />

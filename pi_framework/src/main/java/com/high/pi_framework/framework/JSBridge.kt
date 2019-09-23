@@ -42,6 +42,17 @@ class JSBridge(ynWebView: YNWebView) {
         }
     }
 
+    @JavascriptInterface
+    fun setUserInfoTrans(userInfo: String){
+        userInfoTrans = userInfo
+    }
+
+    @JavascriptInterface
+    fun getUserInfoTrans(): String{
+        return userInfoTrans
+    }
+
+
     //高层调用底层
     @JavascriptInterface
     fun postMessage(className: String, methodName: String, nativeID: Int, listenerID: Int, jsonArray: String){
@@ -208,6 +219,7 @@ class JSBridge(ynWebView: YNWebView) {
         private val METHOD_INIT = "init"//method name->init
         private val METHOD_CLOSE = "close"//method name->close
 
+        private var userInfoTrans = ""
 
         fun sendJS(ynWebView: YNWebView, type: String, name: String, params: Array<Any>){
             val func = StringBuilder("window['handle_native_event']('$type', '$name'")

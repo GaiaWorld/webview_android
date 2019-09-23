@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.text.TextUtils
+import android.util.Log
 import com.high.pi_framework.Util.ViewUtil
 import com.high.pi_framework.base.BaseJSModule
 import com.high.pi_framework.framework.NewWebViewActivity
@@ -133,32 +134,45 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             callBack(BaseJSModule.FAIL, arrayOf("The url cant be null."))
             return
         }
-        if (isWebViewNameExists(webViewName) && Game_Name.equals(webViewName)) {
-            val intent = Intent(ctx!!, NewWebViewActivity::class.java)
-            intent.putExtra("tag",webViewName)
-            ctx!!.startActivity(intent)
-        } else {
-            val file = File(ctx!!.cacheDir, "new_webview_inject")
-            try {
-                val bw = BufferedWriter(FileWriter(file))
-                bw.write(injectContent)
-                bw.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-            if (isWebViewNameExists(Game_Name)){
-                sendCloseWebViewMessage(Game_Name)
-            }
-            Game_Name = webViewName
-            val intent = Intent(ctx, NewWebViewActivity::class.java)
-            intent.putExtra("inject", file.absolutePath)
-            intent.putExtra("uagent", "YINENG_ANDROID_GAME1.0")
-            intent.putExtra("title", title)
-            intent.putExtra("screenOrientation", screenOrientation)
-            intent.putExtra("load_url", url)
-            intent.putExtra("tag", webViewName)
-            ctx!!.runOnUiThread { ctx!!.startActivity(intent); ctx!!.overridePendingTransition(0, 0); }
+        if (webViewName != "default"){
+            NewWebViewActivity.isDefaultClose = true
+            ctx!!.finish()
+            if (NewWebViewActivity.gameExit == true){
+                return
+            }else{
+                if (isWebViewNameExists(webViewName) && Game_Name.equals(webViewName)) {
+                    val intent = Intent(ctx!!, NewWebViewActivity::class.java)
+                    intent.putExtra("tag",webViewName)
+                    ctx!!.startActivity(intent)
+                } else {
+                    val file = File(ctx!!.cacheDir, "new_webview_inject")
+                    try {
+                        val bw = BufferedWriter(FileWriter(file))
+                        bw.write(injectContent)
+                        bw.close()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                    if (isWebViewNameExists(Game_Name)){
+                        sendCloseWebViewMessage(Game_Name)
+                    }
+                    Game_Name = webViewName
+                    val intent = Intent(ctx, NewWebViewActivity::class.java)
+                    intent.putExtra("inject", file.absolutePath)
+                    intent.putExtra("uagent", "YINENG_ANDROID_GAME1.0")
+                    intent.putExtra("title", title)
+                    intent.putExtra("screenOrientation", screenOrientation)
+                    intent.putExtra("load_url", url)
+                    intent.putExtra("tag", webViewName)
+                    ctx!!.runOnUiThread {
+                        ctx!!.startActivity(intent);
+                        ctx!!.overridePendingTransition(0, 0);
+                        if (webViewName != "default") ctx!!.finish()
+                    }
 //            ctx!!.startActivity(intent)
+                }
+            }
+
         }
     }
 
@@ -202,14 +216,20 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             return
         }
         val fromWebView = nameByWebViewObj
-        if (webViewName == "default" && WebViewActivity.isWebViewClose == true){
+        Log.d("webViewManager",webViewName)
+        Log.d("webViewManager","${NewWebViewActivity.isDefaultClose}")
+        if (webViewName == "default"){
+            Log.d("webViewManager","")
             messageList.set("send_message","default")
             messageList.set("message",message)
             messageList.set("from_web_view",fromWebView!!)
 //            ctx!!.startActivity(Intent(ctx!!,WebViewActivity::class.java))
-            val intent = Intent("mine_size_activity")
-            intent.putExtra("screen", "portrait")
-            ctx!!.sendBroadcast(intent)
+
+            val minintent = Intent(ctx!!, WebViewActivity::class.java)
+            minintent.putExtra("screen", "portrait")
+            ctx!!.runOnUiThread { ctx!!.startActivity(minintent) }
+
+//            ctx!!.overridePendingTransition(0, 0);
         }else{
             val intent = Intent("send_message$webViewName")
             intent.putExtra("message", message)
@@ -231,7 +251,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
     }
 
     fun getReady(callBack:(callType: Int, prames: Array<Any>)->Unit){
-        WebViewActivity.isWebViewClose = false
+        NewWebViewActivity.isDefaultClose = false
         if ( messageList["send_message"] != null){
             val name = messageList["send_message"]
             val message = messageList["message"]

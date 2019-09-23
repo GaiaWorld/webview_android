@@ -21,8 +21,8 @@ import kotlinx.android.synthetic.main.activity_new_web_view.*
 import java.io.File
 import java.util.*
 import android.util.DisplayMetrics
-
-
+import android.content.DialogInterface
+import android.support.v7.app.AlertDialog
 
 
 class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener{
@@ -60,21 +60,12 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
      */
     override fun initViews() {
         mRlRootView = root_view
-        val imageView = ImageView(this)
-        imageView.setImageResource(R.drawable.ydzm)
-        imageView
-        val metric = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(metric)
-        val width = metric.widthPixels     // 屏幕宽度（像素）
-        val height = metric.heightPixels   // 屏幕高度（像素）
-        val params = RelativeLayout.LayoutParams(width, height)
-        imageView.setLayoutParams(params);
-        mRlRootView.addView(imageView)
-//        mRlRootView.viewTreeObserver.addOnGlobalLayoutListener (this)
+
+        mRlRootView.viewTreeObserver.addOnGlobalLayoutListener (this)
 //        val bootView = boot_view
 //        bootView.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
 //        mRlRootView.removeAllViews()
-//        ynWebView.addYnWebView(mRlRootView)
+        ynWebView.addYnWebView(mRlRootView)
 //        status_bar.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
     }
 
@@ -82,36 +73,38 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
      * Initialize basic data.
      */
     override fun initData() {
-//        Log.d("WebView", "new WebView: " + intent?.getStringExtra("tag"))
-//        tag = intent?.getStringExtra("tag")
-//        if (null == tag) throw Exception("The tag can't be null!")
-//        val path = intent.getStringExtra("inject") ?: ""
-//        val file = File(path)
-//        val content = file.readText()
-//        file.delete()
-//        val url = intent?.getStringExtra("load_url") ?: "https://cn.bing.com"
-//        val tagStr = tag as String
-//        ynWebView.addNewJavaScript( mRlRootView, tagStr, url, content, R.drawable.ydzm)
-//        addJEV(this)
-//        if (url.startsWith("/")) {
-//            val stream = this.getAssets().open(url.substring(1))
-//            var ct = FileUtil.readFile(stream)
-//            if (ct != "") {
-//                ct = "<script>$content</script>$ct"
-//                super.loadDataWithBaseUrl("file:///android_asset" + url, ct);
-//
-//            } else {
-//                Log.d("JSIntercept", "loadUrl Error!!!");
-//            }
-//        } else {
-//            super.loadUrl(url)
-//        }
-//        registerCloseReceiver()
+        Log.d("WebView", "new WebView: " + intent?.getStringExtra("tag"))
+        tag = intent?.getStringExtra("tag")
+        if (null == tag) throw Exception("The tag can't be null!")
+        val path = intent.getStringExtra("inject") ?: ""
+        val file = File(path)
+        val content = file.readText()
+        file.delete()
+        val url = intent?.getStringExtra("load_url") ?: "https://cn.bing.com"
+        val tagStr = tag as String
+        ynWebView.addNewJavaScript( mRlRootView, tagStr, url, content, R.drawable.ydzm)
+        addJEV(this)
+        if (url.startsWith("/")) {
+            val stream = this.getAssets().open(url.substring(1))
+            var ct = FileUtil.readFile(stream)
+            if (ct != "") {
+                ct = "<script>$content</script>$ct"
+                super.loadDataWithBaseUrl("file:///android_asset" + url, ct);
+
+            } else {
+                Log.d("JSIntercept", "loadUrl Error!!!");
+            }
+        } else {
+            super.loadUrl(url)
+        }
+        registerCloseReceiver()
     }
+
+
 
     override fun onRestart() {
         super.onRestart()
-        JSBridge.sendJS(ynWebView,"PI_App", ON_APP_RESUMED, arrayOf("App进入前台"))
+//        JSBridge.sendJS(ynWebView,"PI_App", ON_APP_RESUMED, arrayOf("App进入前台"))
     }
 
 
@@ -121,13 +114,11 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
 
 
     override fun onBackPressed() {
-        val childCount = mRlRootView.childCount
-        if (childCount > 1) {
-            mRlRootView.removeViewAt(childCount - 1)
-        }
-        else {
-            //JSBridge.sendJS(ynWebView,"PI_Activity", ON_BACK_PRESSED, arrayOf("页面即将关闭"))
-        }
+        AlertDialog.Builder(this)
+            .setTitle("退出")
+            .setMessage("是否立即退出游戏？")
+            .setNegativeButton("取消", null)
+            .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which -> System.exit(0) }).show()
     }
 
     fun closeActivicty(){
@@ -147,7 +138,7 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
 
     fun minsizeActivity(screen: String){
         gameExit = false
-        JSBridge.sendJS(ynWebView,"PI_Activity",ON_BACK_PRESSED, arrayOf("Activity进入后台"))
+//        JSBridge.sendJS(ynWebView,"PI_Activity",ON_BACK_PRESSED, arrayOf("Activity进入后台"))
         val minintent = Intent(this, WebViewActivity::class.java)
         minintent.putExtra("screen", screen)
         startActivity(minintent)
@@ -157,7 +148,7 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        JSBridge.sendJS(ynWebView,"PI_Activity", ON_APP_RESUMED, arrayOf("Activity进入前台"))
+//        JSBridge.sendJS(ynWebView,"PI_Activity", ON_APP_RESUMED, arrayOf("Activity进入前台"))
         gameExit = true
         if (intent?.getStringExtra("tag") == null){
             return
@@ -211,7 +202,6 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
                     }
                 }
                 "mine_size_activity" -> {
-
                     val screen = intent.getStringExtra("screen")
                     this@NewWebViewActivity.minsizeActivity(screen)
                 }
@@ -248,6 +238,7 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
 
     companion object {
         var gameExit: Boolean = false
+        var isDefaultClose: Boolean = true
     }
 
 }

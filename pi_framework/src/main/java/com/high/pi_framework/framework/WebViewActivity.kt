@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
+import android.view.WindowManager
 import android.widget.RelativeLayout
 import com.high.pi_framework.R
 import com.high.pi_framework.Util.FileUtil
@@ -33,10 +34,14 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
     override val layoutResources: Int get() = R.layout.activity_webview
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (isWebViewFirst == "false"){
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
         hideSystemNavigationBar()
         ynWebView.createYnWebView(this)
         addJEV(this)
         super.onCreate(savedInstanceState)
+//        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
     }
 
 
@@ -57,7 +62,7 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
     override fun initData() {
 //        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)// 在setContentView之后，适配顶部状态栏
 //        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)// 适配底部导航栏
-        loadWebView("true")
+        loadWebView(isWebViewFirst)
         registerBc()
     }
 
@@ -110,27 +115,28 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
     }
 
     override fun onRestart() {
-        if (NewWebViewActivity.gameExit == true){
-            startActivity(Intent(this, NewWebViewActivity::class.java))
-            overridePendingTransition(0, 0)
-        }
+//        if (NewWebViewActivity.gameExit == true){
+//            startActivity(Intent(this, NewWebViewActivity::class.java))
+//            overridePendingTransition(0, 0)
+//        }
         super.onRestart()
-        JSBridge.sendJS(ynWebView,"PI_App",ON_APP_RESUMED, arrayOf("App进入前台"))
+//        JSBridge.sendJS(ynWebView,"PI_App",ON_APP_RESUMED, arrayOf("App进入前台"))
     }
 
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        Log.d("activity","onNewIntent")
         val screenOrientation = intent?.getStringExtra("screen")
         if (screenOrientation == "portrait"){
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
-        reliveWebView()
+//        reliveWebView()
     }
 
 
     override fun onBackPressed() {
-        JSBridge.sendJS(ynWebView,"PI_Activity",ON_BACK_PRESSED, arrayOf("App进入后台"))
+//        JSBridge.sendJS(ynWebView,"PI_Activity",ON_BACK_PRESSED, arrayOf("App进入后台"))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -147,10 +153,9 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
     }
 
     private fun hideSystemNavigationBar() {
-        val _window = window
-        val params = _window.attributes
-        params.systemUiVisibility =   View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        this.runOnUiThread { _window.attributes = params }
+        val _window = window.decorView
+        val uiOptions =   View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+        this.runOnUiThread { _window.systemUiVisibility = uiOptions; window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION) }
 
     }
 
@@ -199,8 +204,10 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
     }
 
     fun closeWebView(){
+        isWebViewFirst = "false"
         ynWebView.destroyYnWebView()
-        isWebViewClose = true
+        NewWebViewActivity.isDefaultClose = true
+        this.finish()
     }
 
     fun reliveWebView(){
@@ -210,6 +217,6 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
     companion object {
         const val APP_RESULT_CODE = 912
         val URL_RES_ID = R.string.init_url
-        var isWebViewClose: Boolean = true
+        var isWebViewFirst: String = "true"
     }
 }

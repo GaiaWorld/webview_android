@@ -13,6 +13,7 @@ import com.high.pi_framework.Util.AndroidWorkaround
 import com.high.pi_framework.Util.Logger
 import com.high.pi_framework.Util.ToastManager
 import com.high.pi_framework.framework.JSBridge
+import com.high.pi_framework.framework.WebViewActivity
 import com.high.pi_framework.webview.YNWebView
 
 abstract class BaseActivity : AppCompatActivity(), BaseView {
@@ -162,8 +163,10 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
      * App已经进入后台
      */
     private fun gotoBackground() {
+        WebViewActivity.isWebViewFirst = "true"
         Logger.error("BaseActivity", "App进入后台")
-        JSBridge.sendJS(ynWebView,"PI_App",ON_BACK_PRESSED, arrayOf("App进入后台"))
+//        JSBridge.sendJS(ynWebView,"PI_App",ON_BACK_PRESSED, arrayOf("App进入后台"))
+
     }
 
     /**
@@ -172,7 +175,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
     private fun gotoForeground() {
         isHome = false
         Logger.error("BaseActivity", "App进入前台")
-        JSBridge.sendJS(ynWebView,"PI_App",ON_APP_RESUMED, arrayOf("App进入前台"))
+//        JSBridge.sendJS(ynWebView,"PI_App",ON_APP_RESUMED, arrayOf("App进入前台"))
     }
 
 
