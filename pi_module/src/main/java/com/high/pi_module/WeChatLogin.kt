@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.util.Log
 import com.high.pi_framework.base.BaseJSModule
 import com.high.pi_framework.webview.YNWebView
 import com.high.pi_module.ADList.GDT.Constants
@@ -92,6 +93,7 @@ class WeChatLogin(ynWebView: YNWebView): BaseJSModule(ynWebView) {
 
 
     override fun onDestroy() {
+        Log.d("destroy","wechatLogin")
         ctx!!.unregisterReceiver(mReceiver)
         super.onDestroy()
     }

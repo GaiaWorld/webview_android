@@ -1,5 +1,6 @@
 package com.high.pi_framework.framework
 
+import android.app.ActivityManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -149,11 +150,18 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
             .setTitle("退出")
             .setMessage("是否立即退出游戏？")
             .setNegativeButton("取消", null)
-            .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which -> System.exit(0) }).show()
+            .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which ->
+                val activityManager = this.applicationContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                for (appTask in activityManager.appTasks){
+                    appTask.finishAndRemoveTask()
+                }
+                System.exit(0)
+            }).show()
     }
 
     override fun onDestroy() {
-        ynWebView.iterationDestroy()
+        Log.d("webView","newwebView onDestroy")
+        ynWebView.jsImpl!!.onDestroy()
         WebViewManager.removeWebView(this.tag!!)
         unregisterReceiver(mCloseReceiver)
         super.onDestroy()
