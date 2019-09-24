@@ -94,7 +94,7 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
 
     override fun onDestroy() {
         Log.d("webView","onDestroy")
-        ynWebView.jsImpl!!.onDestroy()
+        ynWebView.iterationDestroy()
         unregisterReceiver(mReceiver)
         super.onDestroy()
     }
@@ -105,7 +105,7 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        ynWebView.jsImpl!!.onActivityResult(requestCode, resultCode, data)
+        ynWebView.iterationOnActivityResult(requestCode, resultCode, data)
         super.onActivityResult(requestCode, resultCode, data)
     }
 
@@ -192,11 +192,8 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
         Log.d("webView","close WebView")
         isWebViewFirst = "false"
         NewWebViewActivity.isDefaultClose = true
-        Handler().postDelayed( Runnable {
-            ynWebView.destroyYnWebView()
-            this.runOnUiThread {  this.finish() }
-        }, 500)
-
+        ynWebView.destroyYnWebView()
+        this.finish()
     }
 
     fun reliveWebView(){

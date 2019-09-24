@@ -161,7 +161,7 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
 
     override fun onDestroy() {
         Log.d("webView","newwebView onDestroy")
-        ynWebView.jsImpl!!.onDestroy()
+        ynWebView.iterationDestroy()
         WebViewManager.removeWebView(this.tag!!)
         unregisterReceiver(mCloseReceiver)
         super.onDestroy()
