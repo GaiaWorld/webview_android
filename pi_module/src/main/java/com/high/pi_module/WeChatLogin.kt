@@ -36,6 +36,12 @@ class WeChatLogin(ynWebView: YNWebView): BaseJSModule(ynWebView) {
         }
     }
 
+    private val wxReceiver = object : BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            api!!.registerApp(Constants.APPID)
+        }
+    }
+
 
     init {
         val intentFilter = IntentFilter()
@@ -54,11 +60,7 @@ class WeChatLogin(ynWebView: YNWebView): BaseJSModule(ynWebView) {
         api!!.registerApp(app_id)
 
         //建议动态监听微信启动广播进行注册到微信
-        ctx!!.registerReceiver(object : BroadcastReceiver(){
-            override fun onReceive(context: Context?, intent: Intent?) {
-                api!!.registerApp(Constants.APPID)
-            }
-        }, IntentFilter(ConstantsAPI.ACTION_REFRESH_WXAPP))
+        ctx!!.registerReceiver(wxReceiver, IntentFilter(ConstantsAPI.ACTION_REFRESH_WXAPP))
     }
 
     fun getCodeFromWX(scope: String, state: String, callBack:(callType: Int, prames: Array<Any>)->Unit){
@@ -94,6 +96,7 @@ class WeChatLogin(ynWebView: YNWebView): BaseJSModule(ynWebView) {
 
     override fun onDestroy() {
         Log.d("destroy","wechatLogin")
+        ctx!!.unregisterReceiver(wxReceiver)
         ctx!!.unregisterReceiver(mReceiver)
         super.onDestroy()
     }
