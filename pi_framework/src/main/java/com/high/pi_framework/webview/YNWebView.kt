@@ -2,6 +2,7 @@ package com.high.pi_framework.webview
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.util.Log
@@ -24,13 +25,26 @@ import java.util.HashMap
 class YNWebView {
     var mAndroidWebView: AndroidWebView? = null
     var mX5: X5Chrome? = null
-
-    var jsImpl: JSInterface? = null
+    val jsImplList = mutableListOf<JSInterface>()
+//    var jsImpl: JSInterface? = null
 
 
     val CONTEXT = "CONTEXT"
     val WEBVIEW = "WEBVIEW"
     val ACTIVITY = "ACTIVITY"
+
+
+    fun iterationDestroy(){
+        for (jsi in jsImplList){
+            jsi.onDestroy()
+        }
+    }
+
+    fun iterationOnActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
+        for (jsi in jsImplList){
+            jsi.onActivityResult(requestCode, resultCode, data)
+        }
+    }
 
     //环境表
     private val envMap = HashMap<String, Any>()

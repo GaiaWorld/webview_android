@@ -31,7 +31,7 @@ abstract class BaseJSModule constructor(ynWebView: YNWebView) : JSExecutable, JS
     init {
         ctx = ynWebView.getEnv(ynWebView.ACTIVITY) as Activity?
         mTipInfo = PermissionsUtil.TipInfo((ynWebView.getEnv(ynWebView.CONTEXT) as Activity).resources.getString(R.string.dialog_title_prompt), tipContentWithoutPermission, (ynWebView.getEnv(ynWebView.CONTEXT) as Activity).resources.getString(R.string.dialog_title_cancel), (ynWebView.getEnv(ynWebView.CONTEXT) as Activity).resources.getString(R.string.dialog_title_ok))
-        ynWebView.jsImpl = this
+        ynWebView.jsImplList.add(this)
     }
 
     //如果需要底层主动给高层抛事件
