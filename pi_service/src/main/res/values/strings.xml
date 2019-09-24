@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">pi_service</string>
+    <string name="vm_url" translatable="false">/vm/boot/jsvm.js</string><!--VM虚拟机要加载的首个网页，如需要用本地打包，一定要以/开头-->
+</resources>

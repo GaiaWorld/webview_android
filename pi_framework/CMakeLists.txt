@@ -78,7 +78,7 @@ add_library( # Sets the name of the library.
         src/main/cpp/v8_inspector/src/inspector/wasm-translation.cc
 
         src/main/cpp/com_kuplay_pi_1framework_piv8_impl.h
-        src/main/cpp/com_kuplay_pi_1framework_piv8_impl.cpp
+        src/main/cpp/com_kuplay_pi_1service_piv8_impl.cpp
         src/main/cpp/ethbtcbridge.h
         src/main/cpp/ethbtcbridge.cpp
         src/main/cpp/util.cpp

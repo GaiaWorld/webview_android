@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
-          package="com.kuplay.kuplay" >
+          package="com.high.high" >
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 定位权限 -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -37,7 +37,7 @@
 
     <application
             android:usesCleartextTraffic="true"
-            android:name=".App"
+            android:name="com.high.high.App"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -51,7 +51,7 @@
         <!-- Android 7.0 文件共享配置，必须配置 -->
         <provider
                android:name="android.support.v4.content.FileProvider"
-               android:authorities="com.kuplay.kuplay.fileprovider"
+               android:authorities="com.high.high.fileprovider"
                android:exported="false"
                android:grantUriPermissions="true">
            <meta-data
@@ -60,7 +60,7 @@
         </provider>
 
         <activity
-            android:name=".SplashActivity"
+            android:name="com.high.high.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -75,10 +75,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".PopupPushActivity" />
+        <activity android:name="com.high.high.PopupPushActivity" />
 
         <activity
-                android:name=".wxapi.WXPayEntryActivity"
+                android:name="com.high.high.wxapi.WXPayEntryActivity"
                 android:label="@string/app_name"
                 android:theme="@android:style/Theme.Translucent.NoTitleBar"
                 android:exported="true"
@@ -86,7 +86,7 @@
                 android:launchMode="singleTask">
         </activity>
         <activity
-                android:name=".wxapi.WXEntryActivity"
+                android:name="com.high.high.wxapi.WXEntryActivity"
                 android:label="@string/app_name"
                 android:theme="@android:style/Theme.Translucent.NoTitleBar"
                 android:exported="true"
@@ -95,20 +95,20 @@
         </activity>
 
         <activity
-                android:name=".gameView.ShareActivity"
+                android:name="com.high.high.gameView.ShareActivity"
                 android:excludeFromRecents="true"
                 android:screenOrientation="portrait" />
         <activity
-                android:name=".gameView.ChargeInGameActivity"
+                android:name="com.high.high.gameView.ChargeInGameActivity"
                 android:excludeFromRecents="true"
                 android:screenOrientation="portrait" />
         <activity
-                android:name=".gameView.ChargeActivity"
+                android:name="com.high.high.gameView.ChargeActivity"
                 android:excludeFromRecents="true"
                 android:screenOrientation="portrait" />
 
         <receiver
-                android:name=".YNMessageReceiver"
+                android:name="com.high.high.YNMessageReceiver"
                 android:exported="false"> <!-- 为保证receiver安全，建议设置不可导出，如需对其他应用开放可通过android：permission进行限制 -->
             <intent-filter>
                 <action android:name="com.alibaba.push2.action.NOTIFICATION_OPENED" />
