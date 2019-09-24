@@ -23,9 +23,12 @@ class SplashActivity : Activity() {
             val decorView = window.decorView
             val uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
             decorView.systemUiVisibility = uiOptions
-            startActivity(Intent(this, WebViewActivity::class.java))
-            overridePendingTransition(0, 0);
-            finish()
+            val handler = Handler()
+            handler.postDelayed( Runnable {
+                startActivity(Intent(this, WebViewActivity::class.java))
+                overridePendingTransition(0, 0);
+                finish()
+            },200)
         }
     }
 }

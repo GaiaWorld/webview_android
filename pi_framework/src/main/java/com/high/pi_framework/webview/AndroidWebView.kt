@@ -159,10 +159,13 @@ class AndroidWebView constructor(private val ctx: Context, private var uAgent: S
             var response: WebResourceResponse? = null
 
             try {
-                val url = uri.toString();
-
-                if (!url.startsWith("file") && !url.startsWith("http")) {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                val url = uri.toString()
+                Log.d("AndroidWebView", url)
+                if (!url.startsWith("file") &&
+                    !url.startsWith("http") &&
+                    !url.startsWith("data:")) {
+                    val intent = Intent(Intent.ACTION_VIEW, uri)
+                    Log.d("AndroidWebView",intent.toString())
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
                     (view as AndroidWebView).context.startActivity(intent)
                     val stream = ByteArrayInputStream("跳转到别的应用处理".toByteArray())

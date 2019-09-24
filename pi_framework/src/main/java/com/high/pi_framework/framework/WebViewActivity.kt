@@ -1,8 +1,10 @@
 package com.high.pi_framework.framework
 
+import android.app.ActivityManager
 import android.content.*
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
@@ -81,10 +83,17 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
             .setTitle("退出")
             .setMessage("是否立即退出游戏？")
             .setNegativeButton("取消", null)
-            .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which -> System.exit(0) }).show()
+            .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which ->
+                val activityManager = this.applicationContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                for (appTask in activityManager.appTasks){
+                    appTask.finishAndRemoveTask()
+                }
+                System.exit(0)
+            }).show()
     }
 
     override fun onDestroy() {
+        Log.d("webView","onDestroy")
         ynWebView.jsImpl!!.onDestroy()
         unregisterReceiver(mReceiver)
         super.onDestroy()
@@ -180,10 +189,14 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
     }
 
     fun closeWebView(){
+        Log.d("webView","close WebView")
         isWebViewFirst = "false"
-        ynWebView.destroyYnWebView()
         NewWebViewActivity.isDefaultClose = true
-        this.finish()
+        Handler().postDelayed( Runnable {
+            ynWebView.destroyYnWebView()
+            this.runOnUiThread {  this.finish() }
+        }, 500)
+
     }
 
     fun reliveWebView(){

@@ -176,8 +176,11 @@ class X5Chrome @JvmOverloads constructor(private val ctx: Context, private val u
             var response: WebResourceResponse? = null
 
             try {
-                val url = uri.toString();
-                if (!url.startsWith("file") && !url.startsWith("http")) {
+                val url = uri.toString()
+                Log.d("AndroidWebView", url)
+                if (!url.startsWith("file") &&
+                    !url.startsWith("http") &&
+                    !url.startsWith("data:")) {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
                     (view as AndroidWebView).context.startActivity(intent)
