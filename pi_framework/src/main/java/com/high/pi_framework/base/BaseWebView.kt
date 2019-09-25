@@ -6,9 +6,9 @@ import java.util.HashMap
 abstract class BaseWebView :BaseActivity() {
 
         override fun onDestroy() {
-            super.onDestroy()
             ynWebView.destroyYnWebView()
             ynWebView.webViewToNull()
+            super.onDestroy()
         }
 
         protected fun addJEV(activity: BaseActivity) {

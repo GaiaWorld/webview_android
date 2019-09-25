@@ -125,7 +125,7 @@ class AndroidWebView constructor(private val ctx: Context, private var uAgent: S
 
         override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
             super.onReceivedError(view, request, error)
-            Log.d("z1u24","打开失败咯")
+            Log.d("AndroidWebView","打开失败咯")
         }
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -145,6 +145,7 @@ class AndroidWebView constructor(private val ctx: Context, private var uAgent: S
 
         override fun onPageFinished(view: WebView, url: String) {
             super.onPageFinished(view, url)
+            Log.d("AndroidWebView","打开完成咯")
             loadCallback?.onLoadFinished()
             mTimer?.cancel()
             mTimer?.purge()

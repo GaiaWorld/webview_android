@@ -140,8 +140,6 @@ class YNWebView {
             mX5!!.addJavascriptInterface(JSBridge(this), JSBridge::class.java.simpleName)
             mX5?.addJavascriptInterface(JSIntercept(this), JSIntercept::class.java.simpleName)
             X5Chrome.sViewRoot.add(mRlRootView)
-//            mX5!!.setBackgroundColor(0)
-//            mX5!!.setBackgroundResource(make)
             WebViewManager.addWebView(tag, mX5!!)
             if(!url.startsWith("/")){
                 mX5!!.setInjectContent(url, content)
@@ -150,8 +148,6 @@ class YNWebView {
             mAndroidWebView!!.addJavascriptInterface(JSBridge(this), JSBridge::class.java.simpleName)
             mAndroidWebView?.addJavascriptInterface(JSIntercept(this), JSIntercept::class.java.simpleName)
             AndroidWebView.sViewRoot.add(mRlRootView)
-//            mAndroidWebView!!.setBackgroundColor(0)
-//            mAndroidWebView!!.setBackgroundResource(make)
             WebViewManager.addWebView(tag, mAndroidWebView!!)
             if(!url.startsWith("/")){
                 mAndroidWebView!!.setInjectContent(url, content)

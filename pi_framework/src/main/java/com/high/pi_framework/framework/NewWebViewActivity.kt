@@ -85,9 +85,13 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
         tag = intent?.getStringExtra("tag")
         if (null == tag) throw Exception("The tag can't be null!")
         val path = intent.getStringExtra("inject") ?: ""
-        val file = File(path)
-        val content = file.readText()
-        file.delete()
+        var content = ""
+        if (path != "") {
+            val file = File(path)
+            content = file.readText()
+            file.delete()
+        }
+
         val url = intent?.getStringExtra("load_url") ?: "https://cn.bing.com"
         val tagStr = tag as String
         ynWebView.addNewJavaScript( mRlRootView, tagStr, url, content, R.drawable.ydzm)

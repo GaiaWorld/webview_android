@@ -143,20 +143,25 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
                 intent.putExtra("tag",webViewName)
                 ctx!!.startActivity(intent)
             } else {
-                val file = File(ctx!!.cacheDir, "new_webview_inject")
-                try {
-                    val bw = BufferedWriter(FileWriter(file))
-                    bw.write(injectContent)
-                    bw.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
+                var filePath = "";
+                if (injectContent != "") {
+                    val file = File(ctx!!.cacheDir, "new_webview_inject")
+                    filePath = file.absolutePath
+                    try {
+                        val bw = BufferedWriter(FileWriter(file))
+                        bw.write(injectContent)
+                        bw.close()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
                 }
+
                 if (isWebViewNameExists(Game_Name)){
                     sendCloseWebViewMessage(Game_Name)
                 }
                 Game_Name = webViewName
                 val intent = Intent(ctx, NewWebViewActivity::class.java)
-                intent.putExtra("inject", file.absolutePath)
+                intent.putExtra("inject", filePath)
                 intent.putExtra("uagent", "YINENG_ANDROID_GAME1.0")
                 intent.putExtra("title", title)
                 intent.putExtra("screenOrientation", screenOrientation)
