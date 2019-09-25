@@ -192,8 +192,10 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
         Log.d("webView","close WebView")
         isWebViewFirst = "false"
         NewWebViewActivity.isDefaultClose = true
-        ynWebView.destroyYnWebView()
-        this.finish()
+        Handler().postDelayed( Runnable {
+            ynWebView.destroyYnWebView()
+            this.finish()
+        },50)
     }
 
     fun reliveWebView(){
