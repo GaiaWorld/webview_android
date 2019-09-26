@@ -16,6 +16,7 @@ import com.high.pi_framework.Util.FileUtil
 import com.high.pi_framework.Util.PrefMgr
 import com.high.pi_framework.base.BaseWebView
 import com.high.pi_framework.module.LocalLanguageMgr
+import com.high.pi_framework.module.TapDB
 import java.io.File
 import java.util.*
 
@@ -55,6 +56,7 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
         ynWebView.createYnWebView(this)
         addJEV(this)
         super.onCreate(savedInstanceState)
+        TapDB.initSDK(this)
     }
 
     override fun initViews() {
@@ -102,6 +104,12 @@ class WebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener {
     override fun onResume() {
         addJEV(this)
         super.onResume()
+        TapDB.onResume(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        TapDB.onStop(this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
