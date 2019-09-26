@@ -97,14 +97,27 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
         ynWebView.addNewJavaScript( mRlRootView, tagStr, url, content, R.drawable.ydzm)
         addJEV(this)
         if (url.startsWith("/")) {
-            val stream = this.getAssets().open(url.substring(1))
-            var ct = FileUtil.readFile(stream)
-            if (ct != "") {
-                ct = "<script>$content</script>$ct"
-                super.loadDataWithBaseUrl("file:///android_asset" + url, ct);
-
-            } else {
-                Log.d("JSIntercept", "loadUrl Error!!!");
+            try {
+                val stream = this.getAssets().open(url.substring(1))
+                var ct = FileUtil.readFile(stream)
+                if (ct != "") {
+                    ct = "<script>$content</script>$ct"
+                    super.loadDataWithBaseUrl("file:///android_asset" + url, ct)
+                } else {
+                    Log.d("JSIntercept", "loadUrl Error!!!");
+                }
+            } catch (e: java.lang.Exception) {
+                // 假设：如果以/开头，同时又没有assets包对应的资源，那么就content就肯定是网页的内容。
+                if (content != "") {
+                    super.loadDataWithBaseUrl("file:///android_asset" + url, content)
+                } else {
+                    AlertDialog.Builder(this)
+                        .setTitle("Error")
+                        .setMessage("程序出错，请重启App")
+                        .create()
+                        .show()
+                    return
+                }
             }
         } else {
             super.loadUrl(url)

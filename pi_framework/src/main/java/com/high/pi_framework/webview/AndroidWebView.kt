@@ -164,7 +164,8 @@ class AndroidWebView constructor(private val ctx: Context, private var uAgent: S
                 Log.d("AndroidWebView", url)
                 if (!url.startsWith("file") &&
                     !url.startsWith("http") &&
-                    !url.startsWith("data:")) {
+                    !url.startsWith("data:") &&
+                    !url.startsWith("blob:")) {
                     val intent = Intent(Intent.ACTION_VIEW, uri)
                     Log.d("AndroidWebView",intent.toString())
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP

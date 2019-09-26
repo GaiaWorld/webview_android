@@ -177,13 +177,14 @@ class X5Chrome @JvmOverloads constructor(private val ctx: Context, private val u
 
             try {
                 val url = uri.toString()
-                Log.d("AndroidWebView", url)
                 if (!url.startsWith("file") &&
                     !url.startsWith("http") &&
-                    !url.startsWith("data:")) {
+                    !url.startsWith("data:") &&
+                    !url.startsWith("blob:")) {
+                    Log.d("AndroidWebview", "shouldInterceptRequest Other App: url = " + url)
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    (view as AndroidWebView).context.startActivity(intent)
+                    (view as X5Chrome).context.startActivity(intent)
                     val stream = ByteArrayInputStream("跳转到别的应用处理".toByteArray())
                     response = WebResourceResponse("application/json", "UTF-8", stream)
                 } else {
