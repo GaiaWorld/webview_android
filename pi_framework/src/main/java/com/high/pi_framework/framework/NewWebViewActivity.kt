@@ -24,6 +24,7 @@ import java.util.*
 import android.util.DisplayMetrics
 import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
+import com.high.pi_framework.module.TapDB
 
 
 class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener{
@@ -71,8 +72,18 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
         }
         addJEV(this)
         super.onCreate(savedInstanceState)
+        TapDB.initSDK(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        TapDB.onResume(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        TapDB.onStop(this)
+    }
 
     override fun initViews() {
         mRlRootView = root_view

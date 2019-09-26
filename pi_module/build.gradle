@@ -60,7 +60,7 @@ dependencies {
     implementation 'com.github.GaiaWorld:ImageSelector:v1.0.5'
     implementation 'com.github.z1u24:QRScanner:v3.0.0'
     implementation 'com.github.GaiaWorld:Argon2Hash:v1.0'
-    implementation project(':pi_framework')
+    api project(':pi_framework')
     api(name: 'open_ad_sdk', ext: 'aar')
     api(name:'alipaySdk-15.6.5-20190718211159-noUtdid', ext:'aar')
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.6'
