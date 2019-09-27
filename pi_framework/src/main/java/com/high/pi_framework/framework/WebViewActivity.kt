@@ -1,10 +1,9 @@
 package com.high.pi_framework.framework
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Bundle
+import android.os.IBinder
+import android.os.Parcel
 import android.util.Log
 import android.view.WindowManager
 import android.widget.RelativeLayout
@@ -14,40 +13,33 @@ import com.high.pi_framework.Util.PrefMgr
 import com.high.pi_framework.Util.ViewUtil
 import com.high.pi_framework.base.BaseWebView
 import com.high.pi_framework.module.LocalLanguageMgr
-import com.high.pi_framework.piv8.JSVMManager
-import com.high.pi_service.V8
-import com.high.pi_framework.piv8.piv8Service
 import com.high.pi_framework.webview.YNWebView
+import com.high.pi_service.piservice
+import com.high.pi_service.piserviceCallBack
 import kotlinx.android.synthetic.main.layout_fake_status_bar_view.*
 import java.io.File
 
 
 class WebViewActivity : BaseWebView() {
+    private var tag: String = ""
     private lateinit var mJsIntercept: JSIntercept
     private lateinit var mRlRootView: RelativeLayout
-
-
-    private lateinit var runtime: com.high.pi_service.V8
-    /**
-     * Get the layout resource from XML.
-     *
-     * @return layout resource from XML.
-     */
+    private var ps: piservice? = null
+    private val conn = webViewConn()
     override val layoutResources: Int get() = R.layout.activity_webview
 
+    //============life==================
     override fun onCreate(savedInstanceState: Bundle?) {
+        tag = resources.getString(R.string.init_name)
         ynWebView.createYnWebView(this)
-        YNWebView.addWithName("default",ynWebView)
+        YNWebView.addWithName(tag, ynWebView)
         addJEV(this)
+        val intent = Intent("com.high.high.piservice")
+        intent.setPackage("com.high.high");
+        bindService(intent, conn, BIND_AUTO_CREATE)
         super.onCreate(savedInstanceState)
-        val intent = Intent(this, piv8Service::class.java)
-        this.startService(intent)
     }
 
-
-    /**
-     * As the method name said,this method is used to initialize views on this activity.
-     */
     override fun initViews() {
         mRlRootView = findViewById(R.id.app_main_rl_root_view)
         mRlRootView.removeAllViews()
@@ -55,9 +47,6 @@ class WebViewActivity : BaseWebView() {
         status_bar.layoutParams.height = ViewUtil.getStatusBarHeight(this).toInt()
     }
 
-    /**
-     * Initialize basic data.
-     */
     override fun initData() {
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)// 在setContentView之后，适配顶部状态栏
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)// 适配底部导航栏
@@ -70,6 +59,27 @@ class WebViewActivity : BaseWebView() {
         registerBc()
     }
 
+    override fun onResume() {
+        addJEV(this)
+        super.onResume()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        JSBridge.sendJS(ynWebView,"PI_App",ON_APP_RESUMED, arrayOf("App进入前台"))
+    }
+
+    override fun onBackPressed() {
+        JSBridge.sendJS(ynWebView,"PI_Activity",ON_BACK_PRESSED, arrayOf("App进入后台"))
+    }
+
+    override fun onDestroy() {
+        unregisterReceiver(mReceiver)
+        super.onDestroy()
+    }
+
+
+    //==========private==========
     private fun onloadUrl(){
         //获取当前app版本号
         val pm = this.applicationContext.packageManager
@@ -108,22 +118,6 @@ class WebViewActivity : BaseWebView() {
         }
     }
 
-    override fun onRestart() {
-        if (NewWebViewActivity.gameExit == true){
-            startActivity(Intent(this, NewWebViewActivity::class.java))
-            overridePendingTransition(0, 0)
-        }
-        super.onRestart()
-        JSBridge.sendJS(ynWebView,"PI_App",ON_APP_RESUMED, arrayOf("App进入前台"))
-    }
-
-
-
-
-    override fun onBackPressed() {
-        JSBridge.sendJS(ynWebView,"PI_Activity",ON_BACK_PRESSED, arrayOf("App进入后台"))
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         ynWebView.jsImpl!!.onActivityResult(requestCode, resultCode, data)
         super.onActivityResult(requestCode, resultCode, data)
@@ -131,7 +125,7 @@ class WebViewActivity : BaseWebView() {
 
     private fun registerBc() {
         val intentFilter = IntentFilter()
-        intentFilter.addAction("send_messagedefault")
+        intentFilter.addAction("send_message$tag")
         registerReceiver(mReceiver, intentFilter)
     }
 
@@ -139,7 +133,7 @@ class WebViewActivity : BaseWebView() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val action = intent?.action ?: return
             when (action) {
-                "send_messagedefault" -> {
+                "send_message$tag" -> {
                     val rpc = intent.getStringExtra("rpc")
                     val message = intent.getStringExtra("message")
                     val sender = intent.getStringExtra("from_web_view")
@@ -155,15 +149,46 @@ class WebViewActivity : BaseWebView() {
         }
     }
 
-    override fun onDestroy() {
-        unregisterReceiver(mReceiver)
-        super.onDestroy()
+    fun webViewBindService(message: String){
+        if (ps != null){
+            val ms = "window['handle_native_event']('ServiceAction', 'bind','$tag','$message')"
+            ps!!.sendMessage(tag, ms)
+        }
     }
 
-    override fun onResume() {
-        addJEV(this)
-        super.onResume()
+    fun webViewPostMessage(sender: String, message: String){
+        if (ps != null){
+            val ms = "window.onWebViewPostMessage('$sender','$message')"
+            ps!!.sendMessage(tag, ms)
+        }
     }
+
+    inner class webViewConn(): ServiceConnection{
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            ps = piservice.Stub.asInterface(service)
+            ps!!.onMessage(tag, object : piserviceCallBack.Stub(){
+                override fun sendMessage(statuCode: Int, message: String?) {
+                    if (statuCode == 200){
+                        val ms = "javascript:window.pi_sdk.piService.onBindService(undefined, $message)"
+                        ynWebView.evaluateJavascript(ms)
+                    }else if(statuCode == 400){
+                        val ms = "javascript:window.pi_sdk.piService.onBindService({code: -4, reason: $message})"
+                        ynWebView.evaluateJavascript(ms)
+                    }else if (statuCode == 600){
+                        val ms = String.format("javascript:window.onWebViewPostMessage('%s','%s')", "JSVM", message)
+                        ynWebView.evaluateJavascript(ms)
+                    }
+                }
+            })
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+
+        }
+    }
+
+
+
 
     companion object {
         const val APP_RESULT_CODE = 912

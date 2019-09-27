@@ -653,33 +653,33 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     v8::V8::Initialize();
 
     jvm = vm;
-    v8cls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/piv8/V8"));
-    v8ObjectCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/piv8/V8Object"));
-    v8ArrayCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/piv8/V8Array"));
-    v8TypedArrayCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/piv8/V8TypedArray"));
-    v8ArrayBufferCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/piv8/V8ArrayBuffer"));
-    v8FunctionCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/piv8/V8Function"));
-    undefinedV8ObjectCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/piv8/V8Object$Undefined"));
-    undefinedV8ArrayCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/piv8/V8Array$Undefined"));
+    v8cls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/V8"));
+    v8ObjectCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/V8Object"));
+    v8ArrayCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/V8Array"));
+    v8TypedArrayCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/V8TypedArray"));
+    v8ArrayBufferCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/V8ArrayBuffer"));
+    v8FunctionCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/V8Function"));
+    undefinedV8ObjectCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/V8Object$Undefined"));
+    undefinedV8ArrayCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/V8Array$Undefined"));
     stringCls = (jclass)env->NewGlobalRef((env)->FindClass("java/lang/String"));
     integerCls = (jclass)env->NewGlobalRef((env)->FindClass("java/lang/Integer"));
     doubleCls = (jclass)env->NewGlobalRef((env)->FindClass("java/lang/Double"));
     booleanCls = (jclass)env->NewGlobalRef((env)->FindClass("java/lang/Boolean"));
     throwableCls = (jclass)env->NewGlobalRef((env)->FindClass("java/lang/Throwable"));
-    v8ResultsUndefinedCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/piv8/V8ResultUndefined"));
-    v8ScriptCompilationCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/piv8/V8ScriptCompilationException"));
-    v8ScriptExecutionException = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/piv8/V8ScriptExecutionException"));
-    v8RuntimeExceptionCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/piv8/V8RuntimeException"));
+    v8ResultsUndefinedCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/V8ResultUndefined"));
+    v8ScriptCompilationCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/V8ScriptCompilationException"));
+    v8ScriptExecutionException = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/V8ScriptExecutionException"));
+    v8RuntimeExceptionCls = (jclass)env->NewGlobalRef((env)->FindClass("com/high/pi_service/V8RuntimeException"));
     errorCls = (jclass)env->NewGlobalRef((env)->FindClass("java/lang/Error"));
     unsupportedOperationExceptionCls = (jclass)env->NewGlobalRef((env)->FindClass("java/lang/UnsupportedOperationException"));
 
     // Get all method IDs
 
-    v8ArrayInitMethodID = env->GetMethodID(v8ArrayCls, "<init>", "(Lcom/high/pi_service/piv8/V8;)V");
-    v8TypedArrayInitMethodID = env->GetMethodID(v8TypedArrayCls, "<init>", "(Lcom/high/pi_service/piv8/V8;)V");
-    v8ArrayBufferInitMethodID = env->GetMethodID(v8ArrayBufferCls, "<init>", "(Lcom/high/pi_service/piv8/V8;Ljava/nio/ByteBuffer;)V");
+    v8ArrayInitMethodID = env->GetMethodID(v8ArrayCls, "<init>", "(Lcom/high/pi_service/V8;)V");
+    v8TypedArrayInitMethodID = env->GetMethodID(v8TypedArrayCls, "<init>", "(Lcom/high/pi_service/V8;)V");
+    v8ArrayBufferInitMethodID = env->GetMethodID(v8ArrayBufferCls, "<init>", "(Lcom/high/pi_service/V8;Ljava/nio/ByteBuffer;)V");
     v8ArrayGetHandleMethodID = env->GetMethodID(v8ArrayCls, "getHandle", "()J");
-    v8CallVoidMethodID = (env)->GetMethodID(v8cls, "callVoidJavaMethod", "(JLcom/high/pi_service/piv8/V8Object;Lcom/high/pi_service/piv8/V8Array;)V");
+    v8CallVoidMethodID = (env)->GetMethodID(v8cls, "callVoidJavaMethod", "(JLcom/high/pi_service/V8Object;Lcom/high/pi_service/V8Array;)V");
     v8ObjectReleaseMethodID = env->GetMethodID(v8ObjectCls, "close", "()V");
     v8ArrayReleaseMethodID = env->GetMethodID(v8ArrayCls, "close", "()V");
     v8ObjectIsUndefinedMethodID = env->GetMethodID(v8ObjectCls, "isUndefined", "()Z");
@@ -688,7 +688,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     integerIntValueMethodID = env->GetMethodID(integerCls, "intValue", "()I");
     booleanBoolValueMethodID = env->GetMethodID(booleanCls, "booleanValue", "()Z");
     doubleDoubleValueMethodID = env->GetMethodID(doubleCls, "doubleValue", "()D");
-    v8CallObjectJavaMethodMethodID = (env)->GetMethodID(v8cls, "callObjectJavaMethod", "(JLcom/high/pi_service/piv8/V8Object;Lcom/high/pi_service/piv8/V8Array;)Ljava/lang/Object;");
+    v8CallObjectJavaMethodMethodID = (env)->GetMethodID(v8cls, "callObjectJavaMethod", "(JLcom/high/pi_service/V8Object;Lcom/high/pi_service/V8Array;)Ljava/lang/Object;");
     v8DisposeMethodID = (env)->GetMethodID(v8cls, "disposeMethodID", "(J)V");
     v8WeakReferenceReleased = (env)->GetMethodID(v8cls, "weakReferenceReleased", "(J)V");
     v8ScriptCompilationInitMethodID = env->GetMethodID(v8ScriptCompilationCls, "<init>", "(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;II)V");
@@ -699,8 +699,8 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     integerInitMethodID = env->GetMethodID(integerCls, "<init>", "(I)V");
     doubleInitMethodID = env->GetMethodID(doubleCls, "<init>", "(D)V");
     booleanInitMethodID = env->GetMethodID(booleanCls, "<init>", "(Z)V");
-    v8FunctionInitMethodID = env->GetMethodID(v8FunctionCls, "<init>", "(Lcom/high/pi_service/piv8/V8;)V");
-    v8ObjectInitMethodID = env->GetMethodID(v8ObjectCls, "<init>", "(Lcom/high/pi_service/piv8/V8;)V");
+    v8FunctionInitMethodID = env->GetMethodID(v8FunctionCls, "<init>", "(Lcom/high/pi_service/V8;)V");
+    v8ObjectInitMethodID = env->GetMethodID(v8ObjectCls, "<init>", "(Lcom/high/pi_service/V8;)V");
     v8InspectorSend = env->GetMethodID(v8cls,"send","(Ljava/lang/Object;Ljava/lang/String;)V");
     v8InspectorSendToDevToolsConsole = env->GetMethodID(v8cls,"sendToDevToolsConsole","(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V");
 

@@ -1,4 +1,4 @@
-package com.high.pi_framework.Util
+package com.high.pi_service.utils
 
 object ContainerUtil {
     /**
@@ -20,5 +20,4 @@ object ContainerUtil {
     fun isNullOrEmpty(set: Set<*>?): Boolean {
         return null == set || 0 == set.size
     }
-
 }

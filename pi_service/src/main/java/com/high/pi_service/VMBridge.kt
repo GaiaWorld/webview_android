@@ -1,17 +1,13 @@
 package com.high.pi_service
 
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import com.kuplay.pi_framework.Util.ClassInfo
-import com.kuplay.pi_framework.Util.CodeUtil
-import com.kuplay.pi_framework.Util.ContainerUtil
-import com.kuplay.pi_framework.base.BaseJSModule
-import com.kuplay.pi_framework.base.JSExecutable
-import com.kuplay.pi_framework.webview.YNWebView
+import com.high.pi_service.utils.*
 import java.util.HashMap
 
-class VMBridge( private val webview: V8?) {
+class VMBridge(private val ctx: Context, private val runtime: V8) {
 
     //获取主线程
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -26,7 +22,7 @@ class VMBridge( private val webview: V8?) {
      */
     val clsMap = HashMap<String, ClassInfo>()
     init {
-        val classes = CodeUtil.getAllClassByInterface(JSExecutable::class.java)
+        val classes = CodeUtil.getAllClassByInterface(PSExecutable::class.java)
         if (!ContainerUtil.isNullOrEmpty(classes)){
             for (clazz in classes) {
                 setClass(clazz.simpleName, clazz)
@@ -77,13 +73,13 @@ class VMBridge( private val webview: V8?) {
             }
             when (methodName) {
                 METHOD_INIT -> {
-                    val yn = YNWebView.getYNWebView("default")!!
-                    val id = newInstance(className, yn!!)
-                    callJS(listenerID, BaseJSModule.SUCCESS, arrayOf(id))
+
+                    val id = newInstance(className, ctx, runtime)
+                    callJS(listenerID, BasePSModule.SUCCESS, arrayOf(id))
                 }
                 METHOD_CLOSE -> {
                     removeObject(nativeID)
-                    callJS( listenerID, BaseJSModule.SUCCESS, emptyArray())
+                    callJS( listenerID, BasePSModule.SUCCESS, emptyArray())
                 }
                 else -> call(className, methodName, nativeID, params)
 
@@ -94,7 +90,7 @@ class VMBridge( private val webview: V8?) {
         }
     }
 
-    fun callJS( listenerId: Int, @BaseJSModule.Companion.StatusCode statusCode: Int, params: Array<Any>) {
+    fun callJS( listenerId: Int, @BasePSModule.Companion.StatusCode statusCode: Int, params: Array<Any>) {
 
         val func = StringBuilder("window['handle_native_message']($listenerId, $statusCode")
         if (null != params)
@@ -130,7 +126,7 @@ class VMBridge( private val webview: V8?) {
 
         Log.d("VMBridge", "callJS: " + func.toString())
         mainHandler.post {
-            webview!!.executeVoidScript(func.toString())
+            runtime.executeVoidScript(func.toString())
         }
     }
 
@@ -140,7 +136,7 @@ class VMBridge( private val webview: V8?) {
         val func = String.format("handle_native_throwerror('%s', '%s', '%s')", className, methodName, message)
         Log.d("VMBridge", "throwJS: $func")
         mainHandler.post {
-            webview!!.executeVoidScript(func)
+            runtime.executeVoidScript(func)
         }
     }
 
@@ -171,12 +167,12 @@ class VMBridge( private val webview: V8?) {
      * 生成对象的实例，返回id
      */
     @Throws(Exception::class)
-    fun newInstance(className: String, ynWebView: YNWebView): Int {
+    fun newInstance(className: String, ctx: Context, runtime: V8): Int {
         val info = clsMap[className] ?: throw Exception("JSEnv.call class $className do not find")
         val id: Int
         try {
             val c = info.clazz.constructors[0]
-            val o = c.newInstance(ynWebView)
+            val o = c.newInstance(ctx, runtime)
             id = addObject(o)
         } catch (e: Exception) {
             e.printStackTrace()

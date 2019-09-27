@@ -4,12 +4,12 @@
         <activity
                 android:name="com.high.pi_framework.framework.WebViewActivity"
                 android:screenOrientation="portrait"
-                android:launchMode="singleTask"
+                android:launchMode="standard"
                 android:theme="@style/FullScreenWithoutAny">
         </activity>
         <activity
                 android:name="com.high.pi_framework.framework.NewWebViewActivity"
-                android:launchMode="singleInstance"
+                android:launchMode="standard"
                 android:screenOrientation="portrait"
                 android:theme="@style/GameScreenWithoutAny" />
 
@@ -23,10 +23,7 @@
                 android:enabled="true"
                 android:exported="true" />
 
-        <service
-                android:name=".piv8.piv8Service"
-                android:enabled="true"
-                android:exported="true" />
+
 
     </application>
 </manifest>

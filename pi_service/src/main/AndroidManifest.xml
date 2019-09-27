@@ -1,2 +1,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.high.pi_service"/>
+          package="com.high.pi_service">
+
+
+    <application>
+        <service
+                android:name=".piv8Service"
+                android:enabled="true"
+                android:process=":piv8Service"
+                android:exported="true" >
+            <intent-filter>
+                <action android:name="com.high.high.piservice"/>
+            </intent-filter>
+        </service>
+
+    </application>
+
+
+
+
+
+
+</manifest>

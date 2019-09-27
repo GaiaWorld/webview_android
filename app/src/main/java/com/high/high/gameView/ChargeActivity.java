@@ -25,8 +25,8 @@ import com.alipay.sdk.app.PayTask;
 import com.high.high.R;
 import com.high.pi_framework.Util.ToastManager;
 import com.high.high.utils.PayResult;
-import com.high.pi_framework.piv8.piv8Service;
-import com.high.pi_framework.piv8.serviceRunCode;
+//import com.high.pi_framework.piv8.piv8Service;
+//import com.high.pi_framework.piv8.serviceRunCode;
 
 import java.text.DecimalFormat;
 import java.util.Map;
@@ -95,14 +95,14 @@ public class ChargeActivity extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ChargeActivity.this, piv8Service.class);
-                Bundle bundle = new Bundle();
-                bundle.putInt(serviceRunCode.key, serviceRunCode.sendMessage);
-                bundle.putString(serviceRunCode.messageKey, serviceRunCode.chargeMessage);
-                bundle.putInt(serviceRunCode.statusCodeKey, serviceRunCode.statusFail);
-                intent.putExtras(bundle);
-                startService(intent);
-                finish();
+//                Intent intent = new Intent(ChargeActivity.this, piv8Service.class);
+//                Bundle bundle = new Bundle();
+//                bundle.putInt(serviceRunCode.key, serviceRunCode.sendMessage);
+//                bundle.putString(serviceRunCode.messageKey, serviceRunCode.chargeMessage);
+//                bundle.putInt(serviceRunCode.statusCodeKey, serviceRunCode.statusFail);
+//                intent.putExtras(bundle);
+//                startService(intent);
+//                finish();
             }
         });
         weixinPayBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -524,21 +524,21 @@ public class ChargeActivity extends AppCompatActivity {
      * 实际支付，拉起插件
      */
     private void doPay() {
-        Intent intent = new Intent(this, piv8Service.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt(serviceRunCode.key, serviceRunCode.sendMessage);
-        bundle.putString(serviceRunCode.messageKey, serviceRunCode.chargeMessage);
-        bundle.putInt(serviceRunCode.statusCodeKey, serviceRunCode.statusSuccess);
-        bundle.putInt(serviceRunCode.payAmount, payAmount);
-        if (useWxPay) {
-            //使用微信支付
-            bundle.putString(serviceRunCode.payKey, serviceRunCode.weChatPay);
-        } else {
-            //使用支付宝
-            bundle.putString(serviceRunCode.payKey, serviceRunCode.aLiPay);
-        }
-        intent.putExtras(bundle);
-        startService(intent);
+//        Intent intent = new Intent(this, piv8Service.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putInt(serviceRunCode.key, serviceRunCode.sendMessage);
+//        bundle.putString(serviceRunCode.messageKey, serviceRunCode.chargeMessage);
+//        bundle.putInt(serviceRunCode.statusCodeKey, serviceRunCode.statusSuccess);
+//        bundle.putInt(serviceRunCode.payAmount, payAmount);
+//        if (useWxPay) {
+//            //使用微信支付
+//            bundle.putString(serviceRunCode.payKey, serviceRunCode.weChatPay);
+//        } else {
+//            //使用支付宝
+//            bundle.putString(serviceRunCode.payKey, serviceRunCode.aLiPay);
+//        }
+//        intent.putExtras(bundle);
+//        startService(intent);
     }
 
 

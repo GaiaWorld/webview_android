@@ -8,9 +8,6 @@ import android.util.Log
 import com.high.pi_framework.Util.ViewUtil
 import com.high.pi_framework.base.BaseJSModule
 import com.high.pi_framework.framework.NewWebViewActivity
-import com.high.pi_framework.piv8.piv8Service
-import com.high.pi_framework.piv8.serviceRunCode
-import com.high.pi_framework.piv8.utils.StageUtils
 import com.high.pi_framework.webview.YNWebView
 import org.json.JSONObject
 import java.io.BufferedWriter
@@ -217,12 +214,7 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
 
     fun postWebViewMessage(webViewName: String, message: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
         if(webViewName == "JSVM"){
-            val fromWebView = nameByWebViewObj
-            val fullCode = String.format("window.onWebViewPostMessage('%s','%s')", fromWebView, message)
-            val intent = Intent(ctx!!, piv8Service::class.java)
-            intent.putExtra(serviceRunCode.key,serviceRunCode.runScript)
-            intent.putExtra(serviceRunCode.scriptKey,fullCode)
-            ctx!!.startService(intent)
+
         }
         else if (!isGameViewExists(webViewName) && !isNoShowViewExists(webViewName)) {
             callBack(BaseJSModule.FAIL, arrayOf("The WebView's name is not exists."))
@@ -264,26 +256,6 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
         val activity = yn.getEnv(yn.ACTIVITY) as Activity
         val high = ViewUtil.getStatusBarHeight(activity)
         callBack(BaseJSModule.SUCCESS, arrayOf(high,0))
-    }
-
-    fun getReady(stage: String, callBack: (callType: Int, prames: Array<Any>) -> Unit){
-        val fromWebView = nameByWebViewObj
-        if (fromWebView!!.equals("default")){
-            val b = StageUtils.makeStages(stage,"default")
-            if (b){
-                val fullCode = "window['onLoadTranslation']('" + stage + "')"
-                val intentOK = Intent("send_messagedefault")
-                intentOK.putExtra("message", fullCode)
-                intentOK.putExtra("rpc", "false")
-                intentOK.putExtra("from_web_view", fromWebView)
-                ctx!!.sendBroadcast(intentOK)
-
-                val intent = Intent(ctx!!, piv8Service::class.java)
-                intent.putExtra(serviceRunCode.key,serviceRunCode.runScript)
-                intent.putExtra(serviceRunCode.scriptKey,fullCode)
-                ctx!!.startService(intent)
-            }
-        }
     }
 
     /**

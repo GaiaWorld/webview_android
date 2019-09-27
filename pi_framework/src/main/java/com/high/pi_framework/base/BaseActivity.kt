@@ -1,12 +1,11 @@
 package com.high.pi_framework.base
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Bundle
+import android.os.IBinder
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
+import android.util.Log
 import android.widget.Toast
 import com.high.pi_framework.Util.AndroidBug5497Workaround
 import com.high.pi_framework.Util.AndroidWorkaround
@@ -80,6 +79,19 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
             registered = true
         }
         this.initData()
+    }
+
+
+    override fun onDestroy() {
+        if (registered) {
+            try {
+                unregisterReceiver(mBackgroundReceiver)
+            } catch (e: IllegalArgumentException) {
+                e.printStackTrace()
+            }
+            registered = false
+        }
+        super.onDestroy()
     }
 
     private fun setFitSystemWindows() {
@@ -173,19 +185,6 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
         isHome = false
         Logger.error("BaseActivity", "App进入前台")
         JSBridge.sendJS(ynWebView,"PI_App",ON_APP_RESUMED, arrayOf("App进入前台"))
-    }
-
-
-    override fun onDestroy() {
-        if (registered) {
-            try {
-                unregisterReceiver(mBackgroundReceiver)
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
-            }
-            registered = false
-        }
-        super.onDestroy()
     }
 
     companion object {

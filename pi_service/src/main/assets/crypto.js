@@ -9,3 +9,11 @@ crypto.getRandomValues = function(typedArray){
 }
 
 
+window.sendBindMessage = function(webViewName, message){
+    window.sendJSCMessage(200, webViewName, message)
+}
+
+window.JSVM.postMessage = function(webViewName, message){
+    window.sendJSCMessage(600, webViewName, message)
+}
+

@@ -3,9 +3,23 @@ package com.high.pi_service.utils
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.InputStream
 
 class FileUtil{
     companion object {
+        fun readFile(stream: InputStream): String {
+            var content = ""
+            try {
+                val bs = ByteArray(stream.available())
+                stream.read(bs)
+                content = String(bs, Charsets.UTF_8)
+            } catch (e: Exception) {
+
+            }
+
+            return content
+        }
+
         fun readFile(path: String): String {
             var content = ""
             val file = File(path)

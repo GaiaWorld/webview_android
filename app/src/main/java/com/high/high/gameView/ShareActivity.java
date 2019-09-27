@@ -178,8 +178,8 @@ public class ShareActivity extends AppCompatActivity {
         OnekeyShare oks = new OnekeyShare();
         oks.disableSSOWhenAuthorize();
         oks.setImageData(screenshot);
-        if (null != platform)
-            oks.setPlatform(platform);
+//        if (null != platform)
+//            oks.setPlatform(platform);
         oks.setCallback(new PlatformActionListener() {
             @Override
             public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {

@@ -3,9 +3,9 @@ package com.high.pi_framework.framework
 import android.app.Activity
 import android.util.Log
 import android.webkit.JavascriptInterface
-import com.high.pi_framework.Util.ClassInfo
-import com.high.pi_framework.Util.CodeUtil
-import com.high.pi_framework.Util.ContainerUtil
+import com.high.pi_service.utils.ClassInfo
+import com.high.pi_service.utils.CodeUtil
+import com.high.pi_service.utils.ContainerUtil
 import com.high.pi_framework.base.BaseJSModule
 import com.high.pi_framework.base.JSExecutable
 import com.high.pi_framework.webview.AndroidWebView
@@ -43,6 +43,17 @@ class JSBridge(private val ynWebView: YNWebView, private val webview: Any?) {
             info.methods!![m.name] = m
         }
     }
+
+    @JavascriptInterface
+    fun webViewBindService(message: String){
+        val ctx = ynWebView.getEnv(ynWebView.ACTIVITY)
+        if ( ctx is WebViewActivity){
+            ctx.webViewBindService(message)
+        }else if (ctx is NewWebViewActivity){
+            ctx.webViewBindService(message)
+        }
+    }
+
 
     //高层调用底层
     @JavascriptInterface
