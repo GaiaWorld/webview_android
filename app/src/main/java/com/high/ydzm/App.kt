@@ -12,6 +12,7 @@ import com.alibaba.sdk.android.push.CommonCallback
 import com.alibaba.sdk.android.push.noonesdk.PushServiceFactory
 import com.alibaba.sdk.android.push.register.HuaWeiRegister
 import com.alibaba.sdk.android.push.register.MiPushRegister
+import java.io.IOException
 
 class App : Application(){
     private val TAG = "Init"
@@ -19,10 +20,9 @@ class App : Application(){
     //==============life===========
     override fun onCreate() {
         super.onCreate()
-        YNWebView.getX5Open(this)
+        YNWebView.sAppCtx = this
         initCloudChannel(this)
     }
-
 
     //===============private==========
     /**
@@ -30,24 +30,28 @@ class App : Application(){
      * @param applicationContext
      */
     private fun initCloudChannel(applicationContext: Context) {
-        createNotificationChannel()
-        PushServiceFactory.init(applicationContext)
-        val pushService = PushServiceFactory.getCloudPushService()
-        // 注册方法会自动判断是否支持小米系统推送，如不支持会跳过注册。
-        MiPushRegister.register(applicationContext, "2882303761517862496", "5611786234496");
-        // 注册方法会自动判断是否支持华为系统推送，如不支持会跳过注册。
-        HuaWeiRegister.register(applicationContext);
-        pushService.register(applicationContext, "25706201","3f23e416c16ab516b6602480d0891b45",object : CommonCallback {
-            override fun onSuccess(response: String) {
-                Log.d(TAG, "init cloudchannel success")
-                Log.d(TAG, pushService.deviceId)
-                turnOn()
-            }
+        try {
+            createNotificationChannel()
+            PushServiceFactory.init(applicationContext)
+            val pushService = PushServiceFactory.getCloudPushService()
+            // 注册方法会自动判断是否支持小米系统推送，如不支持会跳过注册。
+            MiPushRegister.register(applicationContext, "2882303761517862496", "5611786234496");
+            // 注册方法会自动判断是否支持华为系统推送，如不支持会跳过注册。
+            HuaWeiRegister.register(applicationContext);
+            pushService.register(applicationContext, "25706201","3f23e416c16ab516b6602480d0891b45",object : CommonCallback {
+                override fun onSuccess(response: String) {
+                    Log.d(TAG, "init cloudchannel success")
+                    Log.d(TAG, pushService.deviceId)
+                    turnOn()
+                }
 
-            override fun onFailed(errorCode: String, errorMessage: String) {
-                Log.d(TAG, "init cloudchannel failed -- errorcode:$errorCode -- errorMessage:$errorMessage")
-            }
-        })
+                override fun onFailed(errorCode: String, errorMessage: String) {
+                    Log.d(TAG, "init cloudchannel failed -- errorcode:$errorCode -- errorMessage:$errorMessage")
+                }
+            })
+        } catch (e: IOException) {
+
+        }
     }
 
     private fun turnOn(){

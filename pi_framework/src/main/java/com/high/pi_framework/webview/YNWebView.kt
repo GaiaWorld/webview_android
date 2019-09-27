@@ -15,12 +15,9 @@ import com.high.pi_framework.framework.JSBridge
 import com.high.pi_framework.framework.JSIntercept
 import com.high.pi_framework.module.WebViewManager
 import com.tencent.smtt.sdk.QbSdk
-import com.tencent.smtt.sdk.WebView
-import com.tencent.smtt.sdk.WebViewClient
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.HashMap
-
 
 class YNWebView {
     var mAndroidWebView: AndroidWebView? = null
@@ -211,8 +208,7 @@ class YNWebView {
         lateinit var sAppCtx: Application
 
         //判断是否使用X5浏览器
-        fun getX5Open(Ctx: Application) {
-            sAppCtx = Ctx
+        fun getX5Open(finishCallback: ()->Unit) {
             //读取文件，如果文件不存在打开WebView判断版本号，如果文件存在，读取文件内容（获取文件更新时间，超过30天重新写文件）
             val mBootPath = "/data/data/" + sAppCtx.packageName
             val path = "$mBootPath/apk_back/x5file.txt"
@@ -243,9 +239,21 @@ class YNWebView {
             }
 
             if (isX5) {
-                QbSdk.initX5Environment(sAppCtx, null)
-            }
+                QbSdk.setDownloadWithoutWifi(true)
+                QbSdk.initX5Environment(sAppCtx, object: QbSdk.PreInitCallback {
+                    override fun onCoreInitFinished() {
+                        Log.d("AndroidWebView", "QbSdk.initX5Environment onCoreInitFinished: 加载X5内核完成")
+                    }
 
+                    override fun onViewInitFinished(b: Boolean) {
+                        finishCallback()
+                        //x5內核初始化完成的回调，为true表示x5内核加载成功，否则表示x5内核加载失败，会自动切换到系统内核。
+                        Log.d("AndroidWebView", "QbSdk.initX5Environment onViewInitFinished: 加载X5 WebView是否成功: $b")
+                    }
+                })
+            } else {
+                finishCallback()
+            }
         }
 
         fun x5Read(sAppCtx: Application){
