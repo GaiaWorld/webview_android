@@ -26,11 +26,11 @@ class SplashActivity : Activity() {
             decorView.systemUiVisibility = uiOptions
             YNWebView.getX5Open {
                 val handler = Handler()
-                handler.postDelayed( Runnable {
+                // handler.postDelayed( Runnable {
                     startActivity(Intent(this, WebViewActivity::class.java))
                     overridePendingTransition(0, 0);
                     finish()
-                },200)
+                // },200)
             }
         }
     }
