@@ -9,7 +9,7 @@
                 android:process=":piv8Service"
                 android:exported="true" >
             <intent-filter>
-                <action android:name="com.high.high.piservice"/>
+                <action android:name="com.high.ydzm.piservice"/>
             </intent-filter>
         </service>
 

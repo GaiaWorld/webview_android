@@ -44,6 +44,7 @@ abstract class BaseJSModule constructor(ynWebView: YNWebView) : JSExecutable, JS
      */
     override fun onResume() {}
 
+    override fun onDestroy(){}
     /**
      * Dispatch incoming result to the correct fragment.
      *

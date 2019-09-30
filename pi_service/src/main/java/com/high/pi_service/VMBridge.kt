@@ -42,10 +42,12 @@ class VMBridge(private val ctx: Context, private val runtime: V8) {
 
     //高层调用底层
     fun postMessage(arr: V8Array){
+
         val className: String = arr[0].toString()
         val methodName: String = arr[1].toString()
         val nativeID: Int = arr[2] as Int
         val listenerID: Int = arr[3] as Int
+        Log.d("VMBridge","$className,$methodName,$nativeID,$listenerID")
         var callBack = { callType: Int, prames: Array<Any> ->
             if (callType == 3){
                 throwJS(className,methodName,prames[0] as String)
@@ -207,6 +209,10 @@ class VMBridge(private val ctx: Context, private val runtime: V8) {
         }
 
         return r
+    }
+
+    fun onDestroy(){
+
     }
 
     companion object {

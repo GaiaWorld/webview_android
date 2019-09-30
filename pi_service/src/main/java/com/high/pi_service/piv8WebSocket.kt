@@ -2,6 +2,8 @@ package com.high.pi_service
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Base64
+import android.util.Log
 import okhttp3.*
 import okio.ByteString
 
@@ -26,6 +28,7 @@ class piv8WebSocket(private val v8: V8){
                 super.onOpen(webSocket, response)
                 managerIsopen.set(webSocket!!,1.toString())
                 if (getId(webSocket) != ""){
+                    Log.d("piv8","webSocket onopen")
                     val id = getId(webSocket)
                     mainHandler.post { val callBack = managerOpen.get(id); callBack!!.call(null, null); callBack.close(); managerOpen.remove(id) }
                 }
@@ -33,6 +36,7 @@ class piv8WebSocket(private val v8: V8){
             override fun onMessage(webSocket: WebSocket?, bytes: ByteString?) {
                 super.onMessage(webSocket, bytes)
                 if (getId(webSocket!!) != ""){
+                    Log.d("piv8","webSocket onmessage: $bytes")
                     val id = getId(webSocket)
                     val s = bytes!!.base64()
                     mainHandler.post { val arr = V8Array(v8); arr.push(s);val callBack = managerMesg.get(id); callBack!!.call(null, arr); arr.close(); }
@@ -41,24 +45,28 @@ class piv8WebSocket(private val v8: V8){
             override fun onMessage(webSocket: WebSocket?, text: String?) {
                 super.onMessage(webSocket, text)
                 if (getId(webSocket!!) != "") {
+                    Log.d("piv8","webSocket onmessage $text")
                     val id = getId(webSocket)
                     mainHandler.post { val arr = V8Array(v8); arr.push(text!!); val callBack = managerMesg.get(id); callBack!!.call(null, arr); arr.close(); }
                 }
             }
             override fun onClosed(webSocket: WebSocket?, code: Int, reason: String?) {
-                super.onClosed(webSocket, code, reason)
                 if (getId(webSocket!!) != ""){
+                    Log.d("piv8","webSocket close")
                     val id = getId(webSocket)
                     mainHandler.post { val arr = V8Array(v8); arr.push(code); arr.push(reason); val callBack = managerClose.get(id); callBack!!.call(null, arr); callBack.close(); arr.close(); managerClose.remove(id); val msgCallBack = managerMesg.get(id); msgCallBack!!.close(); managerMesg.remove(id) }
                 }
+                super.onClosed(webSocket, code, reason)
             }
             override fun onFailure(webSocket: WebSocket?, t: Throwable?, response: Response?) {
-                super.onFailure(webSocket, t, response)
+                Log.d("piv8","webSocket failure with : ${t!!.message}")
                 managerIsfail.set(webSocket!!,1.toString())
-                if (getId(webSocket) != ""){
+                if (getId(webSocket) != "" && managerFailed.get(getId(webSocket)) != null){
+                    var str = "{\"code\":\"-1\",\"result\":\"this webSocket error\"}"
                     val id = getId(webSocket)
-                    mainHandler.post { val arr = V8Array(v8); arr.push(t!!.message!!); val callBack = managerFailed.get(id); callBack!!.call(null, arr); callBack.close(); arr.close(); managerFailed.remove(id) }
+                    mainHandler.post { val arr = V8Array(v8); arr.push(str); val callBack = managerFailed.get(id); callBack!!.call(null, arr); callBack.close(); arr.close(); managerFailed.remove(id) }
                 }
+                super.onFailure(webSocket, t, response)
             }
 
         })
@@ -69,6 +77,7 @@ class piv8WebSocket(private val v8: V8){
     }
 
     fun onOpen(wId: String, callBack: V8Function){
+        Log.d("piv8","onOpen listenner")
         val func = callBack.twin()
         val ws = managerWebSocket.get(wId)
         if (managerIsopen.get(ws!!)!!.toInt() == 1) {
@@ -84,6 +93,7 @@ class piv8WebSocket(private val v8: V8){
     }
 
     fun onFail(wId: String, callBack: V8Function){
+        Log.d("piv8","onFail listenner")
         val ws = managerWebSocket.get(wId)
         if (managerIsfail.get(ws!!)!!.toInt() == 1){
             mainHandler.post { callBack.call(null, null) }
@@ -94,11 +104,13 @@ class piv8WebSocket(private val v8: V8){
     }
 
     fun onMessage(wId: String, callBack: V8Function){
+        Log.d("piv8","onMessage listenner")
         val func = callBack.twin()
         managerMesg.set(wId,func)
     }
 
     fun onClose(wId: String, callBack: V8Function){
+        Log.d("piv8","onClose listenner")
         val func = callBack.twin()
         managerClose.set(wId,func)
     }
@@ -106,9 +118,11 @@ class piv8WebSocket(private val v8: V8){
 
 
     fun sendMsg(wId: String,  data: String, type: String){
+        Log.d("piv8","sendMessage to service with $type ======== $data")
         val w = managerWebSocket.get(wId)
         if (type == "bin"){
-            w!!.send(ByteString.decodeBase64(data)!!)
+            val base64 = Base64.decode(data,Base64.NO_WRAP)
+            w!!.send(ByteString.of(base64, 0, base64.size))
         }else{
             w!!.send(data)
         }

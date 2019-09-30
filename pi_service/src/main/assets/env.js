@@ -11,6 +11,7 @@ class WebSocket{
             piv8WebSocket.sendMsg(this.ws, sendData, 'string');
         }else{
             var u8 = new Uint8Array(sendData)
+            console.log("this is a bin webSocket=====" + self.base64js.fromByteArray(u8))
             piv8WebSocket.sendMsg(this.ws, self.base64js.fromByteArray(u8),'bin');
         }
     }
@@ -28,7 +29,10 @@ class WebSocket{
     }
 
     set onerror(cb){
-        piv8WebSocket.onfail(this.ws,cb);
+        var ob = function(str){
+            cb(JSON.parse(str))
+        }
+        piv8WebSocket.onfail(this.ws,ob);
     }
 
     set onmessage(cb){
@@ -40,7 +44,7 @@ class WebSocket{
                 cb(result);
             }else{
                 var result = {};
-                result.data = base64js.toByteArray(dic).buffer;
+                result.data = self.base64js.toByteArray(dic).buffer;
                 result.type = type;
                 cb(result);
             }

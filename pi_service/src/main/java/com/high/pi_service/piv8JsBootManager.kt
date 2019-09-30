@@ -190,10 +190,13 @@ class PiV8JsBootManager(private val context: Context, private val v8: V8){
                 var start = 0
                 var end = 0
                 var i = 0
+                Log.d("piv8","downLoad files length is : ${files.length()}")
                 while ( i < files.length()){
                     var file = files[i] as JSONObject
-                    start = start + end
+                    start = end
+                    Log.d("piv8","downLoad start is : $start")
                     end = end + file.get("size") as Int
+                    Log.d("piv8","downLoad end is : $end")
                     var name = file.get("path").toString()
                     var data:ByteArray = isn.copyOfRange(start, end)
                     var content: String = data.toString(Charsets.UTF_8)

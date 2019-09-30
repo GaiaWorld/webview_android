@@ -8,7 +8,7 @@ import android.text.format.Formatter
 import com.github.dfqin.grantor.PermissionListener
 import com.github.dfqin.grantor.PermissionsUtil
 import com.high.pi_framework.Util.FileUtil
-import com.high.pi_framework.Util.GetDeviceId
+import com.high.pi_service.utils.GetDeviceId
 import com.high.pi_framework.base.BaseJSModule
 import com.high.pi_framework.webview.YNWebView
 import com.high.pi_module.Util.NetUtils

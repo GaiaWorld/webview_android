@@ -1,0 +1,1 @@
+(_$defineTpl("pi/ui/tip",function(t,a,r,s,i,n,e,o,l,p,u){return function(t,a,s){var i={attrs:{},tagName:"div",sid:0,children:[],attrSize:2,attrHash:1526069159};i.attrs["w-class"]="tip_point";var n="";return n+="position:absolute;pointer-events:none;display:",a.show?n+="block":n+="none",n+=";",i.attrs.style=n,i.attrHash=r.nextHash(i.attrHash,e(i.attrs.style)),u(i),i}}));

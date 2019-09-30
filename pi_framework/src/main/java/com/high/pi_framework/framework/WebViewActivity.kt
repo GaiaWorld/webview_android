@@ -34,8 +34,8 @@ class WebViewActivity : BaseWebView() {
         ynWebView.createYnWebView(this)
         YNWebView.addWithName(tag, ynWebView)
         addJEV(this)
-        val intent = Intent("com.high.high.piservice")
-        intent.setPackage("com.high.high");
+        val intent = Intent("com.high.ydzm.piservice")
+        intent.setPackage("com.high.ydzm");
         bindService(intent, conn, BIND_AUTO_CREATE)
         super.onCreate(savedInstanceState)
     }
@@ -166,18 +166,18 @@ class WebViewActivity : BaseWebView() {
     inner class webViewConn(): ServiceConnection{
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             ps = piservice.Stub.asInterface(service)
+//            ps!!.sendMessage("123","456")
             ps!!.onMessage(tag, object : piserviceCallBack.Stub(){
                 override fun sendMessage(statuCode: Int, message: String?) {
+                    var ms = ""
                     if (statuCode == 200){
-                        val ms = "javascript:window.pi_sdk.piService.onBindService(undefined, $message)"
-                        ynWebView.evaluateJavascript(ms)
+                        ms = "javascript:window.pi_sdk.piService.onBindService(undefined, '$message')"
                     }else if(statuCode == 400){
-                        val ms = "javascript:window.pi_sdk.piService.onBindService({code: -4, reason: $message})"
-                        ynWebView.evaluateJavascript(ms)
+                        ms = "javascript:window.pi_sdk.piService.onBindService({code: -4, reason: $message},undefined)"
                     }else if (statuCode == 600){
-                        val ms = String.format("javascript:window.onWebViewPostMessage('%s','%s')", "JSVM", message)
-                        ynWebView.evaluateJavascript(ms)
+                        ms = String.format("javascript:window.onWebViewPostMessage('%s','%s')", "JSVM", message)
                     }
+                    runOnUiThread { ynWebView.evaluateJavascript(ms) }
                 }
             })
         }

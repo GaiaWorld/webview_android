@@ -65,4 +65,5 @@ dependencies {
     api(name: 'open_ad_sdk', ext: 'aar')
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.6'
     implementation 'com.github.z1u24:QRScanner:v3.0.0'
+    implementation project(':pi_service')
 }

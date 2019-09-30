@@ -158,14 +158,14 @@ class YNWebView {
             mX5?.addJavascriptInterface(JSBridge(this, mX5), JSBridge::class.java.simpleName)
             mX5?.addJavascriptInterface(mJsIntercept, JSIntercept::class.java.simpleName)
             X5Chrome.sViewRoot.add(mRlRootView)
-            WebViewManager.addGameView("default", mX5!!)
+            WebViewManager.addGameView("wallet", mX5!!)
             setWeb("",mX5!!)
         } else {
             mJsIntercept = JSIntercept(this)
             mAndroidWebView?.addJavascriptInterface(JSBridge(this, mAndroidWebView), JSBridge::class.java.simpleName)
             mAndroidWebView?.addJavascriptInterface(mJsIntercept, JSIntercept::class.java.simpleName)
             AndroidWebView.sViewRoot.add(mRlRootView)
-            WebViewManager.addGameView("default", mAndroidWebView!!)
+            WebViewManager.addGameView("wallet", mAndroidWebView!!)
             setWeb("",mAndroidWebView!!)
         }
         return mJsIntercept

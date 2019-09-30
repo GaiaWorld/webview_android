@@ -17,4 +17,6 @@ interface JSInterface {
      */
     fun onResume()
 
+    fun onDestroy(){}
+
 }

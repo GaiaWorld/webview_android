@@ -1,0 +1,1 @@
+(_$defineTpl("pi/ui/slidetab",function(i,n,r,t,u,e,f,l,a,d,o){return function(i,n,r){var t=void 0;return a("}",4122649163)}}));

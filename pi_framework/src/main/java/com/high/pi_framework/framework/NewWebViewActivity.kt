@@ -43,8 +43,8 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
             ynWebView.createYnWebView(this)
         }
         addJEV(this)
-        val intent = Intent("com.high.high.piservice")
-        intent.setPackage("com.high.high");
+        val intent = Intent("com.high.ydzm.piservice")
+        intent.setPackage("com.high.ydzm");
         bindService(intent, conn, BIND_AUTO_CREATE)
         super.onCreate(savedInstanceState)
     }

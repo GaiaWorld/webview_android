@@ -1,6 +1,5 @@
 package com.high.pi_service.utils
 
-import com.high.pi_framework.webview.YNWebView
 import dalvik.system.BaseDexClassLoader
 import dalvik.system.DexFile
 import java.lang.reflect.Array
@@ -71,14 +70,15 @@ object CodeUtil {
                 }
             }
 
-            val appName = YNWebView.sAppCtx.getPackageName()
+            val appName = "com.high.ydzm"
             val pf = "com.high.pi_framework"
             val pm = "com.high.pi_module"
+            val ps = "com.high.pi_service"
             for (file in dexFiles) {
                 val entries = file.entries()
                 while (entries.hasMoreElements()) {
                     val s1 = entries.nextElement()
-                    if (s1.contains(appName) || s1.contains(pf) || s1.contains(pm)) {
+                    if (s1.contains(appName) || s1.contains(pf) || s1.contains(pm) || s1.contains(ps)) {
                         if (clazz.isAssignableFrom(Class.forName(s1))) {
                             classes.add(Class.forName(s1))
                         }

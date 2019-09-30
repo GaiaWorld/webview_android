@@ -19,6 +19,7 @@ class JSVMManager constructor(){
     private var runtime: V8? = null
     private var ctx: Context? = null
     private val callBackMap = HashMap<String, V8Function>()
+    var vmBridge: VMBridge? = null
 
     fun getRuntime(): V8?{
         return runtime
@@ -55,7 +56,7 @@ class JSVMManager constructor(){
         runtime!!.add("console",v8Console)
         runtime!!.registerJavaMethod(alertCallBack,"alert")
         v8Console.registerJavaMethod(logCallBack,"log")
-//        val vmBridge = VMBridge(runtime)
+        vmBridge = VMBridge(ctx!!,runtime!!)
 //        vmViewModuleInfo =  vmBridge.clsMap["piActivityManager"]
 //        val c = vmViewModuleInfo!!.clazz.constructors[0];
 //        vmViewModule = c.newInstance(ctx!!)
@@ -78,12 +79,14 @@ class JSVMManager constructor(){
 //        val btc = api.getObject("btc")
 //        val cipher = api.getObject("cipher")
 
+        runtime!!.registerJavaMethod(ctx, "sendMessage","sendJSCMessage", arrayOf<Class<*>>(Int::class.java, String::class.java, String::class.java))
+        runtime!!.registerJavaMethod(ctx, "vmReady","vmLoadReady", arrayOf())
         v8DataHandle.registerJavaMethod(piv8dataHandle,"createNewDataHandle", "createNewDataHandle" , arrayOf())
         v8DataHandle.registerJavaMethod(piv8dataHandle,"getContent", "getContent" , arrayOf<Class<*>>(Int::class.java))
         v8DataHandle.registerJavaMethod(piv8dataHandle,"runScript", "runScript" , arrayOf<Class<*>>(Int::class.java))
         v8DataHandle.registerJavaMethod(piv8dataHandle,"setContent", "setContent" , arrayOf<Class<*>>(Int::class.java, String::class.java, String::class.java))
 
-        jsvm.registerJavaMethod(this,"postMessage","messageReciver", arrayOf<Class<*>>(V8Array::class.java))
+        jsvm.registerJavaMethod(vmBridge,"postMessage","messageReciver", arrayOf<Class<*>>(V8Array::class.java))
         jsvm.registerJavaMethod(this,"getRandomValues","getRandomValues", arrayOf())
         jsvm.registerJavaMethod(this,"getDownRead","getDownReadDH", arrayOf<Class<*>>(String::class.java, String::class.java, V8Function::class.java, V8Function::class.java))
 //        jsvm.registerJavaMethod(this,"postMessage","postMessage", arrayOf<Class<*>>(String::class.java, String::class.java))
@@ -371,64 +374,7 @@ class JSVMManager constructor(){
 //        val method = vmViewModuleInfo!!.methods!!["goAliPay"]
 //        method!!.invoke(vmViewModule, payInfo)
 //    }
-//
-//    fun distributionMessage(messageKey: String, bundle: Bundle){
-//        when(messageKey){
-//            serviceRunCode.chargeMessage -> {
-//                val code = bundle.getInt(serviceRunCode.statusCodeKey)
-//                if (code == serviceRunCode.statusSuccess){
-//                    val payWay = bundle.getString(serviceRunCode.payKey)
-//                    val payAmount = bundle.getInt(serviceRunCode.payAmount)
-//                    Handler(Looper.getMainLooper()).post {
-//                        val array = V8Array(runtime)
-//                        array.push(code)
-//                        array.push(payAmount)
-//                        array.push(payWay!!)
-//                        val cb = callBackMap["chareAction"]
-//                        if (cb != null && !cb.isReleased){
-//                            cb.call(null, array)
-//                        }
-//                        array.close()
-//                    }
-//                }else{
-//                    Handler(Looper.getMainLooper()).post {
-//                        val array = V8Array(runtime)
-//                        array.push(code)
-//                        val cb = callBackMap["chareAction"]
-//                        if (cb != null && !cb.isReleased){
-//                            cb.call(null, array)
-//                        }
-//                        array.close()
-//                    }
-//                }
-//
-//            }
-//            serviceRunCode.chargeInGameMessage -> {
-//                val code = bundle.getInt(serviceRunCode.statusCodeKey)
-//                if (code == serviceRunCode.statusSuccess){
-//                    val payWay = bundle.getString(serviceRunCode.payKey)
-//                    Handler(Looper.getMainLooper()).post {
-//                        val array = V8Array(runtime)
-//                        array.push(payWay!!)
-////                        functionCallWithOutNull(chareInGameSuccessFunction, array)
-//                        array.close()
-//                    }
-//                }else{
-//                    Handler(Looper.getMainLooper()).post {
-//                        val array = V8Array(runtime)
-//                        array.push(code)
-////                        functionCallWithOutNull(chareInGameFailFunction, array)
-//                        array.close()
-//                    }
-//                }
-//
-//            }
-//            serviceRunCode.shareMessage -> {
-//                //返回结果
-//
-//            }
-//        }
-//    }
+
 
     private fun functionCallWithOutNull(func: V8Function?, array: V8Array){
         if (func != null){

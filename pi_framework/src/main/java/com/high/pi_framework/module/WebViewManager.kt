@@ -8,6 +8,7 @@ import android.util.Log
 import com.high.pi_framework.Util.ViewUtil
 import com.high.pi_framework.base.BaseJSModule
 import com.high.pi_framework.framework.NewWebViewActivity
+import com.high.pi_framework.framework.WebViewActivity
 import com.high.pi_framework.webview.YNWebView
 import org.json.JSONObject
 import java.io.BufferedWriter
@@ -214,7 +215,12 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
 
     fun postWebViewMessage(webViewName: String, message: String, callBack:(callType: Int, prames: Array<Any>)->Unit) {
         if(webViewName == "JSVM"){
+            val fromWebView = nameByWebViewObj
+            if (ctx is WebViewActivity){
+                (ctx as WebViewActivity).webViewPostMessage(fromWebView!!, message)
+            }else{
 
+            }
         }
         else if (!isGameViewExists(webViewName) && !isNoShowViewExists(webViewName)) {
             callBack(BaseJSModule.FAIL, arrayOf("The WebView's name is not exists."))

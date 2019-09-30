@@ -5,6 +5,7 @@ import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import com.high.pi_service.utils.DataHandleManager
 import org.json.JSONObject
 import java.io.File
@@ -32,6 +33,7 @@ class piv8DB(private val ctx: Context, private val v8: V8, private var fileName:
     internal val DELETE_ITEM_SQL = "DELETE from %@ where id = ?"
 
     fun create(inputTabName: String, success: V8Function, fail: V8Function, complete: V8Function){
+        Log.d("piDB","create db with tabName: $inputTabName")
         val v8Success = success.twin()
         val v8Fail = fail.twin()
         val v8Complete = complete.twin()
