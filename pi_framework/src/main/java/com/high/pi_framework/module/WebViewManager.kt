@@ -203,6 +203,13 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
         sendCloseWebViewMessage(webViewName)
     }
 
+    fun reload(callBack:(callType: Int, prames: Array<Any>)->Unit) {
+        val activity = yn.getEnv(yn.ACTIVITY)
+        if (activity is NewWebViewActivity) {
+            activity.loadUrlImpl()
+        }
+    }
+
     /**
      * Send a message to the web page view with the specified name.
      *

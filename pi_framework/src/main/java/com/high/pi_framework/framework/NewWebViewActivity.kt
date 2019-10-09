@@ -28,6 +28,8 @@ import com.high.pi_framework.module.TapDB
 
 
 class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListener{
+    private var injectContent: String? = null
+    private var url: String? = null
     private lateinit var mRlRootView: RelativeLayout
     private var tag: String? = null
     private var timer: Timer? = null
@@ -96,43 +98,18 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
         tag = intent?.getStringExtra("tag")
         if (null == tag) throw Exception("The tag can't be null!")
         val path = intent.getStringExtra("inject") ?: ""
-        var content = ""
         if (path != "") {
             val file = File(path)
-            content = file.readText()
+            injectContent = file.readText()
             file.delete()
         }
 
-        val url = intent?.getStringExtra("load_url") ?: "https://cn.bing.com"
+        url = intent?.getStringExtra("load_url") ?: "https://cn.bing.com"
         val tagStr = tag as String
-        ynWebView.addNewJavaScript( mRlRootView, tagStr, url, content, R.drawable.ydzm)
+        ynWebView.addNewJavaScript( mRlRootView, tagStr, url!!, injectContent!!, R.drawable.ydzm)
         addJEV(this)
-        if (url.startsWith("/")) {
-            try {
-                val stream = this.getAssets().open(url.substring(1))
-                var ct = FileUtil.readFile(stream)
-                if (ct != "") {
-                    ct = "<script>$content</script>$ct"
-                    super.loadDataWithBaseUrl("file:///android_asset" + url, ct)
-                } else {
-                    Log.d("JSIntercept", "loadUrl Error!!!");
-                }
-            } catch (e: java.lang.Exception) {
-                // 假设：如果以/开头，同时又没有assets包对应的资源，那么就content就肯定是网页的内容。
-                if (content != "") {
-                    super.loadDataWithBaseUrl("file:///android_asset" + url, content)
-                } else {
-                    AlertDialog.Builder(this)
-                        .setTitle("Error")
-                        .setMessage("程序出错，请重启App")
-                        .create()
-                        .show()
-                    return
-                }
-            }
-        } else {
-            super.loadUrl(url)
-        }
+
+        loadUrlImpl()
         registerCloseReceiver()
     }
 
@@ -185,6 +162,35 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
                 }
                 System.exit(0)
             }).show()
+    }
+
+    public fun loadUrlImpl() {
+        if (url!!.startsWith("/")) {
+            try {
+                val stream = this.getAssets().open(url!!.substring(1))
+                var ct = FileUtil.readFile(stream)
+                if (ct != "") {
+                    ct = "<script>$injectContent</script>$ct"
+                    super.runOnUiThread { super.loadDataWithBaseUrl("file:///android_asset" + url, ct) }
+                } else {
+                    Log.d("JSIntercept", "loadUrl Error!!!");
+                }
+            } catch (e: java.lang.Exception) {
+                // 假设：如果以/开头，同时又没有assets包对应的资源，那么就content就肯定是网页的内容。
+                if (injectContent != "") {
+                    super.runOnUiThread { super.loadDataWithBaseUrl("file:///android_asset" + url!!, injectContent!!) }
+                } else {
+                    AlertDialog.Builder(this)
+                        .setTitle("Error")
+                        .setMessage("程序出错，请重启App")
+                        .create()
+                        .show()
+                    return
+                }
+            }
+        } else {
+            super.runOnUiThread { super.loadUrl(url!!) }
+        }
     }
 
     override fun onDestroy() {
