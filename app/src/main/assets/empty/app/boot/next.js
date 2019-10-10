@@ -215,25 +215,43 @@ winit.initNext = function () {
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
 				loadPiSdk();
+				enterApp();
 			});
 		}, function (result) {
 			alert("加载基础模块失败, " + result.error + ":" + result.reason);
 		}, modProcess.handler);
+	}
+
+	var enterApp = function(){
+		util.loadDir([
+			"app/view/",
+			"app/postMessage/",
+			"pi/ui/root.js",
+			"pi/ui/root.tpl",
+			"pi/ui/html.js",
+			"pi/ui/html.tpl"
+		], flags, fm, undefined, function (fileMap) {
+			var index = pi_modules.commonjs.exports.relativeGet("app/view/main").exports;
+			index.run(function () {
+				// 关闭读取界面
+				document.body.removeChild(document.getElementById('rcmj_loading_log'));
+			});
+		});
+		
 	}
 	
 	var loadPiSdk = function(){
 		util.loadDir(["app/pi_sdk/"], flags, fm, undefined, function (fileMap) {
 			pi_sdk.setWebviewManager("pi/browser/webview");
 			pi_sdk.piSdkInit((res)=>{
-				console.log('bind vm success',res);
-				window.pi_sdk.api.authorize({appId:101},function(err,result){
-					console.log('authorize',err,result);
+				console.log('bind vm success', res);
+				window.pi_sdk.api.authorize({appId:101},function(err, result) {
+					console.log('authorize',err,JSON.stringify(result));
 					if(err === -1) {  // 没有账号
 						window.pi_sdk.api.openSignInPage();
 					}else if(err === 0) { // 网络未连接
-						// 进入首页?
-					}else{
-						// 进入首页
+						console.log('网络未连接');
+						// TODO 进入首页?
 					}
 				});
 			});

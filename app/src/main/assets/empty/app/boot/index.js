@@ -1,4 +1,4 @@
-//!version=1.0.12.100917
+//!version=1.6MEVMMgkTx1g2qzvwyVXkb.12.100917
 //!android_depend_version=1.0.0  
 //!ios_depend_version=1.0.0
 

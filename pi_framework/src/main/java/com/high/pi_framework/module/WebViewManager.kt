@@ -218,8 +218,8 @@ class WebViewManager constructor(ynWebView: YNWebView) : BaseJSModule(ynWebView)
             val fromWebView = nameByWebViewObj
             if (ctx is WebViewActivity){
                 (ctx as WebViewActivity).webViewPostMessage(fromWebView!!, message)
-            }else{
-
+            }else if (ctx is NewWebViewActivity){
+                (ctx as NewWebViewActivity).webViewPostMessage(fromWebView!!, message)
             }
         }
         else if (!isGameViewExists(webViewName) && !isNoShowViewExists(webViewName)) {

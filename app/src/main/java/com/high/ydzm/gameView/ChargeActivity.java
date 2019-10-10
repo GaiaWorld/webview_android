@@ -82,27 +82,27 @@ public class ChargeActivity extends AppCompatActivity {
         initBars();
         setContentView(R.layout.activity_charge);
         initViews();
-
+        registerBc();
         //赋值
         Bundle bundle = getIntent().getExtras();
         int balance = bundle.getInt("balance",0);
         float fb = (float) (balance/100.00);
-        DecimalFormat decimalFormat = new DecimalFormat("###,###.00");
-        String balanceString = decimalFormat.format(fb).toString();
+        String balanceString = "0";
+        if(fb > 0){
+            DecimalFormat decimalFormat = new DecimalFormat("###,###.00");
+            balanceString = decimalFormat.format(fb).toString();
+        }
         balanceView.setText(balanceString);
 
         //onclick
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(ChargeActivity.this, piv8Service.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putInt(serviceRunCode.key, serviceRunCode.sendMessage);
-//                bundle.putString(serviceRunCode.messageKey, serviceRunCode.chargeMessage);
-//                bundle.putInt(serviceRunCode.statusCodeKey, serviceRunCode.statusFail);
-//                intent.putExtras(bundle);
-//                startService(intent);
-//                finish();
+                Intent intent = new Intent("outpay_action");
+                intent.putExtra("code",-1);
+                intent.putExtra("pay_way","");
+                intent.putExtra("payAmount",0);
+                finish();
             }
         });
         weixinPayBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -415,7 +415,7 @@ public class ChargeActivity extends AppCompatActivity {
     private void registerBc() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("wx_pay_action");
-        intentFilter.addAction("startAliPay");
+        intentFilter.addAction("start_ali_pay_action");
         registerReceiver(mReceiver, intentFilter);
     }
 
@@ -430,10 +430,17 @@ public class ChargeActivity extends AppCompatActivity {
                 loadingLayout.setVisibility(View.GONE);
                 if (ruselt == 0){
                     ToastManager.Companion.toast(ChargeActivity.this, "充值成功！");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            finish();
+                        }
+                    });
                 }else{
                     ToastManager.Companion.toast(ChargeActivity.this, "充值失败！");
                 }
-            }else if(action != null && action.equals("startAliPay")){
+            }else if(action != null && action.equals("start_ali_pay_action")){
+
                 final String payInfo = intent.getStringExtra("payInfo");
                 final Runnable payRunnable = new Runnable() {
 
@@ -471,13 +478,27 @@ public class ChargeActivity extends AppCompatActivity {
                      */
                     String resultInfo = payResult.getResult();// 同步返回需要验证的信息
                     String resultStatus = payResult.getResultStatus();
+                    circleView.clearAnimation();
+                    loadingLayout.setVisibility(View.GONE);
                     // 判断resultStatus 为9000则代表支付成功
                     if (TextUtils.equals(resultStatus, "9000")) {
+                        ToastManager.Companion.toast(ChargeActivity.this, "充值成功！");
                         // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
-//                        showAlert(PayDemoActivity.this, getString(R.string.pay_success) + payResult);
+                        Intent intent = new Intent("ali_pay_action");
+                        intent.putExtra("code",0);
+                        sendBroadcast(intent);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        });
                     } else {
                         // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
-//                        showAlert(PayDemoActivity.this, getString(R.string.pay_failed) + payResult);
+                        ToastManager.Companion.toast(ChargeActivity.this, "充值失败！");
+                        Intent intent = new Intent("ali_pay_action");
+                        intent.putExtra("code",-1);
+                        sendBroadcast(intent);
                     }
                     break;
                 }
@@ -487,15 +508,7 @@ public class ChargeActivity extends AppCompatActivity {
         };
     };
 
-//
-/**
- //     * 获取支付宝 SDK 版本号。
- //     */
-//    public String getSdkVersion() {
-//        PayTask payTask = new PayTask(this);
-//        String version = payTask.getVersion();
-//        return version;
-//    }
+
 
 
     /**
@@ -505,7 +518,6 @@ public class ChargeActivity extends AppCompatActivity {
         try {
             //结算之前判断一下输入金额有效性
             payAmount = Integer.parseInt(customizeView.getText().toString());
-            payAmount = payAmount * 100;
         } catch (NumberFormatException e) {
             payAmount = 0;
         }
@@ -524,21 +536,15 @@ public class ChargeActivity extends AppCompatActivity {
      * 实际支付，拉起插件
      */
     private void doPay() {
-//        Intent intent = new Intent(this, piv8Service.class);
-//        Bundle bundle = new Bundle();
-//        bundle.putInt(serviceRunCode.key, serviceRunCode.sendMessage);
-//        bundle.putString(serviceRunCode.messageKey, serviceRunCode.chargeMessage);
-//        bundle.putInt(serviceRunCode.statusCodeKey, serviceRunCode.statusSuccess);
-//        bundle.putInt(serviceRunCode.payAmount, payAmount);
-//        if (useWxPay) {
-//            //使用微信支付
-//            bundle.putString(serviceRunCode.payKey, serviceRunCode.weChatPay);
-//        } else {
-//            //使用支付宝
-//            bundle.putString(serviceRunCode.payKey, serviceRunCode.aLiPay);
-//        }
-//        intent.putExtras(bundle);
-//        startService(intent);
+        Intent intent = new Intent("outpay_action");
+        intent.putExtra("code",0);
+        String pay_way = "alipay";
+        if (useWxPay){
+            pay_way = "wxpay";
+        }
+        intent.putExtra("pay_way",pay_way);
+        intent.putExtra("payAmount",payAmount);
+        sendBroadcast(intent);
     }
 
 

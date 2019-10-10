@@ -74,6 +74,7 @@ class WebViewActivity : BaseWebView() {
     }
 
     override fun onDestroy() {
+        unbindService(conn)
         unregisterReceiver(mReceiver)
         super.onDestroy()
     }
@@ -143,7 +144,6 @@ class WebViewActivity : BaseWebView() {
                     }else{
                         ynWebView.evaluateJavascript(message)
                     }
-
                 }
             }
         }
@@ -166,7 +166,6 @@ class WebViewActivity : BaseWebView() {
     inner class webViewConn(): ServiceConnection{
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             ps = piservice.Stub.asInterface(service)
-//            ps!!.sendMessage("123","456")
             ps!!.onMessage(tag, object : piserviceCallBack.Stub(){
                 override fun sendMessage(statuCode: Int, message: String?) {
                     var ms = ""
@@ -175,7 +174,12 @@ class WebViewActivity : BaseWebView() {
                     }else if(statuCode == 400){
                         ms = "javascript:window.pi_sdk.piService.onBindService({code: -4, reason: $message},undefined)"
                     }else if (statuCode == 600){
-                        ms = String.format("javascript:window.onWebViewPostMessage('%s','%s')", "JSVM", message)
+                        var newMessage = message
+                        if (message!!.contains("\\")){
+                            newMessage = message.replace("\\","\\\\\\")
+                            Log.d("piservice","javascript:$newMessage")
+                        }
+                        ms = String.format("javascript:window.onWebViewPostMessage('%s','%s')", "JSVM", newMessage)
                     }
                     runOnUiThread { ynWebView.evaluateJavascript(ms) }
                 }

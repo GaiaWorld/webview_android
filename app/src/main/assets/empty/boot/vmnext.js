@@ -126,7 +126,6 @@ winit.initNext = function () {
 		// 开始flag
 		console.log("vm项目开始了。。。。。。。");
 		util.loadDir([ "app/remote/","app/store"], flags, fm, undefined, function (fileMap) {
-			pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.initStore();
 			pi_modules.commonjs.exports.relativeGet("app/remote/login").exports.openConnect();
 			
 		}, function (r) {

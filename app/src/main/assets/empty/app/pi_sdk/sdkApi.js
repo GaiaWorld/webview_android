@@ -38,18 +38,19 @@ exports.setFreeSecrectPay = (openFreeSecret) => {
         });
     });
 };
-// ----------对外接口------------------------------------------------------------------------------------------
+// ----------对外接口-----------------------------------------------------------------------
 // 获取openID
-const authorize = (payload, callBack) => {
-    window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'authorize', payload, (error, result) => {
-        console.log('getOpenId call success', error);
-        console.log('getOpenId call success', result);
+const authorize = (params, callBack) => {
+    window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'authorize', params, (error, result) => {
+        console.log('authorize call success', error, JSON.stringify(result));
         callBack(error, result);
     });
 };
 // 第三方支付
 const thirdPay = (order, callBack) => {
     const payCode = {
+        CANCEL: -2,
+        NOWEXIN: -7,
         SUCCESS: 1,
         SETNOPASSWORD: 2,
         EXCEEDLIMIT: 3,
@@ -59,10 +60,7 @@ const thirdPay = (order, callBack) => {
     };
     sdkTools_1.closePopBox();
     sdkTools_1.popNewLoading('支付中...');
-    window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'thirdPay', {
-        order,
-        webviewName: window["pi_sdk"].config.webviewName
-    }, (error, res) => {
+    window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'thirdPay', Object.assign({}, order, { webviewName: window["pi_sdk"].config.webviewName }), (error, res) => {
         console.log('thirdPay call success', res);
         sdkTools_1.closePopBox();
         if (res.result === payCode.SUCCESS) {
@@ -87,6 +85,14 @@ const thirdPay = (order, callBack) => {
                         sdkTools_1.popNewMessage('支付成功');
                         callBack(error, res);
                     }
+                    else if (res.result === payCode.CANCEL) {
+                        sdkTools_1.popNewMessage('取消支付');
+                        callBack(error, res);
+                    }
+                    else if (res.result === payCode.NOWEXIN) {
+                        sdkTools_1.popNewMessage('未安装微信');
+                        callBack(error, res);
+                    }
                     else {
                         sdkTools_1.popNewMessage('支付失败');
                         callBack(error, res);
@@ -101,8 +107,8 @@ const thirdPay = (order, callBack) => {
     });
 };
 // 打开新页面
-const openNewWebview = (payload) => {
-    window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'openNewWebview', payload, (error, result) => {
+const openNewWebview = (param) => {
+    window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'openNewWebview', param, (error, result) => {
         console.log('openNewWebview call success');
     });
 };
@@ -117,6 +123,12 @@ const openSignInPage = () => {
     signIn_1.createSignInStyle();
     signIn_1.createSignInPage();
 };
+// 邀请好友 分享
+const inviteUser = (param) => {
+    window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'inviteFriends', Object.assign({}, param, { webviewName: window["pi_sdk"].config.webviewName }), (error, result) => {
+        console.log('inviteUser call success');
+    });
+};
 // ----------对外接口------------------------------------------------------------------------------------------
 const piSdk = window["pi_sdk"] || {};
 const piApi = {
@@ -124,7 +136,8 @@ const piApi = {
     thirdPay,
     openNewWebview,
     closeWalletWebview,
-    openSignInPage
+    openSignInPage,
+    inviteUser
 };
 // tslint:disable-next-line: no-unsafe-any
 piSdk.api = piApi;

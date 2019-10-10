@@ -23,7 +23,7 @@ class App : Application(){
     override fun onCreate() {
         super.onCreate()
         YNWebView.getX5Open(this)
-        regToService()
+
 //        initCloudChannel(this)
         //注册微信
         regToWx()
@@ -46,11 +46,7 @@ class App : Application(){
 //        }
 //    }
 
-    private fun regToService(){
-        val intent = Intent("com.high.ydzm.piservice")
-        intent.setPackage("com.high.ydzm");
-        startService(intent)
-    }
+
 
     /**
      * 初始化云推送通道

@@ -4,12 +4,12 @@
         <activity
                 android:name="com.high.pi_framework.framework.WebViewActivity"
                 android:screenOrientation="portrait"
-                android:launchMode="standard"
+                android:launchMode="singleInstance"
                 android:theme="@style/FullScreenWithoutAny">
         </activity>
         <activity
                 android:name="com.high.pi_framework.framework.NewWebViewActivity"
-                android:launchMode="standard"
+                android:launchMode="singleInstance"
                 android:screenOrientation="portrait"
                 android:theme="@style/GameScreenWithoutAny" />
 

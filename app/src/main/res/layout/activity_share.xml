@@ -85,7 +85,7 @@
         android:layout_below="@+id/share_code_layout"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:background="@mipmap/share_code_pic"
+        android:adjustViewBounds="true"
         android:scaleType="fitXY" />
     <!-- 扫码下载-->
     <TextView

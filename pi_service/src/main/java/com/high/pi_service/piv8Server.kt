@@ -46,7 +46,11 @@ class piv8Service: Service() {
     //===================private==============
     private fun registerBc() {
         val intentFilter = IntentFilter()
-        intentFilter.addAction("")
+        intentFilter.addAction("outpay_action")
+        intentFilter.addAction("inpay_action")
+        intentFilter.addAction("share_action")
+//        intentFilter.addAction("wx_pay_action")
+        intentFilter.addAction("ali_pay_action")
         registerReceiver(mBroadcastReceiver, intentFilter)
     }
 
@@ -71,8 +75,8 @@ class piv8Service: Service() {
     }
 
 
-    private fun postMessage(webViewName: String?, message: String?){
 
+    private fun postMessage(webViewName: String?, message: String?){
         Log.d("piservice","$webViewName ============ $message")
         if (message != null && isVMReady == true){
             try {
@@ -109,6 +113,8 @@ class piv8Service: Service() {
     }
 
     fun goShare(imageName: String, userName: String, shareCode: String, shareUrl: String, callBack: V8Function){
+        val cb = callBack.twin()
+        actionCallBack.put("share_action", cb)
         val intent = Intent("com.high.ydzm.gameView.ShareActivity")
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.putExtra("nickname",userName)
@@ -121,6 +127,16 @@ class piv8Service: Service() {
     fun addActionListener(type: String, callBack: V8Function){
         val cb = callBack.twin()
         actionCallBack.put(type, cb)
+    }
+
+    fun removeActionListener(type: String){
+        if (type in actionCallBack.keys){
+            val cb = actionCallBack[type]
+            if (!cb!!.isReleased){
+                cb.close()
+            }
+            actionCallBack.remove(type)
+        }
     }
 
     fun goWXPay(app_id: String, partnerid: String, prepayid: String, packages: String, noncestr: String, timestamp: String, sign: String, callBack: V8Function){
@@ -151,30 +167,36 @@ class piv8Service: Service() {
             val action = intent?.action ?: return
             when(action){
                 "outpay_action" -> {
+                    Log.d("piservice","outpay_action")
+                    //获取code
+                    val code = intent.getIntExtra("code",0)
                     val way = intent.getStringExtra("pay_way")
                     val payAmount = intent.getIntExtra("payAmount",0)
                     if (action in actionCallBack.keys){
+                        Log.d("piservice","outpay_action==========$code=====$way=====$payAmount")
                         val cb = actionCallBack[action]
                         if (!cb!!.isReleased){
+                            Log.d("piservice","outpay_action==========$code=====$way=====$payAmount")
                             val arr = V8Array(runtime)
-                            arr.push(way)
+                            arr.push(code)
                             arr.push(payAmount)
+                            arr.push(way)
                             cb.call(null, arr)
                             arr.close()
                         }
                     }
                 }
                 "inpay_action" -> {
+                    val code = intent.getIntExtra("code",0)
                     val way = intent.getStringExtra("pay_way")
-                    val payAmount = intent.getIntExtra("payAmount",0)
-                    val orderId = intent.getIntExtra("orderId",0)
+                    val orderId = intent.getStringExtra("orderId")
                     if (action in actionCallBack.keys){
                         val cb = actionCallBack[action]
                         if (!cb!!.isReleased){
                             val arr = V8Array(runtime)
+                            arr.push(code)
                             arr.push(orderId)
                             arr.push(way)
-                            arr.push(payAmount)
                             cb.call(null, arr)
                             arr.close()
                         }

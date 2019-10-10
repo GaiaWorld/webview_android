@@ -115,6 +115,7 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
 
 
     override fun onDestroy() {
+        unbindService(conn)
         WebViewManager.removeGameView(this.tag!!)
         unregisterReceiver(mCloseReceiver)
         super.onDestroy()
@@ -144,14 +145,6 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
         startActivity(minintent)
     }
 
-    fun webViewBindService(message: String){
-        if (ps != null){
-            val ms = "window['handle_native_event']('ServiceAction', 'bind','$tag','$message')"
-            ps!!.sendMessage(tag, ms)
-        }
-    }
-
-
     //============delegate=============
     override fun onGlobalLayout() {
         if (timer != null){
@@ -175,6 +168,23 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
         intentFilter.addAction("mine_size_activity")
         registerReceiver(mCloseReceiver, intentFilter)
     }
+
+
+    fun webViewPostMessage(sender: String, message: String){
+        if (ps != null){
+            val ms = "window.onWebViewPostMessage('$sender','$message')"
+            ps!!.sendMessage(tag, ms)
+        }
+    }
+
+
+    fun webViewBindService(message: String){
+        if (ps != null){
+            val ms = "window['handle_native_event']('ServiceAction', 'bind','$tag','$message')"
+            ps!!.sendMessage(tag, ms)
+        }
+    }
+
 
     private val mCloseReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -208,13 +218,20 @@ class NewWebViewActivity : BaseWebView(), ViewTreeObserver.OnGlobalLayoutListene
             ps = piservice.Stub.asInterface(service)
             ps!!.onMessage(tag, object : piserviceCallBack.Stub(){
                 override fun sendMessage(statuCode: Int, message: String?) {
-                    if (statuCode == 0){
-                        val ms = "javascript:window.pi_sdk.piService.onBindService(undefined, $message)"
-                        ynWebView.evaluateJavascript(ms)
-                    }else{
-                        val ms = "javascript:window.pi_sdk.piService.onBindService({code: -4, reason: $message})"
-                        ynWebView.evaluateJavascript(ms)
+                    var ms = ""
+                    if (statuCode == 200){
+                        ms = "javascript:window.pi_sdk.piService.onBindService(undefined, '$message')"
+                    }else if(statuCode == 400){
+                        ms = "javascript:window.pi_sdk.piService.onBindService({code: -4, reason: $message},undefined)"
+                    }else if (statuCode == 600){
+                        var newMessage = message
+                        if (message!!.contains("\\")){
+                            newMessage = message.replace("\\","\\\\\\")
+                            Log.d("piservice","javascript:$newMessage")
+                        }
+                        ms = String.format("javascript:window.onWebViewPostMessage('%s','%s')", "JSVM", newMessage)
                     }
+                    runOnUiThread { ynWebView.evaluateJavascript(ms) }
                 }
             })
         }

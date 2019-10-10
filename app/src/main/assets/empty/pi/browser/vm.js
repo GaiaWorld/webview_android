@@ -7,26 +7,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @param userName 用户名
  * @param shareCode 邀请码
  * @param shareUrl 用于生产二维码的URL
- * @param successcallBack
- * @param errorCallBack
+ * @param callBack(result) 0: 分享成功， -1： 分享失败  -2： 分享取消
  */
-exports.goshare = (imageName, userName, shareCode, shareUrl, successcallBack, errorCallBack) => {
-    var callBack = (isSuccess) => {
-        if (isSuccess === "success") {
-            successcallBack();
-        }
-        else {
-            errorCallBack();
-        }
-    };
-    window.JSVM.goShare(imageName, userName, shareCode, shareUrl, callBack);
+exports.goshare = (imageName, userName, shareCode, shareUrl, callBack) => {
+    window.Service.goShare(imageName, userName, shareCode, shareUrl, callBack);
 };
 /**
  * android去充值---->打开界面
  * @param slv 银两余额
  */
 exports.goChareActivity = (slv) => {
-    window.JSVM.goChareActivity(slv);
+    window.Service.goChareActivity(slv);
 };
 /**
  * 监听充值界面推送事件
@@ -42,13 +33,13 @@ exports.addChareActionListener = (success, fail) => {
             fail(code);
         }
     };
-    window.JSVM.addChareActionListener(callBack);
+    window.Service.addActionListener("outpay_action", callBack);
 };
 /**
  * 关闭监听事件
  */
 exports.removeChareActionListener = () => {
-    window.JSVM.removeChareActionListener();
+    window.Service.removeActionListener("outpay_action");
 };
 /**
  * android游戏内充值---->打开界面
@@ -60,43 +51,43 @@ exports.removeChareActionListener = () => {
  * @param pay 还需支付 int(fen)
  */
 exports.goChareInGameActivity = (orderId, kupayId, balance, seller, price, pay) => {
-    window.JSVM.goChareInGameActivity(orderId, kupayId, balance, seller, price, pay);
+    window.Service.goChareInGameActivity(orderId, kupayId, balance, seller, price, pay);
 };
 /**
  * 监听充值界面推送事件
- * @param success platform：充值平台
+ * @param success(orderId, platform)订单ID， 充值平台
  * @param fail code: -1:用户点击返回
  */
 exports.addChareInGameActionListener = (success, fail) => {
-    var callBack = (code, plateform) => {
+    var callBack = (code, orderId, plateform) => {
         if (code === 0) {
-            success(plateform);
+            success(orderId, plateform);
         }
         else {
             fail(code);
         }
     };
-    window.JSVM.addChareInGameActionListener(callBack);
+    window.Service.addActionListener("inpay_action", callBack);
 };
 /**
  * 关闭监听事件
  */
 exports.removeChareInGameActionListener = () => {
-    window.JSVM.removeChareInGameActionListener();
+    window.Service.removeActionListener("inpay_action");
 };
 /**
  * 支付宝支付
  * callBack(code) 0: 成功  其他： 取消
  */
 exports.goAliPay = (codeInfo, callBack) => {
-    window.JSVM.goAliPay(codeInfo, callBack);
+    window.Service.goAliPay(codeInfo, callBack);
 };
 /**
  * 微信支付
  * callBack(code) 0： 成功  其他： 取消
  */
 exports.goWeXinPay = (app_id, partnerid, prepayid, packages, noncestr, timestamp, sign, callBack) => {
-    window.JSVM.goWXPay(app_id, partnerid, prepayid, packages, noncestr, timestamp, sign, callBack);
+    window.Service.goWXPay(app_id, partnerid, prepayid, packages, noncestr, timestamp, sign, callBack);
 };
 /**
  * 吊起ios支付界面

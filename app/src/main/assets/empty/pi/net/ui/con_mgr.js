@@ -90,7 +90,7 @@ exports.open = (callback, errorCallback, closeCallback, reOpenCallback, timeout)
         else {
             con = result;
             exports.setConState(ConState.opened);
-            // con.send({ type: 'app@time', param: { ctime: now() } });
+            con.send({ type: 'app@time', param: { ctime: time_1.now() } });
             // callTime(callback, [result], "open");
             callback([result]);
         }
@@ -113,7 +113,7 @@ exports.request = (msg, cb, timeout) => {
         }, waitTimeout);
         lastRequest = msg;
         con.request(msg, (r) => {
-            console.log(msg.type, JSON.stringify(msg.param), '----------------------', r);
+            console.log(msg.type, JSON.stringify(msg.param), '----------------------', JSON.stringify(r));
             if (r.error) {
                 if (conState === ConState.closed) {
                     exports.reopen();
@@ -444,7 +444,7 @@ const requestWaits = () => {
  */
 const ping = (reOpenCallback) => {
     const func = () => {
-        // console.log('ping',new Date().getTime());
+        // console.log('ping',Date.now());
         if (conState === ConState.closed) {
             exports.reopen(reOpenCallback);
         }
@@ -455,7 +455,7 @@ const ping = (reOpenCallback) => {
                 exports.reopen(reOpenCallback);
             }
             else {
-                // con.send({ type: 'app@time', param: { ctime: now() } });
+                con.send({ type: 'app@time', param: { ctime: time_1.now() } });
             }
         }
         pingTimer = setTimeout(func, pingTime);

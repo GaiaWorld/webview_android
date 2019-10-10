@@ -3,6 +3,7 @@ package com.high.ydzm.gameView;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -16,6 +17,10 @@ import android.widget.TextView;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.onekeyshare.OnekeyShare;
+import cn.sharesdk.tencent.qq.QQ;
+import cn.sharesdk.tencent.qzone.QZone;
+import cn.sharesdk.wechat.friends.Wechat;
+import cn.sharesdk.wechat.moments.WechatMoments;
 import com.iqos.qrscanner.utils.QRCodeUtils;
 import com.high.ydzm.R;
 
@@ -46,6 +51,12 @@ public class ShareActivity extends AppCompatActivity {
     ImageView shareBtnWeixinQZone;
     //邀请码
     String code;
+
+    private static final int PLATFORM_WE_CHAT = 1;//分享到的平台->微信
+    private static final int PLATFORM_MOMENTS = 2;//分享到的平台->朋友圈
+    private static final int PLATFORM_QQ = 3;//分享到的平台->QQ空间
+    private static final int PLATFORM_Q_ZONE = 4;//分享到的平台->QQ
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,25 +189,55 @@ public class ShareActivity extends AppCompatActivity {
         OnekeyShare oks = new OnekeyShare();
         oks.disableSSOWhenAuthorize();
         oks.setImageData(screenshot);
-//        if (null != platform)
-//            oks.setPlatform(platform);
+        String platform = getPlatformName(shareType);
+        if (!"".equals(platform))
+            oks.setPlatform(platform);
         oks.setCallback(new PlatformActionListener() {
             @Override
             public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
                 //分享完成
+                Intent intent = new Intent("share_action");
+                intent.putExtra("ruselt",0);
+                sendBroadcast(intent);
             }
 
             @Override
             public void onError(Platform platform, int i, Throwable throwable) {
                 //分享出错
+                Intent intent = new Intent("share_action");
+                intent.putExtra("ruselt",-1);
+                sendBroadcast(intent);
             }
 
             @Override
             public void onCancel(Platform platform, int i) {
                 //分享取消
+                Intent intent = new Intent("share_action");
+                intent.putExtra("ruselt",-2);
+                sendBroadcast(intent);
             }
         });
         oks.show(this);
+    }
+
+
+    private String getPlatformName(int shareType){
+        String plateformName = "";
+        switch (shareType){
+            case PLATFORM_WE_CHAT:
+                plateformName = Wechat.NAME;
+                break;
+            case PLATFORM_MOMENTS:
+                plateformName = WechatMoments.NAME;
+                break;
+            case PLATFORM_QQ:
+                plateformName = QQ.NAME;
+                break;
+            case PLATFORM_Q_ZONE:
+                plateformName = QZone.NAME;
+                break;
+        }
+        return plateformName;
     }
 
 

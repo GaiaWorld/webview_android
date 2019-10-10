@@ -258,7 +258,7 @@ const phoneLogin = () => {
 // 微信登录
 const wxLogin = () => {
     sdkTools_1.popNewLoading('登录中');
-    window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'wechatLogin', null, (error, res) => {
+    window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'wechatLogin', {}, (error, res) => {
         sdkTools_1.closePopBox();
         if (error) {
             sdkTools_1.popNewMessage('登录失败');
@@ -268,10 +268,6 @@ const wxLogin = () => {
             closeSigninPage();
         }
     });
-    setTimeout(() => {
-        sdkTools_1.closePopBox();
-        console.log('3秒自动停止转圈');
-    }, 3000);
 };
 // 游客登录
 const touristLogin = () => {

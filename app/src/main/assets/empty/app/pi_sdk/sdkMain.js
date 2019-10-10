@@ -38,7 +38,12 @@ const showButtons = [{
         clickedClose: true,
         clickCb: () => {
             console.log('click 邀请好友');
-            pi_RPC_Method(piConfig.jsApi, 'inviteFriends', piConfig.webviewName, (error, result) => {
+            pi_RPC_Method(piConfig.jsApi, 'inviteFriends', {
+                nickName: '测试',
+                inviteCode: '123456',
+                apkDownloadUrl: 'http://xxxxx',
+                webviewName: piConfig.webviewName
+            }, (error, result) => {
                 console.log('inviteFriends call success');
             });
         }
@@ -200,8 +205,8 @@ const setWebviewManager = (path) => {
 const piSdkInit = (cb) => {
     sdkTools_1.createThirdBaseStyle();
     sdkTools_1.createThirdApiStyleTag();
-    piService.bind(2000, { webviewName: piConfig.webviewName }, cb);
-    // buttonModInit()();
+    piService.bind(10000, { webviewName: piConfig.webviewName }, cb);
+    sdkTools_1.buttonModInit()();
     // getFreeSecret();
 };
 piConfig.ButtonId = ButtonId;
@@ -211,6 +216,12 @@ piConfig.isHorizontal = false;
 piConfig.appid = '101';
 piConfig.jsApi = 'app/remote/JSAPI';
 piConfig.imgUrlPre = 'http://192.168.33.13/wallet/app/res/image/third/';
+piConfig.buttonMod = 1;
+piConfig.buttonMods = {
+    FLOATBUTTON: 1,
+    WXBUTTON: 2,
+    FLOATBUTTON2: 3
+};
 pi_sdk.setWebviewManager = setWebviewManager;
 pi_sdk.piSdkInit = piSdkInit;
 pi_sdk.config = piConfig;

@@ -21,24 +21,6 @@ class WebViewManager extends native_1.NativeObject {
             getInstance().call('reloadDefault', {});
         }
     }
-    static getReady(stage) {
-        if (isJSVM) {
-            window.JSVM.getReady(stage);
-        }
-        else if (isPC) {
-            const pcindex = pcStageArray.indexOf(stage);
-            if (pcindex >= 0) {
-                window.onLoadTranslation(stage);
-                pcStageArray.splice(pcindex, 1);
-            }
-            else {
-                pcStageArray.push(stage);
-            }
-        }
-        else {
-            getInstance().call('getReady', { stage });
-        }
-    }
     /**
      * 创建新的WebView窗口并弹出来
      * 注：webViewName不能和已有的WebView重复，如果相同，抛异常
@@ -52,7 +34,12 @@ class WebViewManager extends native_1.NativeObject {
      * 注：不能使用这个释放主WebView
      */
     static close(webViewName) {
-        getInstance().call('closeWebView', { webViewName });
+        if (isJSVM) {
+            window["JSVM"].closeWebView(webViewName);
+        }
+        else {
+            getInstance().call('closeWebView', { webViewName });
+        }
     }
     /**
      * 获取屏幕刘海与下部分高度
@@ -61,7 +48,12 @@ class WebViewManager extends native_1.NativeObject {
         getInstance().call('getScreenModify', { success });
     }
     static minWebView(webViewName) {
-        getInstance().call('minWebView', { webViewName });
+        if (isJSVM) {
+            window["JSVM"].minWebView(webViewName);
+        }
+        else {
+            getInstance().call('minWebView', { webViewName });
+        }
     }
     /**
      * 创建一个新的webview，但不会显示出来
@@ -146,12 +138,6 @@ class WebViewManager extends native_1.NativeObject {
             WebViewManager.postMessage(webViewName, RPC_CALL_START + JSON.stringify(sign));
         }
     }
-    /**
-     * 关闭定时器
-     */
-    static endTimer() {
-        getInstance().call('endTimerInWebView', {});
-    }
 }
 exports.WebViewManager = WebViewManager;
 // ========================= implmentation
@@ -194,14 +180,9 @@ native_1.registerSign(WebViewManager, {
             name: 'message',
             type: native_1.ParamType.String
         }],
-    getReady: [{
-            name: 'stage',
-            type: native_1.ParamType.String
-        }],
     getScreenModify: [],
     isDefaultKilled: [],
     reloadDefault: [],
-    endTimerInWebView: [],
     minWebView: [{
             name: 'webViewName',
             type: native_1.ParamType.String
@@ -292,7 +273,6 @@ const handleRpcCall = (fromWebViewName, { moduleName, methodName, params, rpcID,
                 }
                 return v;
             });
-            console.log(`handleRpcCall params ${JSON.stringify(params)}`);
             try {
                 result = func(...params);
                 console.log(`handleRpcCall result ${result}`);
