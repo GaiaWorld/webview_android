@@ -1,1 +1,0 @@
-(_$defineTpl("pi/render3d/scene/scene",function(t,a,e,n,r,i,s,o,d,l,c){return function(t,a,e){var n={attrs:{},tagName:"div",sid:0,children:[],childHash:2946814719,attrSize:2,attrHash:4171162151};return n.attrs.style="position:absolute;top:0",n.attrs["on-tap"]="onRayCast",n}}));

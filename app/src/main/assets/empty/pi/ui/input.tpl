@@ -1,1 +1,0 @@
-(_$defineTpl("pi/ui/input",function(t,n,r,u,a,i,s,o,e,l,c){return function(t,n,r){n=n||{sign:1,text:"",readOnly:!0,focus:!0,id:1};var u={attrs:{},tagName:"input",sid:0,children:[],childHash:0,attrSize:4,attrHash:428539163};return u.attrs["on-input"]="onInput",u.attrs["on-blur"]="onBlur",u.attrs["on-focus"]="onFocus",u.attrs.value="",u}}));

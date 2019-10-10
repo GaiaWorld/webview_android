@@ -1,1 +1,0 @@
-(_$defineTpl("pi/ui/guide",function(t,i,a,e,r,s,n,d,l,u,o){return function(t,i,a){var e={attrs:{},tagName:"div",sid:0,children:[],childHash:2946814719,attrSize:3,attrHash:3757922498};return e.attrs["on-tap"]="guide",e.attrs["w-ev-tap"]="{'stop':false}",e.attrs.style="position:absolute;left:0;top:0;width:100%;height:100%;z-index:111;",e}}));

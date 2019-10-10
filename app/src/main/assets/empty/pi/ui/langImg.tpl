@@ -1,1 +1,0 @@
-(_$defineTpl("pi/ui/langImg",function(t,a,s,r,i,n,e,u,c,g,h){return function(t,a,r){var i={attrs:{},tagName:"img",sid:0,children:[],attrSize:1,attrHash:1848122660},n="";return n+=a[r],n+="",i.attrs.src=n,i.attrHash=s.nextHash(i.attrHash,e(i.attrs.src)),h(i),i}}));
